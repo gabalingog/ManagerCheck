@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import './Landing.css';
 import logo from './../Assets/Logo.png';
@@ -10,10 +10,19 @@ const Landing = () => {
     // track user input
     const [searchInput, setSearchInput] = useState('');
     // store all managers
-    const [managers, setManagers] = useState([
-        { id: 1, name: "Gab"},
-        { id: 2, name: "Janelle"}
-    ])
+    const [managers, setManagers] = useState(() => {
+        const savedManagers = localStorage.getItem('managers');
+        return savedManagers ? JSON.parse(savedManagers) : [
+            { id: 1, name: "Gab"},
+            { id: 2, name: "Janelle"}
+        ];
+    });
+
+    // save to local storage
+    useEffect(() => {
+        localStorage.setItem('managers', JSON.stringify(managers));
+    }, [managers]);
+    
     // show add form
     const [showAddForm, setShowAddForm] = useState(false);
     // add form input
