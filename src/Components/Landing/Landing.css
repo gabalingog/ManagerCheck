@@ -1,0 +1,51 @@
+.landing{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 100px;
+}
+
+.title{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.logo{
+    width: 80px;
+    height: 80px;
+}
+
+.webTitle{
+    font-size: 50px;
+}
+
+.intro{
+    padding-top: 30px;
+    font-size: 25px;
+}
+
+.searchRes{
+    padding-top: 15px;
+    position: relative;
+    display: inline-block;
+}
+
+.searchBarMan{
+    width: 400px;
+    height: 40px;
+    font-size: 20px;
+    border: 2px solid black;
+    border-radius: 25px;
+    padding-left: 50px;
+}
+
+.searchLogo {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    left: 10px;
+    top: 22px;
+    pointer-events: none;
+    opacity: 60%;
+}

@@ -15,7 +15,6 @@ function App() {
         <Route path='/rate' element={<RateManager/>}>
           <Route path=':managerID' element={<Managers/>}/>
         </Route>
-    
       </Routes>
       </BrowserRouter>
     </div>

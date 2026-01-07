@@ -1,15 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './Navbar.css'
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
 
-  //const [login, setLogin] = useState("login");
+  const [menu, setMenu] = useState("home");
 
   return (
     <div className='navbar'>
       <div className='buttons'>
-        <button>Sign up</button>
-        {/* <span onClick={()=>{setLogin("login")}}>Login<hr/></span> */}
+        <Link to='/rate'><button >Sign up</button></Link>
         <span>Login</span>
       </div>
     </div>
