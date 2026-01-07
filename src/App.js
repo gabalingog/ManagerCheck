@@ -2,8 +2,9 @@ import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './Components/Navbar/Navbar';
 import Home from './Pages/Home';
-import RateManager from './Pages/RateManager';
+import RateManager from './Components/Rate/RateManager';
 import Managers from './Pages/Managers';
+import Landing from './Components/Landing/Landing';
 
 function App() {
   return (
@@ -12,9 +13,12 @@ function App() {
       <Navbar/>
       <Routes>
         <Route path='/' element={<Home/>}/>
-        <Route path='/rate' element={<RateManager/>}>
+        <Route path='/rate/:managerID' element={<RateManager/>}/>
+
+
+        {/* <Route path='/rate' element={<RateManager/>}>
           <Route path=':managerID' element={<Managers/>}/>
-        </Route>
+        </Route> */}
       </Routes>
       </BrowserRouter>
     </div>
