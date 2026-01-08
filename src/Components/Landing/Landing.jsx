@@ -102,7 +102,7 @@ const Landing = () => {
             </div>
             <span className='intro'> Rate your manager from <span className='font-medium'>Barcelona Wine Bar</span></span>
             <div className="searchRes">
-            <img src={search} alt="Search" className='searchLogo'/>
+                <img src={search} alt="Search" className='searchLogo'/>
                 <input
                     type="text"
                     placeholder="Search for a manager"
@@ -110,47 +110,46 @@ const Landing = () => {
                     value={searchInput}
                     onChange={handleSearch}
                 />
-            </div>
-
-            {/* dropdown */}
-            {/* searching on bar and there's a filtered result */}
-            {searchInput && filteredManagers.length > 0 && (
-                <div className="searchResult">
-                    {filteredManagers.map((manager) => (
-                        <div
-                            key={manager.id}
-                            className="searchResultItem"
-                            onClick={() => handleSelectManager(manager)}>
-                            {manager.name}
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {/* no managers matching */}
-            {searchInput && filteredManagers.length === 0 && (
-                <div className="searchResult">
-                    <span className='noManager'>Can't find the manager?
-                    <span className='enterName font-medium' onClick={handleEnterManager}> Enter first name</span></span>
-                </div>
-            )}
-
-            {/* add form */}
-            {showAddForm && (
-                <div className="addManagerForm">
-                    <input
-                        type="text"
-                        placeholder="Enter manager's first name"
-                        className='addManagerInput'
-                        value={newManagerName}
-                        onChange={(e) => setNewManagerName(e.target.value)}
-                    />
-                    <div className="formButtons">
-                        <button onClick={handleAddManager} className='addButton'>Add</button>
-                        <button onClick={handleCancelAdd} className='cancelButton'>Cancel</button>
+                {/* dropdown */}
+                {/* searching on bar and there's a filtered result */}
+                {searchInput && filteredManagers.length > 0 && (
+                    <div className="searchResult">
+                        {filteredManagers.map((manager) => (
+                            <div
+                                key={manager.id}
+                                className="searchResultItem"
+                                onClick={() => handleSelectManager(manager)}>
+                                {manager.name}
+                            </div>
+                        ))}
                     </div>
-                </div>
-            )}
+                )}
+
+                {/* no managers matching */}
+                {searchInput && filteredManagers.length === 0 && (
+                    <div className="searchResult">
+                        <span className='noManager'>Can't find the manager?
+                        <span className='enterName font-medium' onClick={handleEnterManager}>Enter first name</span></span>
+                    </div>
+                )}
+
+                {/* add form */}
+                {showAddForm && (
+                    <div className="addManagerForm">
+                        <input
+                            type="text"
+                            placeholder="Enter manager's first name"
+                            className='addManagerInput'
+                            value={newManagerName}
+                            onChange={(e) => setNewManagerName(e.target.value)}
+                        />
+                        <div className="formButtons">
+                            <button onClick={handleAddManager} className='addButton'>Add</button>
+                            <button onClick={handleCancelAdd} className='cancelButton'>Cancel</button>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }
