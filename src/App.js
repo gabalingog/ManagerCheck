@@ -4,7 +4,7 @@ import Navbar from './Components/Navbar/Navbar';
 import Home from './Pages/Home';
 import RateManager from './Components/Rate/RateManager';
 import Managers from './Pages/Managers';
-import Landing from './Components/Landing/Landing';
+import Landing from './Components/Landing/ManagerLanding';
 
 function App() {
   return (

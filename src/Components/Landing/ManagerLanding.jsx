@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import './Landing.css';
+import './ManagerLanding.css';
 import logo from './../Assets/Logo.png';
 import search from './../Assets/Search.png';
 
@@ -9,6 +9,7 @@ const Landing = () => {
 
     // track user input
     const [searchInput, setSearchInput] = useState('');
+
     // store all managers
     const [managers, setManagers] = useState(() => {
         const savedManagers = localStorage.getItem('managers');
