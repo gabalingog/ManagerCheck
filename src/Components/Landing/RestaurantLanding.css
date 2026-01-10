@@ -1,40 +1,35 @@
 .bgmain {
     background-color: #D2DCB6;
 }
-
 .main {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     padding: 80px 40px 80px 150px;
     gap: 200px;
-    /* top right bottom left */
-    /* padding: 80px 40px 40px 200px; */
 }
-
 .title {
     font-size: 120px;
     font-weight: 400;
     line-height: 1.2;
     display: block;
 }
-
+.title br {
+    display: block; /* Show line break on full screen */
+}
 .right {
     display: flex;
     justify-content: flex-end;
     flex: 1;
 }
-
 .searching {
     width: 100%;
 }
-
 .searching > span {
     display: block;
     font-size: 40px;
     margin-bottom: 15px;
 }
-
 .searchRes {
     display: flex;
     align-items: center;
@@ -46,7 +41,6 @@
     padding: 5px 10px 5px 50px;
     width: 700px;
 }
-
 .searchLogo {
     width: 30px;
     height: 30px;
@@ -56,7 +50,6 @@
     pointer-events: none;
     opacity: 60%;
 }
-
 .searchBarMan {
     flex: 1;
     padding: 10px;
@@ -65,21 +58,18 @@
     background-color: transparent;
     outline: none;
 }
-
 .searchBarMan::placeholder {
     color: black;
 }
-
 .bottom {
     display: flex;
-    gap: 40px;
-    padding: 40px;
+    padding: 20px;
     margin-top: 40px;
+    justify-content: space-evenly;
 }
-
 .anonBox {
-    flex: 1;
-    max-width: 350px;
+    width: 400px;
+    height: 180px;
     border: 2px solid #333;
     border-radius: 25px;
     padding: 40px;
@@ -87,54 +77,56 @@
     display: flex;
     flex-direction: column;
 }
-
 .anonBox .header {
     font-size: 32px;
     font-weight: normal;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     display: block;
+    border: none;
+    padding: 0;
+    background: none;
 }
-
 .anonBox p {
     font-size: 16px;
     line-height: 1.5;
     margin: 0 0 30px 0;
     flex-grow: 1;
 }
-
 .viewRatings {
     padding: 12px 25px;
     font-size: 16px;
     border: 2px solid #333;
     border-radius: 25px;
     background-color: white;
-    cursor: not-allowed;
+    cursor: pointer;
     transition: all 0.3s ease;
-    opacity: 0.5;
 }
-
+.viewRatings:hover {
+    background-color: #333;
+    color: white;
+    transform: translateY(-2px);
+}
 .topRestos {
-    flex: 2;
+    width: 400px;
+    height: 180px;
     border: 2px solid #333;
     border-radius: 25px;
-    padding: 40px 40px 30px 40px;
+    padding: 40px;
     background-color: white;
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
-
 .topRestos > span {
     font-size: 32px;
     font-weight: normal;
+    margin-bottom: 20px;
 }
-
 .underline {
     text-decoration: underline;
     text-decoration-thickness: 2px;
     text-underline-offset: 5px;
 }
-
 .findRestos {
     padding: 12px 25px;
     font-size: 16px;
@@ -144,59 +136,124 @@
     cursor: pointer;
     transition: all 0.3s ease;
 }
-
 .findRestos:hover {
     background-color: #333;
     color: white;
     transform: translateY(-2px);
 }
 
+/* Responsive Design */
 @media (max-width: 1024px) {
     .main {
         flex-direction: column;
         padding: 40px 20px;
         gap: 40px;
+        align-items: center;
     }
-
+    
     .title {
-        font-size: 60px;
+        font-size: 70px;
+        text-align: center;
     }
-
+    
+    .title br {
+        display: none; /* Hide line break on smaller screens */
+    }
+    
     .right {
         width: 100%;
         justify-content: center;
     }
-
+    
+    .searching {
+        max-width: 600px;
+    }
+    
+    .searchRes {
+        width: 100%;
+    }
+    
+    .searching > span {
+        font-size: 30px;
+        text-align: center;
+    }
+    
     .bottom {
         flex-direction: column;
-        padding: 40px 20px;
+        padding: 20px;
+        align-items: center;
+        gap: 30px;
     }
-
-    .anonBox {
-        max-width: 100%;
+    
+    .anonBox,
+    .topRestos {
+        width: 90%;
+        max-width: 500px;
+        height: auto;
+        min-height: 180px;
     }
 }
 
 @media (max-width: 768px) {
-    .restoLanding {
+    .bgmain {
         padding: 20px;
     }
-
+    
+    .main {
+        padding: 30px 15px;
+        gap: 30px;
+    }
+    
     .title {
-        font-size: 48px;
+        font-size: 50px;
     }
-
+    
+    .title br {
+        display: none; /* Hide line break on mobile */
+    }
+    
+    .searching > span {
+        font-size: 24px;
+    }
+    
+    .searchRes {
+        padding: 5px 10px 5px 45px;
+    }
+    
+    .searchLogo {
+        width: 25px;
+        height: 25px;
+        left: 12px;
+    }
+    
+    .searchBarMan {
+        font-size: 16px;
+    }
+    
     .bottom {
-        padding: 20px;
+        padding: 15px;
+        gap: 20px;
     }
-
+    
     .anonBox,
     .topRestos {
-        padding: 25px;
+        width: 100%;
+        padding: 30px;
     }
-
+    
     .anonBox .header,
     .topRestos > span {
-        font-size: 24px;
+        font-size: 26px;
+        margin-bottom: 20px;
+    }
+    
+    .anonBox p {
+        font-size: 14px;
+    }
+    
+    .viewRatings,
+    .findRestos {
+        padding: 10px 20px;
+        font-size: 14px;
     }
 }

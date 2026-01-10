@@ -10,19 +10,17 @@ const RestaurantLanding = () => {
         <div className="bgmain">
             <div className="main">
                 <div className="left">
-                    <span className='title'>Manager<br></br>Check</span>
+                    <span className='title'>Manager <br></br>Check</span>
                 </div>
                 <div className="right">
                     <div className="searching">
-                        <span>Search <i>your</i> restaurant</span>
+                        <span>Rate <i>your</i> restaurant</span>
                         <div className="searchRes">
                             <img src={search} alt="Search" className='searchLogo'/>
                             <input
                                 type="text"
-                                placeholder="Search for a manager"
+                                placeholder="Search for a restaurant"
                                 className='searchBarMan'
-                                // value={searchInput}
-                                // onChange={handleSearch}
                             />
                         </div>
                     </div>
@@ -31,13 +29,13 @@ const RestaurantLanding = () => {
         </div>
         <div className="bottom">
             <div className="anonBox">
-                <span className='header'>Anonymous</span>
+                <span className='header'>Anonymous reviews</span>
                 {/* <p>Manager Check protects your reviews about the restaurant industry</p> */}
                 <button className="viewRatings">View your ratings</button>
             </div>
             <div className="topRestos">
                 <span>Find the <underline>best</underline> workplace</span>
-                <button className="findRestos">View the top rated restaurants near you</button>
+                <button className="findRestos">View the top rated restaurants</button>
             </div>
       </div>
     </div>
