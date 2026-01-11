@@ -1,9 +1,15 @@
+.bgmain {
+    background-color: #D2DCB6;
+    overflow: hidden;
+}
+
 .main {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    padding: 80px 40px 80px 150px;
+    /* padding: 80px 40px 80px 150px; */
     gap: 200px;
+    margin-bottom: 20px;
 }
 
 .title {
@@ -24,8 +30,9 @@
 }
 
 .searching {
+    margin-top: -30px;
     width: 100%;
-    position: relative; /* Add this */
+    position: relative;
 }
 
 .searching > span {
@@ -43,7 +50,7 @@
     border-radius: 25px;
     box-sizing: border-box;
     padding: 5px 10px 5px 50px;
-    width: 700px; /* Changed from 700px to 500px */
+    width: 700px;
     z-index: 1;
 }
 
@@ -71,24 +78,27 @@
 }
 
 .searchResult {
-    margin-top: 10px;
+    margin-top: 5px;
     position: absolute;
     top: calc(100% + 5px);
     left: 0;
     width: 700px;
-    background-color: #D2DCB6;
+    background-color: white;
     border: 2px solid black;
     border-radius: 25px;
-    max-height: 300px;
+    max-height: 156px; /* Exact height for 3 items (52px each) */
     overflow-y: auto;
+    overflow-x: hidden; /* Add this */
     box-sizing: border-box;
-    z-index: 100; /* Increased from 10 to 100 */
+    z-index: 100;
 }
 
 .searchResultItem {
-    padding: 12px 20px;
+    padding: 16px 20px; /* Increased from 12px to make items more consistent */
     cursor: pointer;
     border-bottom: 1px solid #ddd;
+    height: 52px; /* Fixed height per item */
+    box-sizing: border-box;
 }
 
 .searchResultItem:hover {
@@ -119,13 +129,13 @@
     position: absolute;
     top: calc(100% + 5px);
     left: 0;
-    width: 100%;
+    width: 700px;
     background-color: white;
     border: 2px solid black;
     border-radius: 25px;
     padding: 20px;
     box-sizing: border-box;
-    z-index: 100; /* Increased from 10 to 100 */
+    z-index: 100;
 }
 
 .addManagerInput {
@@ -250,7 +260,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
+@media (max-width: 1400px) {
     .main {
         flex-direction: column;
         padding: 40px 20px;
@@ -277,6 +287,14 @@
     }
     
     .searchRes {
+        width: 100%;
+    }
+
+    .searchResult {
+        width: 100%;
+    }
+
+    .addManagerForm {
         width: 100%;
     }
     
@@ -325,6 +343,14 @@
     
     .searchRes {
         padding: 5px 10px 5px 45px;
+    }
+
+    .searchResult {
+        width: 100%;
+    }
+
+    .addManagerForm {
+        width: 100%;
     }
     
     .searchLogo {
