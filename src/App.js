@@ -5,6 +5,7 @@ import Home from './Pages/Home';
 import RateManager from './Components/Rate/RateManager';
 import Managers from './Pages/Managers';
 import Landing from './Components/Landing/ManagerLanding';
+import ManagerForm from './Components/ManagerForm/ManagerForm.jsx'
 
 function App() {
   return (
@@ -13,8 +14,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/rate/:managerID' element={<RateManager/>}/>
-
-
+        <Route path="/rate/:managerID/form" element={<ManagerForm />} />
         {/* <Route path='/rate' element={<RateManager/>}>
           <Route path=':managerID' element={<Managers/>}/>
         </Route> */}

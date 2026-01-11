@@ -8,15 +8,12 @@ const RateManager = () => {
   const managerName = location.state?.managerName;
   const navigate = useNavigate();
 
-  const [communication, setCommunication] = useState(0);
-  const [fairness, setFairness] = useState(0);
-  const [approachability, setApproachability] = useState(0);
-  const [organization, setOrganization] = useState(0);
-  const [wouldRecommend, setWouldRecommend] = useState(null);
-  const [comment, setComment] = useState('');
-
   const goHome = () => {
     navigate('/');
+  }
+
+  const goToRatingForm = () => {
+    navigate(`/rate/${managerID}/form`, { state: { managerName } });
   }
 
   const [allRatings, setAllRatings] = useState(() => {
@@ -146,42 +143,6 @@ const RateManager = () => {
   const ratingDistribution = getRatingDistribution();
   const maxCount = Math.max(...Object.values(ratingDistribution));
 
-  const submitRating = (e) => {
-    e.preventDefault();
-    if (!communication || !fairness || !approachability || !organization || wouldRecommend === null || !comment.trim()) {
-      alert('Please complete all fields before submitting');
-      return;
-    }
-
-    const newRating = {
-      id: existingRatings.length > 0 ? Math.max(...existingRatings.map(r => r.id)) + 1 : 1,
-      communication,
-      fairness,
-      approachability,
-      organization,
-      wouldRecommend,
-      comment: comment.trim(),
-      date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year:'numeric'}),
-      position: "Server",
-      duration: "6 months",
-      tags: []
-    };
-
-    setAllRatings(prevRatings => ({
-      ...prevRatings,
-      [managerID]: [...(prevRatings[managerID] || []), newRating]
-    }));
-
-    setCommunication(0);
-    setFairness(0);
-    setApproachability(0);
-    setOrganization(0);
-    setWouldRecommend(null);
-    setComment('');
-
-    alert('Rating submitted successfully!');
-  };
-
   return (
     <div className='rateManagerPage'> 
       <div className="topBar">
@@ -211,7 +172,7 @@ const RateManager = () => {
             <div className="recoNum">{existingRatings.length}</div>
             <div className="rateLabel">Total Reviews</div>
           </div>
-          <button className="rateButton">Rate your manager</button>
+          <button className="rateButton" onClick={goToRatingForm}>Rate the manager</button>
         </div>
       </div>
 
