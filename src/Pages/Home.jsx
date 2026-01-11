@@ -1,5 +1,5 @@
 import React from 'react'
-import Landing from '../Components/Landing/ManagerLanding';
+import ManagerLanding from '../Components/Landing/ManagerLanding';
 import Navbar from './../Components/Navbar/Navbar';
 import RestaurantLanding from '../Components/Landing/RestaurantLanding';
 
@@ -7,8 +7,8 @@ const Home = () => {
   return (
     <div>
       <Navbar/>
-      <Landing/>
-      {/* <RestaurantLanding/> */}
+      {/* <ManagerLanding/> */}
+      <RestaurantLanding/>
     </div>
   )
 }

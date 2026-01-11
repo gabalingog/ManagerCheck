@@ -1,0 +1,394 @@
+.rateRestaurantPage {
+    padding: 0;
+    margin: 0;
+}
+
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: white;
+    border-bottom: 2px solid #000;
+    gap: 20px;
+}
+
+.pageTitle {
+    font-size: 24px;
+    font-weight: 500;
+    margin: 0;
+    white-space: nowrap;
+    color: #333;
+}
+
+.searchBarTop {
+    flex: 1;
+    max-width: 600px;
+    position: relative;
+}
+
+.searchBarTop input {
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 18px;
+    border: 2px solid black;
+    border-radius: 25px;
+    box-sizing: border-box;
+}
+
+.searchDropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid black;
+    border-top: none;
+    border-radius: 0 0 15px 15px;
+    margin-top: -10px;
+    padding-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.searchDropdownItem {
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 16px;
+}
+
+.searchDropdownItem:hover {
+    background-color: #f0f0f0;
+}
+
+.noResults {
+    padding: 15px 20px;
+    color: #666;
+    font-size: 16px;
+    text-align: center;
+}
+
+.homeBtn {
+    padding: 12px 30px;
+    font-size: 18px;
+    border: 2px solid black;
+    border-radius: 50px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.homeBtn:hover {
+    background-color: #333;
+    color: white;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px 150px;
+    background-color: #D2DCB6;
+    margin-bottom: 0;
+    border: none;
+    border-radius: 0;
+}
+
+.restaurantInfo {
+    flex: 1;
+}
+
+.restaurantName {
+    font-size: 120px;
+    font-weight: 400;
+    display: block;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.location {
+    font-size: 24px;
+    color: #333;
+    margin: 10px 0;
+}
+
+.stars {
+    display: flex;
+    gap: 5px;
+    margin-top: 15px;
+}
+
+.star {
+    font-size: 40px;
+    color: #ddd;
+}
+
+.star.filled {
+    color: #ff4444;
+}
+
+.ratingSummary {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    gap: 60px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.overallRating, .recoStats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.rateNum, .recoNum {
+    font-size: 48px;
+    font-weight: 400;
+    margin-bottom: 5px;
+}
+
+.rateLabel {
+    font-size: 18px;
+    color: #333;
+    margin-top: 5px;
+}
+
+.rateButton {
+    padding: 15px 35px;
+    font-size: 18px;
+    border: 2px solid #ff0000;
+    border-radius: 25px;
+    background-color: white;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.rateButton:hover {
+    background-color: #ff0000;
+    color: white;
+}
+
+.contentContainer {
+    display: flex;
+    gap: 30px;
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.leftSection {
+    flex: 0 0 300px;
+}
+
+.rightSection {
+    flex: 1;
+}
+
+.ratingDistribution {
+    border: 2px solid black;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+.distributionRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.distNum {
+    width: 20px;
+    font-weight: bold;
+}
+
+.distBar {
+    flex: 1;
+    height: 25px;
+    border: 2px solid black;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: white;
+}
+
+.distFill {
+    height: 100%;
+    background-color: #ffeb3b;
+    transition: width 0.3s ease;
+}
+
+.summaryTags {
+    border: 2px solid black;
+    border-radius: 15px;
+    padding: 20px;
+    background-color: white;
+}
+
+.summaryTags h3 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+}
+
+.tags {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tag {
+    padding: 10px 15px;
+    border: 2px solid black;
+    border-radius: 10px;
+    background-color: white;
+    text-align: center;
+    font-size: 14px;
+}
+
+.reviewsList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.noReviews {
+    text-align: center;
+    padding: 40px;
+    color: gray;
+}
+
+.reviewCard {
+    border: 2px solid black;
+    border-radius: 15px;
+    padding: 20px;
+    background-color: white;
+}
+
+.reviewHeader {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.reviewHeader .stars {
+    display: flex;
+    gap: 5px;
+    margin-top: 0;
+}
+
+.reviewHeader .star {
+    font-size: 24px;
+    color: #ddd;
+}
+
+.reviewHeader .star.filled {
+    color: #ff4444;
+}
+
+.reviewPosition {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+}
+
+.reviewDuration {
+    margin-left: auto;
+    color: gray;
+    font-size: 14px;
+}
+
+.reviewComment {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.reviewFooter {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.reviewTag {
+    padding: 8px 15px;
+    border: 2px solid black;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+    font-size: 14px;
+}
+
+@media (max-width: 1024px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 30px;
+        padding: 40px;
+    }
+
+    .restaurantName {
+        font-size: 70px;
+    }
+
+    .ratingSummary {
+        width: 100%;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .contentContainer {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .leftSection {
+        flex: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .topBar {
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .pageTitle {
+        font-size: 20px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .searchBarTop {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .homeBtn {
+        width: 100%;
+    }
+
+    .header {
+        padding: 30px 20px;
+    }
+
+    .restaurantName {
+        font-size: 50px;
+    }
+
+    .star {
+        font-size: 30px;
+    }
+
+    .rateNum, .recoNum {
+        font-size: 36px;
+    }
+}
