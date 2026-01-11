@@ -10,7 +10,6 @@ function App() {
   return (
     <div>
       <BrowserRouter>
-      <Navbar/>
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/rate/:managerID' element={<RateManager/>}/>

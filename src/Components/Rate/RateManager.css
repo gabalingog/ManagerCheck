@@ -1,132 +1,338 @@
-.rateManagerPage{
-    padding: 20px;
+.rateManagerPage {
+    padding: 0;
+    margin: 0;
+}
+
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: white;
+    border-bottom: 2px solid #000;
+}
+
+.searchBarTop {
+    flex: 1;
+    max-width: 600px;
+}
+
+.searchBarTop input {
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 18px;
+    border: 2px solid black;
+    border-radius: 25px;
+    box-sizing: border-box;
+}
+
+.homeBtn {
+    padding: 12px 30px;
+    font-size: 18px;
+    border: 2px solid black;
+    border-radius: 50px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.homeBtn:hover {
+    background-color: #333;
+    color: white;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
-    padding: 30px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    border: 1px solid black;
+    align-items: center;
+    padding: 40px 150px;
+    background-color: #D2DCB6;
+    margin-bottom: 0;
+    border: none;
+    border-radius: 0;
 }
 
-.managerInfo span{
-    font-size: 30px;
-    font-weight: 500;
+.managerInfo {
+    flex: 1;
+}
+
+.managerName {
+    font-size: 120px;
+    font-weight: 400;
+    display: block;
+    margin-bottom: 20px;
+    line-height: 1.2;
 }
 
 .resName {
-    font-size: 20px;
-    color: gray;
+    font-size: 24px;
+    color: #333;
+    margin: 10px 0;
 }
 
-.resLoc {
-    margin-top: -20px;
-    font-size: 15px;
-    color: gray;
+.stars {
+    display: flex;
+    gap: 5px;
+    margin-top: 15px;
+}
+
+.star {
+    font-size: 40px;
+    color: #ddd;
+}
+
+.star.filled {
+    color: #ff4444;
 }
 
 .ratingSummary {
     display: flex;
+    flex-direction: row; /* Changed from column to row */
+    align-items: center;
     text-align: center;
-    gap: 40px;
+    gap: 60px; /* Increased gap between items */
+    margin-right: auto; /* Remove this if it exists */
+    margin-left: auto; /* Center it */
+}
+
+.overallRating, .recoStats {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center text within each stat */
 }
 
 .rateNum, .recoNum {
-    font-size: 30px;
+    font-size: 48px;
+    font-weight: 400;
+    margin-bottom: 5px;
 }
 
-.rateLabel, .recoLabel {
-    font-size: 15px;
-    color: gray;
+.rateLabel {
+    font-size: 18px;
+    color: #333;
     margin-top: 5px;
 }
 
-.rateTotal {
-    font-size: 12px;
-    color: gray;
-    margin-top: 5px;
+.rateButton {
+    padding: 15px 35px;
+    font-size: 18px;
+    border: 2px solid #ff0000;
+    border-radius: 25px;
+    background-color: white;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s ease;
 }
 
-.rateBreakdown {
+.rateButton:hover {
+    background-color: #ff0000;
+    color: white;
+}
+
+.contentContainer {
+    display: flex;
+    gap: 30px;
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.leftSection {
+    flex: 0 0 300px;
+}
+
+.rightSection {
+    flex: 1;
+}
+
+.ratingDistribution {
+    border: 2px solid black;
     border-radius: 15px;
-    border: 1px solid black;
+    padding: 20px;
     margin-bottom: 20px;
+    background-color: white;
 }
 
-.breakdownItems {
+.distributionRow {
     display: flex;
     align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.distNum {
+    width: 20px;
+    font-weight: bold;
+}
+
+.distBar {
+    flex: 1;
+    height: 25px;
+    border: 2px solid black;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: white;
+}
+
+.distFill {
+    height: 100%;
+    background-color: #ffeb3b;
+    transition: width 0.3s ease;
+}
+
+.summaryTags {
+    border: 2px solid black;
+    border-radius: 15px;
     padding: 20px;
+    background-color: white;
+}
+
+.summaryTags h3 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+}
+
+.tags {
+    display: flex;
+    flex-direction: column;
     gap: 10px;
 }
 
-.breakdownBar {
-    flex: 1;
+.tag {
+    padding: 10px 15px;
+    border: 2px solid black;
     border-radius: 10px;
-    height: 10px;
-    overflow: hidden;
-    background: grey;
+    background-color: white;
+    text-align: center;
+    font-size: 14px;
 }
 
-.breakdownFill {
-    height: 100%;
-    background: lightgreen;
+.reviewsList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.breakdownNum {
-    text-align: right;
+.noReviews {
+    text-align: center;
+    padding: 40px;
+    color: gray;
 }
 
-.ratingsList {
+.reviewCard {
+    border: 2px solid black;
     border-radius: 15px;
-    border: 1px solid black;
     padding: 20px;
+    background-color: white;
 }
 
-.ratingsList > span {
-    font-size: 22px;
-    display: block;
+.reviewHeader {
+    display: flex;
+    align-items: center;
+    gap: 15px;
     margin-bottom: 15px;
 }
 
-.noRatings {
-    text-align: center;
+.reviewHeader .stars {
+    display: flex;
+    gap: 5px;
+    margin-top: 0; /* Remove any top margin in review cards */
+}
+
+.reviewHeader .star {
+    font-size: 24px; /* Smaller stars in review cards */
+    color: #ddd;
+}
+
+.reviewHeader .star.filled {
+    color: #ff4444;
+}
+
+.reviewPosition {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+}
+
+.reviewDuration {
+    margin-left: auto;
     color: gray;
+    font-size: 14px;
 }
 
-.ratingCard {
-    border: 1px solid black;
-    border-radius: 15px;
+.reviewComment {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    color: #333;
 }
 
-.ratingCardHeader {
+.reviewFooter {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.qualityRatings {
-    display: flex;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
-.qualityTag {
-    background: #f0f0f0;
-    border-radius: 15px;
-    padding: 4px 12px;
+.reviewTag {
+    padding: 8px 15px;
+    border: 2px solid black;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+    font-size: 14px;
 }
 
-.ratingDate {
-    font-size: 12px;
-    color: gray;
+@media (max-width: 1024px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 30px;
+        padding: 40px;
+    }
+
+    .managerName {
+        font-size: 70px;
+    }
+
+    .ratingSummary {
+        width: 100%;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .contentContainer {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .leftSection {
+        flex: 1;
+    }
 }
 
-.ratingRow {
-    margin-bottom: 10px;
-}
+@media (max-width: 768px) {
+    .topBar {
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px;
+    }
 
-.ratingRow label {
-    display: block;
+    .searchBarTop {
+        max-width: 100%;
+    }
+
+    .header {
+        padding: 30px 20px;
+    }
+
+    .managerName {
+        font-size: 50px;
+    }
+
+    .star {
+        font-size: 30px;
+    }
+
+    .rateNum, .recoNum {
+        font-size: 36px;
+    }
 }
