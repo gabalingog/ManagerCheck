@@ -6,7 +6,8 @@ import RateManager from './Components/Rate/RateManager';
 import Managers from './Pages/Managers';
 import Landing from './Components/Landing/ManagerLanding';
 import ManagerForm from './Components/ManagerForm/ManagerForm.jsx'
-import RestaurantLanding from './Components/Landing/RestaurantLanding.jsx'
+import RestaurantForm from './Components/ManagerForm/RestaurantForm.jsx';
+import RestaurantLanding from './Components/Landing/RestaurantLanding.jsx';
 import RateRestaurant from './Components/Rate/RateRestaurant.jsx';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/restaurants" element={<RestaurantLanding />} />
         <Route path="/restaurant/:restaurantID" element={<RateRestaurant />} />
         <Route path="/rate/:managerID/form" element={<ManagerForm />} />
+        <Route path="/restaurant/:restaurantID/form" element={<RestaurantForm />} />
         {/* <Route path='/rate' element={<RateManager/>}>
           <Route path=':managerID' element={<Managers/>}/>
         </Route> */}

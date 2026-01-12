@@ -8,14 +8,47 @@ const RateRestaurant = () => {
   const restaurantName = location.state?.restaurantName;
   const navigate = useNavigate();
 
-  const [searchInput, setSearchInput] = useState('');
+  const [managerSearchInput, setManagerSearchInput] = useState('');
+  const [restaurantSearchInput, setRestaurantSearchInput] = useState('');
   const [filteredManagers, setFilteredManagers] = useState([]);
+  const [filteredRestaurants, setFilteredRestaurants] = useState([]);
+  const [showRestaurantDropdown, setShowRestaurantDropdown] = useState(false);
+  const [restaurantPlaceholder, setRestaurantPlaceholder] = useState('Barcelona Wine Bar');
+  
   const [managers, setManagers] = useState(() => {
     const savedManagers = localStorage.getItem('managers');
     return savedManagers ? JSON.parse(savedManagers) : [
       { id: 1, name: "Gab"},
       { id: 2, name: "Janelle"}
     ];
+  });
+
+  // Force initialize with all 18 restaurants
+  const defaultRestaurants = [
+    { id: 1, name: "Barcelona Wine Bar", location: "Boston, MA" },
+    { id: 2, name: "Atlantic Fish Company", location: "Boston, MA" },
+    { id: 3, name: "Borelli's Italian Restaurant", location: "Boston, MA" },
+    { id: 4, name: "Chart House", location: "Boston, MA" },
+    { id: 5, name: "Davio's Northern Italian Steakhouse", location: "Boston, MA" },
+    { id: 6, name: "Empire Restaurant & Lounge", location: "Boston, MA" },
+    { id: 7, name: "French Quarter", location: "Boston, MA" },
+    { id: 8, name: "Grill 23 & Bar", location: "Boston, MA" },
+    { id: 9, name: "Legal Sea Foods", location: "Boston, MA" },
+    { id: 10, name: "Mama Maria", location: "Boston, MA" },
+    { id: 11, name: "Mistral", location: "Boston, MA" },
+    { id: 12, name: "Neptune Oyster", location: "Boston, MA" },
+    { id: 13, name: "No. 9 Park", location: "Boston, MA" },
+    { id: 14, name: "Oleana", location: "Boston, MA" },
+    { id: 15, name: "The Capital Grille", location: "Boston, MA" },
+    { id: 16, name: "The Salty Pig", location: "Boston, MA" },
+    { id: 17, name: "Top of the Hub", location: "Boston, MA" },
+    { id: 18, name: "Union Oyster House", location: "Boston, MA" }
+  ];
+
+  const [restaurants] = useState(() => {
+    // Always use the default 18 restaurants and update localStorage
+    localStorage.setItem('restaurants', JSON.stringify(defaultRestaurants));
+    return defaultRestaurants;
   });
 
   const goHome = () => {
@@ -26,13 +59,9 @@ const RateRestaurant = () => {
     navigate(`/restaurant/${restaurantID}/form`, { state: { restaurantName } });
   }
 
-  const goToManagerLanding = () => {
-    navigate('/');
-  }
-
-  const handleSearch = (e) => {
+  const handleManagerSearch = (e) => {
     const searched = e.target.value;
-    setSearchInput(searched);
+    setManagerSearchInput(searched);
 
     if (searched.trim() === '') {
       setFilteredManagers([]);
@@ -44,10 +73,51 @@ const RateRestaurant = () => {
     }
   };
 
+  const handleRestaurantSearch = (e) => {
+    const searched = e.target.value;
+    setRestaurantSearchInput(searched);
+    setShowRestaurantDropdown(false);
+
+    if (searched.trim() === '') {
+      setFilteredRestaurants([]);
+      setRestaurantPlaceholder('Barcelona Wine Bar'); // Reset placeholder when search is cleared
+    } else {
+      const filtered = restaurants.filter(restaurant =>
+        restaurant.name.toLowerCase().includes(searched.toLowerCase())
+      ).sort((a, b) => a.name.localeCompare(b.name));
+      setFilteredRestaurants(filtered);
+    }
+  };
+
+  const handleClearRestaurantSearch = () => {
+    if (showRestaurantDropdown) {
+      // If dropdown is already showing, hide it
+      setShowRestaurantDropdown(false);
+      setFilteredRestaurants([]);
+      setRestaurantSearchInput('');
+      setRestaurantPlaceholder('Barcelona Wine Bar');
+    } else {
+      // If dropdown is not showing, show it with all restaurants
+      setRestaurantSearchInput('');
+      setRestaurantPlaceholder('Search for a restaurant');
+      setShowRestaurantDropdown(true);
+      const sortedRestaurants = [...restaurants].sort((a, b) => a.name.localeCompare(b.name));
+      setFilteredRestaurants(sortedRestaurants);
+    }
+  };
+
   const handleSelectManager = (manager) => {
-    setSearchInput('');
+    setManagerSearchInput('');
     setFilteredManagers([]);
     navigate(`/rate/${manager.id}`, { state: { managerName: manager.name } });
+  };
+
+  const handleSelectRestaurant = (restaurant) => {
+    setRestaurantSearchInput('');
+    setFilteredRestaurants([]);
+    setShowRestaurantDropdown(false);
+    setRestaurantPlaceholder('Barcelona Wine Bar'); // Reset placeholder when restaurant is selected
+    navigate(`/restaurant/${restaurant.id}`, { state: { restaurantName: restaurant.name } });
   };
 
   const [allRatings, setAllRatings] = useState(() => {
@@ -176,33 +246,71 @@ const RateRestaurant = () => {
   return (
     <div className='rateRestaurantPage'> 
       <div className="topBar">
-        <h2 className="pageTitle">Rate restaurant managers</h2>
-        <div className="searchBarTop">
-          <input 
-            type="text" 
-            placeholder="Search for a manager" 
-            value={searchInput}
-            onChange={handleSearch}
-          />
-          {searchInput && filteredManagers.length > 0 && (
-            <div className="searchDropdown">
-              {filteredManagers.map((manager) => (
-                <div
-                  key={manager.id}
-                  className="searchDropdownItem"
-                  onClick={() => handleSelectManager(manager)}
-                >
-                  {manager.name}
-                </div>
-              ))}
-            </div>
-          )}
-          {searchInput && filteredManagers.length === 0 && (
-            <div className="searchDropdown">
-              <div className="noResults">No managers found</div>
-            </div>
-          )}
+        <div className="dualSearchBar">
+          <div className="searchSection">
+            <input 
+              type="text" 
+              placeholder="Search for a manager" 
+              value={managerSearchInput}
+              onChange={handleManagerSearch}
+            />
+            {managerSearchInput && filteredManagers.length > 0 && (
+              <div className="searchDropdown">
+                {filteredManagers.map((manager) => (
+                  <div
+                    key={manager.id}
+                    className="searchDropdownItem"
+                    onClick={() => handleSelectManager(manager)}
+                  >
+                    {manager.name}
+                  </div>
+                ))}
+              </div>
+            )}
+            {managerSearchInput && filteredManagers.length === 0 && (
+              <div className="searchDropdown">
+                <div className="noResults">No managers found</div>
+              </div>
+            )}
+          </div>
+
+          <div className="searchSection">
+            <input 
+              type="text" 
+              placeholder={restaurantPlaceholder}
+              value={restaurantSearchInput}
+              onChange={handleRestaurantSearch}
+              className="restaurantSearchInput"
+            />
+            {!restaurantSearchInput && (
+              <button 
+                className="clearButton"
+                onClick={handleClearRestaurantSearch}
+              >
+                ✕
+              </button>
+            )}
+            {(showRestaurantDropdown || (restaurantSearchInput && filteredRestaurants.length > 0)) && (
+              <div className="searchDropdown">
+                {filteredRestaurants.map((restaurant) => (
+                  <div
+                    key={restaurant.id}
+                    className="searchDropdownItem"
+                    onClick={() => handleSelectRestaurant(restaurant)}
+                  >
+                    {restaurant.name}
+                  </div>
+                ))}
+              </div>
+            )}
+            {restaurantSearchInput && filteredRestaurants.length === 0 && (
+              <div className="searchDropdown">
+                <div className="noResults">No restaurants found</div>
+              </div>
+            )}
+          </div>
         </div>
+        
         <button className="homeBtn" onClick={goHome}>Home</button>
       </div>
 
