@@ -9,7 +9,7 @@
     align-items: center;
     padding: 20px 40px;
     background-color: white;
-    border-bottom: 2px solid #000;
+    border-bottom: 1px solid #e0e0e0;
     gap: 20px;
 }
 
@@ -29,9 +29,15 @@
     width: 100%;
     padding: 15px 20px;
     font-size: 18px;
-    border: 2px solid black;
-    border-radius: 25px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.searchSection input:focus {
+    outline: none;
+    border-color: #1a1a1a;
 }
 
 .restaurantSearchInput::placeholder {
@@ -64,13 +70,13 @@
     left: 0;
     right: 0;
     background: white;
-    border: 2px solid black;
-    border-radius: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     margin-top: 10px;
     max-height: 156px;
     overflow-y: auto;
     z-index: 1000;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .searchDropdownItem {
@@ -78,7 +84,7 @@
     cursor: pointer;
     transition: background-color 0.2s;
     font-size: 16px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #f5f5f5;
     display: flex;
     align-items: center;
     min-height: 52px;
@@ -90,7 +96,7 @@
 }
 
 .searchDropdownItem:hover {
-    background-color: #f0f0f0;
+    background-color: #fafafa;
 }
 
 .noResults {
@@ -103,26 +109,181 @@
     justify-content: center;
 }
 
+.noManager {
+    color: #666;
+    font-size: 16px;
+}
+
+.enterName {
+    color: #1a1a1a;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.enterName:hover {
+    color: #000;
+}
+
+/* Add Manager Modal */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.addManagerModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 8px;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    z-index: 1001;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modalCloseBtn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.modalCloseBtn:hover {
+    color: #000;
+}
+
+.modalContent h2 {
+    font-size: 24px;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    font-weight: 400;
+}
+
+.modalSubtext {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.modalSubtext strong {
+    color: #1a1a1a;
+    font-weight: 500;
+}
+
+.required {
+    color: #ff4444;
+}
+
+.modalInputGroup {
+    margin-bottom: 24px;
+}
+
+.modalInputGroup label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 400;
+}
+
+.modalInput {
+    width: 100%;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 15px;
+    transition: border-color 0.2s;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+.modalInput:focus {
+    outline: none;
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.modalInput::placeholder {
+    color: #bbb;
+}
+
+.modalButtons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 32px;
+}
+
+.modalAddBtn,
+.modalCancelBtn {
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.modalAddBtn {
+    background: #1a1a1a;
+    color: white;
+    border: 1px solid #1a1a1a;
+}
+
+.modalAddBtn:hover {
+    background: #000;
+    border-color: #000;
+}
+
+.modalCancelBtn {
+    background: white;
+    color: #666;
+    border: 1px solid #e0e0e0;
+}
+
+.modalCancelBtn:hover {
+    border-color: #1a1a1a;
+    color: #1a1a1a;
+}
+
 .homeBtn {
     padding: 12px 30px;
-    font-size: 18px;
-    border: 2px solid black;
-    border-radius: 50px;
+    font-size: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     background-color: white;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s;
+    font-weight: 400;
 }
 
 .homeBtn:hover {
-    background-color: #333;
+    background-color: #1a1a1a;
     color: white;
+    border-color: #1a1a1a;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 40px 150px;
+    padding: 60px 150px;
     background-color: #D2DCB6;
     margin-bottom: 0;
     border: none;
@@ -134,17 +295,19 @@
 }
 
 .restaurantName {
-    font-size: 120px;
-    font-weight: 400;
+    font-size: 80px;
+    font-weight: 300;
     display: block;
-    margin-bottom: 20px;
-    line-height: 1.2;
+    margin-bottom: 15px;
+    line-height: 1.1;
+    color: #1a1a1a;
 }
 
 .location {
-    font-size: 24px;
-    color: #333;
+    font-size: 18px;
+    color: #555;
     margin: 10px 0;
+    font-weight: 300;
 }
 
 .stars {
@@ -154,12 +317,12 @@
 }
 
 .star {
-    font-size: 40px;
-    color: #ddd;
+    font-size: 32px;
+    color: #e0e0e0;
 }
 
 .star.filled {
-    color: #ff4444;
+    color: #ffd700;
 }
 
 .ratingSummary {
@@ -179,30 +342,33 @@
 }
 
 .rateNum, .recoNum {
-    font-size: 48px;
-    font-weight: 400;
-    margin-bottom: 5px;
+    font-size: 56px;
+    font-weight: 300;
+    margin-bottom: 8px;
+    color: #1a1a1a;
 }
 
 .rateLabel {
-    font-size: 18px;
-    color: #333;
+    font-size: 14px;
+    color: #555;
     margin-top: 5px;
+    font-weight: 400;
 }
 
 .rateButton {
-    padding: 15px 35px;
-    font-size: 18px;
-    border: 2px solid #ff0000;
-    border-radius: 25px;
+    padding: 14px 32px;
+    font-size: 16px;
+    border: 1px solid #1a1a1a;
+    border-radius: 8px;
     background-color: white;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.3s ease;
+    transition: all 0.2s;
+    font-weight: 400;
 }
 
 .rateButton:hover {
-    background-color: #ff0000;
+    background-color: #1a1a1a;
     color: white;
 }
 
@@ -223,9 +389,9 @@
 }
 
 .ratingDistribution {
-    border: 2px solid black;
-    border-radius: 15px;
-    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 24px;
     margin-bottom: 20px;
     background-color: white;
 }
@@ -233,40 +399,47 @@
 .distributionRow {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.distributionRow:last-child {
+    margin-bottom: 0;
 }
 
 .distNum {
     width: 20px;
-    font-weight: bold;
+    font-weight: 400;
+    color: #1a1a1a;
 }
 
 .distBar {
     flex: 1;
-    height: 25px;
-    border: 2px solid black;
-    border-radius: 5px;
+    height: 24px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
     overflow: hidden;
-    background-color: white;
+    background-color: #fafafa;
 }
 
 .distFill {
     height: 100%;
-    background-color: #ffeb3b;
+    background-color: #ffd700;
     transition: width 0.3s ease;
 }
 
 .summaryTags {
-    border: 2px solid black;
-    border-radius: 15px;
-    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 24px;
     background-color: white;
 }
 
 .summaryTags h3 {
-    margin: 0 0 15px 0;
-    font-size: 18px;
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: #1a1a1a;
 }
 
 .tags {
@@ -276,12 +449,14 @@
 }
 
 .tag {
-    padding: 10px 15px;
-    border: 2px solid black;
-    border-radius: 10px;
-    background-color: white;
+    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #fafafa;
     text-align: center;
     font-size: 14px;
+    color: #555;
+    font-weight: 400;
 }
 
 .reviewsList {
@@ -292,22 +467,29 @@
 
 .noReviews {
     text-align: center;
-    padding: 40px;
-    color: gray;
+    padding: 60px 40px;
+    color: #999;
+    font-size: 16px;
+    font-weight: 300;
 }
 
 .reviewCard {
-    border: 2px solid black;
-    border-radius: 15px;
-    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 24px;
     background-color: white;
+    transition: box-shadow 0.2s;
+}
+
+.reviewCard:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .reviewHeader {
     display: flex;
     align-items: center;
     gap: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
 }
 
 .reviewHeader .stars {
@@ -317,45 +499,48 @@
 }
 
 .reviewHeader .star {
-    font-size: 24px;
-    color: #ddd;
+    font-size: 20px;
+    color: #e0e0e0;
 }
 
 .reviewHeader .star.filled {
-    color: #ff4444;
+    color: #ffd700;
 }
 
 .reviewPosition {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 500;
-    color: #333;
+    color: #1a1a1a;
 }
 
 .reviewDuration {
     margin-left: auto;
-    color: gray;
+    color: #999;
     font-size: 14px;
+    font-weight: 300;
 }
 
 .reviewComment {
-    font-size: 16px;
-    line-height: 1.6;
-    margin-bottom: 15px;
-    color: #333;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 16px;
+    color: #555;
 }
 
 .reviewFooter {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
 .reviewTag {
-    padding: 8px 15px;
-    border: 2px solid black;
-    border-radius: 10px;
-    background-color: #f0f0f0;
-    font-size: 14px;
+    padding: 6px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #fafafa;
+    font-size: 13px;
+    color: #666;
+    font-weight: 400;
 }
 
 @media (max-width: 1024px) {
@@ -367,7 +552,7 @@
     }
 
     .restaurantName {
-        font-size: 70px;
+        font-size: 56px;
     }
 
     .ratingSummary {
@@ -412,14 +597,14 @@
     }
 
     .restaurantName {
-        font-size: 50px;
+        font-size: 40px;
     }
 
     .star {
-        font-size: 30px;
+        font-size: 28px;
     }
 
     .rateNum, .recoNum {
-        font-size: 36px;
+        font-size: 42px;
     }
 }

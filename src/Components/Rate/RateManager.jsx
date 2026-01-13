@@ -8,6 +8,15 @@ const RateManager = () => {
   const managerName = location.state?.managerName;
   const navigate = useNavigate();
 
+  const [restaurantSearchInput, setRestaurantSearchInput] = useState('');
+  const [managerSearchInput, setManagerSearchInput] = useState('');
+  const [filteredRestaurants, setFilteredRestaurants] = useState([]);
+  const [filteredManagers, setFilteredManagers] = useState([]);
+  const [showManagerDropdown, setShowManagerDropdown] = useState(false);
+  const [showRestaurantDropdown, setShowRestaurantDropdown] = useState(false);
+  const [managerPlaceholder, setManagerPlaceholder] = useState(managerName || 'Manager Name');
+  const [restaurantPlaceholder, setRestaurantPlaceholder] = useState('Barcelona Wine Bar');
+
   const goHome = () => {
     navigate('/');
   }
@@ -15,6 +24,156 @@ const RateManager = () => {
   const goToRatingForm = () => {
     navigate(`/rate/${managerID}/form`, { state: { managerName } });
   }
+
+  const [managers, setManagers] = useState(() => {
+    const savedManagers = localStorage.getItem('managers');
+    if (savedManagers) {
+      return JSON.parse(savedManagers);
+    } else {
+      const defaultManagers = [
+        { id: 1, name: "Gab", restaurantId: 1, restaurantName: "Barcelona Wine Bar" },
+        { id: 2, name: "Janelle", restaurantId: 2, restaurantName: "Atlantic Fish Company" }
+      ];
+      localStorage.setItem('managers', JSON.stringify(defaultManagers));
+      return defaultManagers;
+    }
+  });
+
+  const defaultRestaurants = [
+    { id: 1, name: "Barcelona Wine Bar", location: "Boston, MA" },
+    { id: 2, name: "Atlantic Fish Company", location: "Boston, MA" },
+    { id: 3, name: "Borelli's Italian Restaurant", location: "Boston, MA" },
+    { id: 4, name: "Chart House", location: "Boston, MA" },
+    { id: 5, name: "Davio's Northern Italian Steakhouse", location: "Boston, MA" },
+    { id: 6, name: "Empire Restaurant & Lounge", location: "Boston, MA" },
+    { id: 7, name: "French Quarter", location: "Boston, MA" },
+    { id: 8, name: "Grill 23 & Bar", location: "Boston, MA" },
+    { id: 9, name: "Legal Sea Foods", location: "Boston, MA" },
+    { id: 10, name: "Mama Maria", location: "Boston, MA" },
+    { id: 11, name: "Mistral", location: "Boston, MA" },
+    { id: 12, name: "Neptune Oyster", location: "Boston, MA" },
+    { id: 13, name: "No. 9 Park", location: "Boston, MA" },
+    { id: 14, name: "Oleana", location: "Boston, MA" },
+    { id: 15, name: "The Capital Grille", location: "Boston, MA" },
+    { id: 16, name: "The Salty Pig", location: "Boston, MA" },
+    { id: 17, name: "Top of the Hub", location: "Boston, MA" },
+    { id: 18, name: "Union Oyster House", location: "Boston, MA" }
+  ];
+
+  const [restaurants] = useState(() => {
+    localStorage.setItem('restaurants', JSON.stringify(defaultRestaurants));
+    return defaultRestaurants;
+  });
+
+  // Set restaurant placeholder based on current manager's restaurant
+  useEffect(() => {
+    const currentManager = managers.find(m => m.id === parseInt(managerID));
+    if (currentManager && currentManager.restaurantName) {
+      setRestaurantPlaceholder(currentManager.restaurantName);
+    }
+  }, [managerID, managers]);
+
+  const handleRestaurantSearch = (e) => {
+    const searched = e.target.value;
+    setRestaurantSearchInput(searched);
+    setShowRestaurantDropdown(false);
+
+    if (searched.trim() === '') {
+      setFilteredRestaurants([]);
+      const currentManager = managers.find(m => m.id === parseInt(managerID));
+      if (currentManager && currentManager.restaurantName) {
+        setRestaurantPlaceholder(currentManager.restaurantName);
+      }
+    } else {
+      const filtered = restaurants.filter(restaurant =>
+        restaurant.name.toLowerCase().includes(searched.toLowerCase())
+      ).sort((a, b) => a.name.localeCompare(b.name));
+      setFilteredRestaurants(filtered);
+    }
+  };
+
+  const handleClearRestaurantSearch = () => {
+    const currentManager = managers.find(m => m.id === parseInt(managerID));
+    const currentRestaurantName = currentManager?.restaurantName || 'Barcelona Wine Bar';
+    
+    if (showRestaurantDropdown) {
+      // Second click - close dropdown and restore restaurant name
+      setShowRestaurantDropdown(false);
+      setFilteredRestaurants([]);
+      setRestaurantSearchInput('');
+      setRestaurantPlaceholder(currentRestaurantName);
+    } else {
+      // First click - show all restaurants
+      setRestaurantSearchInput('');
+      setRestaurantPlaceholder('Search for a restaurant');
+      setShowRestaurantDropdown(true);
+      const sortedRestaurants = [...restaurants].sort((a, b) => a.name.localeCompare(b.name));
+      setFilteredRestaurants(sortedRestaurants);
+    }
+  };
+
+  const handleManagerSearch = (e) => {
+    const searched = e.target.value;
+    setManagerSearchInput(searched);
+    setShowManagerDropdown(false);
+
+    if (searched.trim() === '') {
+      setFilteredManagers([]);
+      setManagerPlaceholder(managerName || 'Manager Name');
+    } else {
+      // Get current manager's restaurant ID
+      const currentManager = managers.find(m => m.id === parseInt(managerID));
+      const currentRestaurantId = currentManager?.restaurantId;
+      
+      // Filter managers by current restaurant AND search term
+      const filtered = managers.filter(manager =>
+        manager.restaurantId === currentRestaurantId &&
+        manager.name.toLowerCase().includes(searched.toLowerCase())
+      );
+      setFilteredManagers(filtered);
+    }
+  };
+
+  const handleClearManagerSearch = () => {
+    if (showManagerDropdown) {
+      setShowManagerDropdown(false);
+      setFilteredManagers([]);
+      setManagerSearchInput('');
+      setManagerPlaceholder(managerName || 'Manager Name');
+    } else {
+      setManagerSearchInput('');
+      setManagerPlaceholder('Search for a manager');
+      setShowManagerDropdown(true);
+      
+      // Get current manager's restaurant ID
+      const currentManager = managers.find(m => m.id === parseInt(managerID));
+      const currentRestaurantId = currentManager?.restaurantId;
+      
+      // Only show managers from the same restaurant
+      const restaurantManagers = managers.filter(m => m.restaurantId === currentRestaurantId)
+        .sort((a, b) => a.name.localeCompare(b.name));
+      setFilteredManagers(restaurantManagers);
+    }
+  };
+
+  const handleSelectRestaurant = (restaurant) => {
+    setRestaurantSearchInput('');
+    setFilteredRestaurants([]);
+    setShowRestaurantDropdown(false);
+    const currentManager = managers.find(m => m.id === parseInt(managerID));
+    if (currentManager && currentManager.restaurantName) {
+      setRestaurantPlaceholder(currentManager.restaurantName);
+    }
+    navigate(`/restaurant/${restaurant.id}`, { state: { restaurantName: restaurant.name } });
+  };
+
+  const handleSelectManager = (manager) => {
+    setManagerSearchInput('');
+    setFilteredManagers([]);
+    setShowManagerDropdown(false);
+    setManagerPlaceholder(managerName || 'Manager Name');
+    navigate(`/rate/${manager.id}`, { state: { managerName: manager.name } });
+  };
 
   const [allRatings, setAllRatings] = useState(() => {
     const savedRatings = localStorage.getItem('managerRatings');
@@ -127,10 +286,6 @@ const RateManager = () => {
     parseFloat(calAverage('organization'))) / 4
   ).toFixed(1) : 0;
 
-  const recoPercent = existingRatings.length > 0 ? Math.round(
-    (existingRatings.filter(r => r.wouldRecommend).length / existingRatings.length) * 100
-  ) : 0;
-
   const getRatingDistribution = () => {
     const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
     existingRatings.forEach(rating => {
@@ -146,16 +301,87 @@ const RateManager = () => {
   return (
     <div className='rateManagerPage'> 
       <div className="topBar">
-        <div className="searchBarTop">
-          <input type="text" placeholder="Search your restaurant" />
+        <div className="dualSearchBar">
+          <div className="searchSection">
+            <input 
+              type="text" 
+              placeholder={restaurantPlaceholder}
+              value={restaurantSearchInput}
+              onChange={handleRestaurantSearch}
+              className="restaurantSearchInput"
+            />
+            {!restaurantSearchInput && (
+              <button 
+                className="clearButton"
+                onClick={handleClearRestaurantSearch}
+              >
+                ✕
+              </button>
+            )}
+            {(showRestaurantDropdown || (restaurantSearchInput && filteredRestaurants.length > 0)) && (
+              <div className="searchDropdown">
+                {filteredRestaurants.map((restaurant) => (
+                  <div
+                    key={restaurant.id}
+                    className="searchDropdownItem"
+                    onClick={() => handleSelectRestaurant(restaurant)}
+                  >
+                    {restaurant.name}
+                  </div>
+                ))}
+              </div>
+            )}
+            {restaurantSearchInput && filteredRestaurants.length === 0 && (
+              <div className="searchDropdown">
+                <div className="noResults">No restaurants found</div>
+              </div>
+            )}
+          </div>
+
+          <div className="searchSection">
+            <input 
+              type="text" 
+              placeholder={managerPlaceholder}
+              value={managerSearchInput}
+              onChange={handleManagerSearch}
+              className="managerSearchInput"
+            />
+            {!managerSearchInput && (
+              <button 
+                className="clearButton"
+                onClick={handleClearManagerSearch}
+              >
+                ✕
+              </button>
+            )}
+            {(showManagerDropdown || (managerSearchInput && filteredManagers.length > 0)) && (
+              <div className="searchDropdown">
+                {filteredManagers.map((manager) => (
+                  <div
+                    key={manager.id}
+                    className="searchDropdownItem"
+                    onClick={() => handleSelectManager(manager)}
+                  >
+                    {manager.name}
+                  </div>
+                ))}
+              </div>
+            )}
+            {managerSearchInput && filteredManagers.length === 0 && (
+              <div className="searchDropdown">
+                <div className="noResults">No managers found</div>
+              </div>
+            )}
+          </div>
         </div>
+        
         <button className="homeBtn" onClick={goHome}>Home</button>
       </div>
 
       <div className="header">
         <div className="managerInfo">
           <span className="managerName">{managerName}</span>
-          <p className="resName">Barcelona Wine Bar</p>
+          <p className="resName">{managers.find(m => m.id === parseInt(managerID))?.restaurantName || 'Barcelona Wine Bar'}</p>
           <div className="stars">
             {[1, 2, 3].map((star) => (
               <span key={star} className="star filled">★</span>

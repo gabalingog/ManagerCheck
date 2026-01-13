@@ -21,6 +21,7 @@ const RestaurantForm = () => {
   const [position, setPosition] = useState('');
   const [duration, setDuration] = useState('');
   const [industry, setIndustry] = useState('');
+  const [otherIndustry, setOtherIndustry] = useState('');
 
   const availableTags = [
     "Good Management",
@@ -37,7 +38,8 @@ const RestaurantForm = () => {
     "Healthcare",
     "Labor",
     "Entertainment",
-    "Corporate/Other"
+    "Corporate",
+    "Other"
   ];
 
   const handleStarClick = (category, starValue, isHalf) => {
@@ -56,6 +58,10 @@ const RestaurantForm = () => {
         return [...prev, tag];
       }
     });
+  };
+
+  const handleIndustryClick = (selectedIndustry) => {
+    setIndustry(selectedIndustry);
   };
 
   const handleSubmit = (e) => {
@@ -82,6 +88,10 @@ const RestaurantForm = () => {
       alert('Please select an industry category');
       return;
     }
+    if (industry === 'Other' && !otherIndustry.trim()) {
+      alert('Please specify the industry');
+      return;
+    }
 
     // Get existing ratings from localStorage
     const savedRatings = localStorage.getItem('restaurantRatings');
@@ -99,7 +109,7 @@ const RestaurantForm = () => {
       date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
       position: position.trim(),
       duration: duration.trim(),
-      industry: industry,
+      industry: industry === 'Other' ? otherIndustry.trim() : industry,
       tags: selectedTags
     };
 
@@ -149,38 +159,53 @@ const RestaurantForm = () => {
         <form onSubmit={handleSubmit}>
           {/* Personal Information */}
           <div className="formSection">
-            <h2>Your Information</h2>
-            <div className="inputGroup">
-              <label>Position</label>
-              <input
-                type="text"
-                placeholder="e.g., Server, Host, Bartender"
-                value={position}
-                onChange={(e) => setPosition(e.target.value)}
-              />
+            <div className="inputRow">
+              <div className="inputGroup">
+                <label>Position</label>
+                <input
+                  type="text"
+                  placeholder="e.g., Server, Host, Bartender"
+                  value={position}
+                  onChange={(e) => setPosition(e.target.value)}
+                />
+              </div>
+              <div className="inputGroup">
+                <label>Duration</label>
+                <input
+                  type="text"
+                  placeholder="e.g., 6 months, 2 years"
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                />
+              </div>
             </div>
-            <div className="inputGroup">
-              <label>Duration</label>
-              <input
-                type="text"
-                placeholder="e.g., 6 months, 2 years"
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
-              />
+          </div>
+
+          {/* Industry Category */}
+          <div className="formSection">
+            <h2>Industry Category</h2>
+            <div className="industryContainer">
+              {industries.map((ind) => (
+                <button
+                  key={ind}
+                  type="button"
+                  className={`industry-button ${industry === ind ? 'selected' : ''}`}
+                  onClick={() => handleIndustryClick(ind)}
+                >
+                  {ind}
+                </button>
+              ))}
             </div>
-            <div className="inputGroup">
-              <label>Industry Category</label>
-              <select
-                value={industry}
-                onChange={(e) => setIndustry(e.target.value)}
-                className="industrySelect"
-              >
-                <option value="">Select an industry</option>
-                {industries.map((ind) => (
-                  <option key={ind} value={ind}>{ind}</option>
-                ))}
-              </select>
-            </div>
+            {industry === 'Other' && (
+              <div className="otherIndustryInput">
+                <input
+                  type="text"
+                  placeholder="Please specify industry"
+                  value={otherIndustry}
+                  onChange={(e) => setOtherIndustry(e.target.value)}
+                />
+              </div>
+            )}
           </div>
 
           {/* Rating Categories */}
@@ -239,7 +264,7 @@ const RestaurantForm = () => {
 
           {/* Recommendation */}
           <div className="formSection">
-            <h2>Would you recommend this workplace?</h2>
+            <h2>Would you recommend this workplace? <span className="required">*</span></h2>
             <div className="recommendButtons">
               <button
                 type="button"

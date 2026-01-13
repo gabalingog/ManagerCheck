@@ -8,10 +8,16 @@ const Landing = () => {
     const [searchInput, setSearchInput] = useState('');
     const [managers, setManagers] = useState(() => {
         const savedManagers = localStorage.getItem('managers');
-        return savedManagers ? JSON.parse(savedManagers) : [
-            { id: 1, name: "Gab"},
-            { id: 2, name: "Janelle"}
-        ];
+        if (savedManagers) {
+            return JSON.parse(savedManagers);
+        } else {
+            const defaultManagers = [
+                { id: 1, name: "Gab", restaurantId: 1, restaurantName: "Barcelona Wine Bar" },
+                { id: 2, name: "Janelle", restaurantId: 2, restaurantName: "Atlantic Fish Company" }
+            ];
+            localStorage.setItem('managers', JSON.stringify(defaultManagers));
+            return defaultManagers;
+        }
     });
 
     useEffect(() => {
@@ -55,7 +61,9 @@ const Landing = () => {
 
         const newManager = {
             id: managers.length + 1,
-            name: newManagerName
+            name: newManagerName,
+            restaurantId: 1,
+            restaurantName: "Barcelona Wine Bar"
         };
 
         setManagers([...managers, newManager]);

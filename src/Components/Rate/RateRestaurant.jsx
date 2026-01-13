@@ -14,13 +14,22 @@ const RateRestaurant = () => {
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [showRestaurantDropdown, setShowRestaurantDropdown] = useState(false);
   const [restaurantPlaceholder, setRestaurantPlaceholder] = useState('Barcelona Wine Bar');
+  const [showAddManagerForm, setShowAddManagerForm] = useState(false);
+  const [newManagerName, setNewManagerName] = useState('');
+  const [newManagerPosition, setNewManagerPosition] = useState('');
   
   const [managers, setManagers] = useState(() => {
     const savedManagers = localStorage.getItem('managers');
-    return savedManagers ? JSON.parse(savedManagers) : [
-      { id: 1, name: "Gab"},
-      { id: 2, name: "Janelle"}
-    ];
+    if (savedManagers) {
+      return JSON.parse(savedManagers);
+    } else {
+      const defaultManagers = [
+        { id: 1, name: "Gab", restaurantId: 1, restaurantName: "Barcelona Wine Bar" },
+        { id: 2, name: "Janelle", restaurantId: 2, restaurantName: "Atlantic Fish Company" }
+      ];
+      localStorage.setItem('managers', JSON.stringify(defaultManagers));
+      return defaultManagers;
+    }
   });
 
   // Force initialize with all 18 restaurants
@@ -62,15 +71,56 @@ const RateRestaurant = () => {
   const handleManagerSearch = (e) => {
     const searched = e.target.value;
     setManagerSearchInput(searched);
+    setShowAddManagerForm(false);
 
     if (searched.trim() === '') {
       setFilteredManagers([]);
     } else {
+      // Filter managers by current restaurant ID AND search term
       const filtered = managers.filter(manager =>
+        manager.restaurantId === parseInt(restaurantID) &&
         manager.name.toLowerCase().includes(searched.toLowerCase())
       );
       setFilteredManagers(filtered);
     }
+  };
+
+  const handleEnterManager = () => {
+    setShowAddManagerForm(true);
+  };
+
+  const handleAddManager = () => {
+    if (newManagerName.trim() === '') {
+      alert('Please enter the manager\'s first name');
+      return;
+    }
+    if (newManagerPosition.trim() === '') {
+      alert('Please enter the manager\'s position');
+      return;
+    }
+
+    const savedManagers = localStorage.getItem('managers');
+    const currentManagers = savedManagers ? JSON.parse(savedManagers) : [];
+    
+    const newManager = {
+      id: currentManagers.length > 0 ? Math.max(...currentManagers.map(m => m.id)) + 1 : 1,
+      name: newManagerName.trim(),
+      position: newManagerPosition.trim(),
+      restaurantId: parseInt(restaurantID),
+      restaurantName: restaurantName
+    };
+
+    const updatedManagers = [...currentManagers, newManager];
+    localStorage.setItem('managers', JSON.stringify(updatedManagers));
+    
+    // Navigate to the new manager's page
+    navigate(`/rate/${newManager.id}`, { state: { managerName: newManager.name } });
+  };
+
+  const handleCancelAdd = () => {
+    setShowAddManagerForm(false);
+    setNewManagerName('');
+    setNewManagerPosition('');
   };
 
   const handleRestaurantSearch = (e) => {
@@ -250,33 +300,6 @@ const RateRestaurant = () => {
           <div className="searchSection">
             <input 
               type="text" 
-              placeholder="Search for a manager" 
-              value={managerSearchInput}
-              onChange={handleManagerSearch}
-            />
-            {managerSearchInput && filteredManagers.length > 0 && (
-              <div className="searchDropdown">
-                {filteredManagers.map((manager) => (
-                  <div
-                    key={manager.id}
-                    className="searchDropdownItem"
-                    onClick={() => handleSelectManager(manager)}
-                  >
-                    {manager.name}
-                  </div>
-                ))}
-              </div>
-            )}
-            {managerSearchInput && filteredManagers.length === 0 && (
-              <div className="searchDropdown">
-                <div className="noResults">No managers found</div>
-              </div>
-            )}
-          </div>
-
-          <div className="searchSection">
-            <input 
-              type="text" 
               placeholder={restaurantPlaceholder}
               value={restaurantSearchInput}
               onChange={handleRestaurantSearch}
@@ -306,6 +329,36 @@ const RateRestaurant = () => {
             {restaurantSearchInput && filteredRestaurants.length === 0 && (
               <div className="searchDropdown">
                 <div className="noResults">No restaurants found</div>
+              </div>
+            )}
+          </div>
+
+          <div className="searchSection">
+            <input 
+              type="text" 
+              placeholder="Search for a manager" 
+              value={managerSearchInput}
+              onChange={handleManagerSearch}
+            />
+            {managerSearchInput && filteredManagers.length > 0 && (
+              <div className="searchDropdown">
+                {filteredManagers.map((manager) => (
+                  <div
+                    key={manager.id}
+                    className="searchDropdownItem"
+                    onClick={() => handleSelectManager(manager)}
+                  >
+                    {manager.name}
+                  </div>
+                ))}
+              </div>
+            )}
+            {managerSearchInput && filteredManagers.length === 0 && (
+              <div className="searchDropdown">
+                <div className="noResults">
+                  <span className='noManager'>Can't find the manager?
+                  <span className='enterName' onClick={handleEnterManager}> Enter first name</span></span>
+                </div>
               </div>
             )}
           </div>
@@ -404,6 +457,47 @@ const RateRestaurant = () => {
           </div>
         </div>
       </div>
+
+      {/* Add Manager Modal */}
+      {showAddManagerForm && (
+        <>
+          <div className="modalOverlay" onClick={handleCancelAdd}></div>
+          <div className="addManagerModal">
+            <button className="modalCloseBtn" onClick={handleCancelAdd}>✕</button>
+            <div className="modalContent">
+              <h2>Add Manager</h2>
+              <p className="modalSubtext">Adding manager to <strong>{restaurantName}</strong></p>
+              
+              <div className="modalInputGroup">
+                <label>First Name <span className="required">*</span></label>
+                <input
+                  type="text"
+                  placeholder="e.g., John"
+                  value={newManagerName}
+                  onChange={(e) => setNewManagerName(e.target.value)}
+                  className="modalInput"
+                />
+              </div>
+
+              <div className="modalInputGroup">
+                <label>Position <span className="required">*</span></label>
+                <input
+                  type="text"
+                  placeholder="e.g., General Manager, Shift Manager"
+                  value={newManagerPosition}
+                  onChange={(e) => setNewManagerPosition(e.target.value)}
+                  className="modalInput"
+                />
+              </div>
+
+              <div className="modalButtons">
+                <button onClick={handleAddManager} className="modalAddBtn">Add Manager</button>
+                <button onClick={handleCancelAdd} className="modalCancelBtn">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }
