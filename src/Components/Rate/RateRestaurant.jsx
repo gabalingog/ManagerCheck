@@ -17,6 +17,12 @@ const RateRestaurant = () => {
   const [showAddManagerForm, setShowAddManagerForm] = useState(false);
   const [newManagerName, setNewManagerName] = useState('');
   const [newManagerPosition, setNewManagerPosition] = useState('');
+  const [reviewFilter, setReviewFilter] = useState('recent'); // 'recent' or 'top'
+  const [ratingFilter, setRatingFilter] = useState(null); // null or 1-5
+  const [userVotes, setUserVotes] = useState(() => {
+    const saved = localStorage.getItem('userVotes_restaurant_' + restaurantID);
+    return saved ? JSON.parse(saved) : {};
+  });
   
   const [managers, setManagers] = useState(() => {
     const savedManagers = localStorage.getItem('managers');
@@ -123,6 +129,63 @@ const RateRestaurant = () => {
     setNewManagerPosition('');
   };
 
+  const handleVote = (reviewId, voteType) => {
+    const currentVote = userVotes[reviewId];
+    let newVote = null;
+
+    // Toggle logic: if clicking the same vote, remove it
+    if (currentVote === voteType) {
+      newVote = null;
+    } else {
+      newVote = voteType;
+    }
+
+    // Update user votes
+    const newUserVotes = {
+      ...userVotes,
+      [reviewId]: newVote
+    };
+    setUserVotes(newUserVotes);
+    localStorage.setItem('userVotes_restaurant_' + restaurantID, JSON.stringify(newUserVotes));
+
+    // Update the ratings in localStorage
+    const savedRatings = localStorage.getItem('restaurantRatings');
+    if (savedRatings) {
+      const allRatings = JSON.parse(savedRatings);
+      const restaurantRatings = allRatings[restaurantID] || [];
+      
+      const updatedRatings = restaurantRatings.map(rating => {
+        if (rating.id === reviewId) {
+          const updatedRating = { ...rating };
+          
+          // Adjust counts based on vote change
+          if (currentVote === 'like' && newVote === null) {
+            updatedRating.likes = Math.max(0, (updatedRating.likes || 0) - 1);
+          } else if (currentVote === 'like' && newVote === 'dislike') {
+            updatedRating.likes = Math.max(0, (updatedRating.likes || 0) - 1);
+            updatedRating.dislikes = (updatedRating.dislikes || 0) + 1;
+          } else if (currentVote === 'dislike' && newVote === null) {
+            updatedRating.dislikes = Math.max(0, (updatedRating.dislikes || 0) - 1);
+          } else if (currentVote === 'dislike' && newVote === 'like') {
+            updatedRating.dislikes = Math.max(0, (updatedRating.dislikes || 0) - 1);
+            updatedRating.likes = (updatedRating.likes || 0) + 1;
+          } else if (currentVote === null && newVote === 'like') {
+            updatedRating.likes = (updatedRating.likes || 0) + 1;
+          } else if (currentVote === null && newVote === 'dislike') {
+            updatedRating.dislikes = (updatedRating.dislikes || 0) + 1;
+          }
+          
+          return updatedRating;
+        }
+        return rating;
+      });
+      
+      allRatings[restaurantID] = updatedRatings;
+      localStorage.setItem('restaurantRatings', JSON.stringify(allRatings));
+      setAllRatings(allRatings);
+    }
+  };
+
   const handleRestaurantSearch = (e) => {
     const searched = e.target.value;
     setRestaurantSearchInput(searched);
@@ -171,95 +234,106 @@ const RateRestaurant = () => {
   };
 
   const [allRatings, setAllRatings] = useState(() => {
-    const savedRatings = localStorage.getItem('restaurantRatings');
-    if (savedRatings) {
-      return JSON.parse(savedRatings);
-    } else {
-      return {
-        '1': [
-          {
-            id: 1,
-            teamEnvironment: 5,
-            shiftAvailability: 5,
-            pay: 5,
-            staffWorkloadRatio: 5,
-            wouldRecommend: true,
-            comment: "Amazing place to work! The team is incredibly supportive and management actually cares about work-life balance. Tips are great and shifts are flexible.",
-            date: "January 7, 2025",
-            position: "Server",
-            duration: "2 years",
-            tags: ["Good Pay", "Good Management"]
-          },
-          {
-            id: 2,
-            teamEnvironment: 4,
-            shiftAvailability: 4,
-            pay: 4,
-            staffWorkloadRatio: 4,
-            wouldRecommend: true,
-            comment: "Solid workplace with a positive team culture. Good tips and reasonable scheduling. Would recommend to others looking for restaurant work.",
-            date: "January 6, 2025",
-            position: "Bartender",
-            duration: "1 year",
-            tags: ["Good Management", "Good Scheduling"]
-          },
-          {
-            id: 3,
-            teamEnvironment: 3,
-            shiftAvailability: 2,
-            pay: 3,
-            staffWorkloadRatio: 3,
-            wouldRecommend: false,
-            comment: "Management could be better organized. Often understaffed during busy shifts which makes the work stressful. Pay is just okay.",
-            date: "January 5, 2025",
-            position: "Host",
-            duration: "6 months",
-            tags: ["Low Pay", "Bad Scheduling"]
-          },
-          {
-            id: 4,
-            teamEnvironment: 5,
-            shiftAvailability: 4,
-            pay: 5,
-            staffWorkloadRatio: 4,
-            wouldRecommend: true,
-            comment: "Great restaurant with excellent team dynamics. Everyone helps each other out and the pay is competitive. Management is fair and listens to concerns.",
-            date: "January 3, 2025",
-            position: "Server",
-            duration: "8 months",
-            tags: ["Good Management", "Good Pay"]
-          },
-          {
-            id: 5,
-            teamEnvironment: 2,
-            shiftAvailability: 3,
-            pay: 2,
-            staffWorkloadRatio: 3,
-            wouldRecommend: false,
-            comment: "High turnover and poor communication from management. The team environment suffers because of constant new hires. Pay is below average for the area.",
-            date: "December 28, 2024",
-            position: "Server",
-            duration: "4 months",
-            tags: ["Bad Scheduling", "Low Pay"]
-          }
-        ],
-        '2': [
-          {
-            id: 1,
-            teamEnvironment: 5,
-            shiftAvailability: 5,
-            pay: 3,
-            staffWorkloadRatio: 4,
-            wouldRecommend: true,
-            comment: "Excellent team atmosphere! Everyone is friendly and helpful. Management values employee input and makes scheduling easy.",
-            date: "January 5, 2025",
-            position: "Bartender",
-            duration: "3 months",
-            tags: ["Good Management", "Good Scheduling"]
-          }
-        ]
-      };
-    }
+    // Force refresh with correct data structure
+    const defaultRatings = {
+      '1': [
+        {
+          id: 1,
+          teamEnvironment: 5,
+          shiftAvailability: 5,
+          pay: 5,
+          staffWorkloadRatio: 5,
+          wouldRecommend: true,
+          comment: "Amazing place to work! The team is incredibly supportive and management actually cares about work-life balance. Tips are great and shifts are flexible.",
+          date: "January 7, 2025",
+          position: "Server",
+          duration: "2 years",
+          tags: ["Good Pay", "Good Management"],
+          likes: 9,
+          dislikes: 1
+        },
+        {
+          id: 2,
+          teamEnvironment: 4,
+          shiftAvailability: 4,
+          pay: 4,
+          staffWorkloadRatio: 4,
+          wouldRecommend: true,
+          comment: "Solid workplace with a positive team culture. Good tips and reasonable scheduling. Would recommend to others looking for restaurant work.",
+          date: "January 6, 2025",
+          position: "Bartender",
+          duration: "1 year",
+          tags: ["Good Management", "Good Scheduling"],
+          likes: 7,
+          dislikes: 2
+        },
+        {
+          id: 3,
+          teamEnvironment: 3,
+          shiftAvailability: 2,
+          pay: 3,
+          staffWorkloadRatio: 3,
+          wouldRecommend: false,
+          comment: "Management could be better organized. Often understaffed during busy shifts which makes the work stressful. Pay is just okay.",
+          date: "January 5, 2025",
+          position: "Host",
+          duration: "6 months",
+          tags: ["Low Pay", "Bad Scheduling"],
+          likes: 4,
+          dislikes: 5
+        },
+        {
+          id: 4,
+          teamEnvironment: 5,
+          shiftAvailability: 4,
+          pay: 5,
+          staffWorkloadRatio: 4,
+          wouldRecommend: true,
+          comment: "Great restaurant with excellent team dynamics. Everyone helps each other out and the pay is competitive. Management is fair and listens to concerns.",
+          date: "January 3, 2025",
+          position: "Server",
+          duration: "8 months",
+          tags: ["Good Management", "Good Pay"],
+          likes: 8,
+          dislikes: 1
+        },
+        {
+          id: 5,
+          teamEnvironment: 2,
+          shiftAvailability: 3,
+          pay: 2,
+          staffWorkloadRatio: 3,
+          wouldRecommend: false,
+          comment: "High turnover and poor communication from management. The team environment suffers because of constant new hires. Pay is below average for the area.",
+          date: "December 28, 2024",
+          position: "Server",
+          duration: "4 months",
+          tags: ["Bad Scheduling", "Low Pay"],
+          likes: 3,
+          dislikes: 6
+        }
+      ],
+      '2': [
+        {
+          id: 1,
+          teamEnvironment: 5,
+          shiftAvailability: 5,
+          pay: 3,
+          staffWorkloadRatio: 4,
+          wouldRecommend: true,
+          comment: "Excellent team atmosphere! Everyone is friendly and helpful. Management values employee input and makes scheduling easy.",
+          date: "January 5, 2025",
+          position: "Bartender",
+          duration: "3 months",
+          tags: ["Good Management", "Good Scheduling"],
+          likes: 6,
+          dislikes: 0
+        }
+      ]
+    };
+    
+    localStorage.setItem('restaurantRatings', JSON.stringify(defaultRatings));
+    return defaultRatings;
   });
 
   useEffect(() => {
@@ -292,6 +366,42 @@ const RateRestaurant = () => {
 
   const ratingDistribution = getRatingDistribution();
   const maxCount = Math.max(...Object.values(ratingDistribution));
+
+  const getSortedReviews = () => {
+    let reviews = [...existingRatings];
+    
+    // Filter by rating if selected
+    if (ratingFilter !== null) {
+      reviews = reviews.filter(rating => {
+        const avg = Math.round((rating.teamEnvironment + rating.shiftAvailability + rating.pay + rating.staffWorkloadRatio) / 4);
+        return avg === ratingFilter;
+      });
+    }
+    
+    // Sort by filter type
+    if (reviewFilter === 'top') {
+      // Sort by net likes (likes - dislikes)
+      return reviews.sort((a, b) => {
+        const netA = (a.likes || 0) - (a.dislikes || 0);
+        const netB = (b.likes || 0) - (b.dislikes || 0);
+        return netB - netA;
+      });
+    } else {
+      // Sort by most recent (already in order, but reverse to show newest first)
+      return reviews.reverse();
+    }
+  };
+
+  const sortedReviews = getSortedReviews();
+
+  const handleRatingClick = (rating) => {
+    // Toggle: if clicking the same rating, clear filter
+    if (ratingFilter === rating) {
+      setRatingFilter(null);
+    } else {
+      setRatingFilter(rating);
+    }
+  };
 
   return (
     <div className='rateRestaurantPage'> 
@@ -393,10 +503,41 @@ const RateRestaurant = () => {
 
       <div className="contentContainer">
         <div className="leftSection">
+          {/* Filter Dropdown */}
+          <div className="reviewFilters">
+            <label htmlFor="filterSelect" className="filterLabel">Sort by:</label>
+            <select 
+              id="filterSelect"
+              className="filterDropdown"
+              value={reviewFilter}
+              onChange={(e) => setReviewFilter(e.target.value)}
+            >
+              <option value="recent">Most Recent</option>
+              <option value="top">Top Reviews</option>
+            </select>
+            {ratingFilter !== null && (
+              <div className="activeFilterBadge">
+                Showing {ratingFilter}-star reviews
+                <button 
+                  className="clearFilterBtn"
+                  onClick={() => setRatingFilter(null)}
+                  aria-label="Clear filter"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* Rating Distribution */}
           <div className="ratingDistribution">
             {[5, 4, 3, 2, 1].map((num) => (
-              <div key={num} className="distributionRow">
+              <div 
+                key={num} 
+                className={`distributionRow ${ratingFilter === num ? 'active' : ''}`}
+                onClick={() => handleRatingClick(num)}
+                title={`${ratingDistribution[num]} ${ratingDistribution[num] === 1 ? 'review' : 'reviews'} with ${num} ${num === 1 ? 'star' : 'stars'}`}
+              >
                 <span className="distNum">{num}</span>
                 <div className="distBar">
                   <div 
@@ -427,7 +568,7 @@ const RateRestaurant = () => {
                 <p>No reviews yet. Be the first to review {restaurantName}!</p>
               </div>
             ) : (
-              existingRatings.map((rating) => (
+              sortedReviews.map((rating) => (
                 <div key={rating.id} className="reviewCard">
                   <div className="reviewHeader">
                     <div className="stars">
@@ -447,9 +588,33 @@ const RateRestaurant = () => {
                   </div>
                   
                   <div className="reviewFooter">
-                    {rating.tags && rating.tags.map((tag, index) => (
-                      <span key={index} className="reviewTag">{tag}</span>
-                    ))}
+                    <div className="reviewTags">
+                      {rating.tags && rating.tags.map((tag, index) => (
+                        <span key={index} className="reviewTag">{tag}</span>
+                      ))}
+                    </div>
+                    <div className="reviewVotes">
+                      <button 
+                        className={`voteButton ${userVotes[rating.id] === 'like' ? 'active' : ''}`}
+                        onClick={() => handleVote(rating.id, 'like')}
+                        aria-label="Like"
+                      >
+                        <svg className="voteIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M8 3L12 7H9V13H7V7H4L8 3Z" fill="currentColor"/>
+                        </svg>
+                        <span className="voteCount">{rating.likes || 0}</span>
+                      </button>
+                      <button 
+                        className={`voteButton ${userVotes[rating.id] === 'dislike' ? 'active' : ''}`}
+                        onClick={() => handleVote(rating.id, 'dislike')}
+                        aria-label="Dislike"
+                      >
+                        <svg className="voteIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M8 13L4 9H7V3H9V9H12L8 13Z" fill="currentColor"/>
+                        </svg>
+                        <span className="voteCount">{rating.dislikes || 0}</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))
