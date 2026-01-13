@@ -19,6 +19,8 @@ const RateRestaurant = () => {
   const [newManagerPosition, setNewManagerPosition] = useState('');
   const [reviewFilter, setReviewFilter] = useState('recent'); // 'recent' or 'top'
   const [ratingFilter, setRatingFilter] = useState(null); // null or 1-5
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 10;
   const [userVotes, setUserVotes] = useState(() => {
     const saved = localStorage.getItem('userVotes_restaurant_' + restaurantID);
     return saved ? JSON.parse(saved) : {};
@@ -311,6 +313,156 @@ const RateRestaurant = () => {
           tags: ["Bad Scheduling", "Low Pay"],
           likes: 3,
           dislikes: 6
+        },
+        {
+          id: 6,
+          teamEnvironment: 4,
+          shiftAvailability: 5,
+          pay: 4,
+          staffWorkloadRatio: 5,
+          wouldRecommend: true,
+          comment: "The scheduling here is incredibly flexible and they're always willing to work with your availability. Great for students or people with other commitments.",
+          date: "December 26, 2024",
+          position: "Host",
+          duration: "1 year",
+          tags: ["Good Scheduling"],
+          likes: 6,
+          dislikes: 1
+        },
+        {
+          id: 7,
+          teamEnvironment: 5,
+          shiftAvailability: 4,
+          pay: 5,
+          staffWorkloadRatio: 4,
+          wouldRecommend: true,
+          comment: "Best restaurant job I've had. Management treats everyone with respect and the pay reflects the hard work we put in. Highly recommend!",
+          date: "December 24, 2024",
+          position: "Server",
+          duration: "1.5 years",
+          tags: ["Good Pay", "Good Management"],
+          likes: 10,
+          dislikes: 0
+        },
+        {
+          id: 8,
+          teamEnvironment: 3,
+          shiftAvailability: 3,
+          pay: 3,
+          staffWorkloadRatio: 2,
+          wouldRecommend: false,
+          comment: "Consistently short-staffed which makes every shift feel overwhelming. Management promises to hire more but nothing changes. Decent pay but not worth the stress.",
+          date: "December 22, 2024",
+          position: "Bartender",
+          duration: "7 months",
+          tags: ["Bad Scheduling"],
+          likes: 5,
+          dislikes: 3
+        },
+        {
+          id: 9,
+          teamEnvironment: 4,
+          shiftAvailability: 4,
+          pay: 3,
+          staffWorkloadRatio: 4,
+          wouldRecommend: true,
+          comment: "Good team atmosphere and management is approachable. Pay could be better but the work environment makes up for it. Nice place to build restaurant experience.",
+          date: "December 20, 2024",
+          position: "Server",
+          duration: "5 months",
+          tags: ["Good Management"],
+          likes: 5,
+          dislikes: 2
+        },
+        {
+          id: 10,
+          teamEnvironment: 5,
+          shiftAvailability: 5,
+          pay: 4,
+          staffWorkloadRatio: 5,
+          wouldRecommend: true,
+          comment: "Love working here! The team feels like family and management genuinely cares about employee wellbeing. Shifts are well-balanced and never overwhelming.",
+          date: "December 18, 2024",
+          position: "Host",
+          duration: "9 months",
+          tags: ["Good Management", "Good Scheduling"],
+          likes: 8,
+          dislikes: 0
+        },
+        {
+          id: 11,
+          teamEnvironment: 4,
+          shiftAvailability: 3,
+          pay: 4,
+          staffWorkloadRatio: 3,
+          wouldRecommend: true,
+          comment: "Overall a good place to work. Some nights can get hectic but the pay is fair and coworkers are supportive. Management could improve on scheduling consistency.",
+          date: "December 15, 2024",
+          position: "Bartender",
+          duration: "1 year",
+          tags: ["Good Pay"],
+          likes: 6,
+          dislikes: 2
+        },
+        {
+          id: 12,
+          teamEnvironment: 5,
+          shiftAvailability: 4,
+          pay: 5,
+          staffWorkloadRatio: 4,
+          wouldRecommend: true,
+          comment: "Excellent workplace with competitive wages. Management is transparent about expectations and tips are consistently good. Would definitely recommend to anyone in the service industry.",
+          date: "December 12, 2024",
+          position: "Server",
+          duration: "2 years",
+          tags: ["Good Pay", "Good Management"],
+          likes: 9,
+          dislikes: 1
+        },
+        {
+          id: 13,
+          teamEnvironment: 3,
+          shiftAvailability: 4,
+          pay: 3,
+          staffWorkloadRatio: 3,
+          wouldRecommend: false,
+          comment: "The job is fine but nothing special. Pay is average and some management decisions don't make sense. Not a bad first job but wouldn't stay long-term.",
+          date: "December 10, 2024",
+          position: "Host",
+          duration: "3 months",
+          tags: ["Low Pay"],
+          likes: 4,
+          dislikes: 4
+        },
+        {
+          id: 14,
+          teamEnvironment: 4,
+          shiftAvailability: 5,
+          pay: 4,
+          staffWorkloadRatio: 5,
+          wouldRecommend: true,
+          comment: "Great work-life balance here. Scheduling is flexible and they respect time-off requests. Team is friendly and management handles conflicts professionally.",
+          date: "December 8, 2024",
+          position: "Bartender",
+          duration: "1.5 years",
+          tags: ["Good Scheduling", "Good Management"],
+          likes: 7,
+          dislikes: 1
+        },
+        {
+          id: 15,
+          teamEnvironment: 5,
+          shiftAvailability: 5,
+          pay: 5,
+          staffWorkloadRatio: 4,
+          wouldRecommend: true,
+          comment: "One of the best restaurant jobs in the area. Management invests in their staff and it shows. Great tips, reasonable hours, and a supportive team environment.",
+          date: "December 5, 2024",
+          position: "Server",
+          duration: "3 years",
+          tags: ["Good Pay", "Good Management", "Good Scheduling"],
+          likes: 10,
+          dislikes: 0
         }
       ],
       '2': [
@@ -393,6 +545,35 @@ const RateRestaurant = () => {
   };
 
   const sortedReviews = getSortedReviews();
+
+  // Pagination
+  const totalPages = Math.ceil(sortedReviews.length / reviewsPerPage);
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+  const currentReviews = sortedReviews.slice(indexOfFirstReview, indexOfLastReview);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    // Scroll to top of reviews
+    window.scrollTo({ top: 400, behavior: 'smooth' });
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      handlePageChange(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      handlePageChange(currentPage + 1);
+    }
+  };
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [reviewFilter, ratingFilter]);
 
   const handleRatingClick = (rating) => {
     // Toggle: if clicking the same rating, clear filter
@@ -568,7 +749,8 @@ const RateRestaurant = () => {
                 <p>No reviews yet. Be the first to review {restaurantName}!</p>
               </div>
             ) : (
-              sortedReviews.map((rating) => (
+              <>
+                {currentReviews.map((rating) => (
                 <div key={rating.id} className="reviewCard">
                   <div className="reviewHeader">
                     <div className="stars">
@@ -617,7 +799,44 @@ const RateRestaurant = () => {
                     </div>
                   </div>
                 </div>
-              ))
+              ))}
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="pagination">
+                  <button 
+                    className="pageArrow"
+                    onClick={handlePrevPage}
+                    disabled={currentPage === 1}
+                  >
+                    ←
+                  </button>
+                  
+                  <div className="pageNumbers">
+                    {[...Array(totalPages)].map((_, index) => {
+                      const pageNum = index + 1;
+                      return (
+                        <button
+                          key={pageNum}
+                          className={`pageNumber ${currentPage === pageNum ? 'active' : ''}`}
+                          onClick={() => handlePageChange(pageNum)}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button 
+                    className="pageArrow"
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                  >
+                    →
+                  </button>
+                </div>
+              )}
+              </>
             )}
           </div>
         </div>

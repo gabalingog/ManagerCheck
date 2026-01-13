@@ -1,3 +1,8 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
 .rateRestaurantPage {
     padding: 0;
     margin: 0;
@@ -376,12 +381,19 @@
     display: flex;
     gap: 30px;
     padding: 40px;
-    max-width: 1400px;
+    max-width: 1500px;
     margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .leftSection {
     flex: 0 0 300px;
+    position: sticky;
+    top: 40px;
+    align-self: flex-start;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
 }
 
 .rightSection {
@@ -685,6 +697,65 @@
     font-weight: 500;
     min-width: 16px;
     text-align: center;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 40px;
+    padding: 20px 0;
+}
+
+.pageArrow {
+    padding: 10px 16px;
+    border: 1px solid #e0e0e0;
+    background: white;
+    border-radius: 6px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #1a1a1a;
+}
+
+.pageArrow:hover:not(:disabled) {
+    border-color: #1a1a1a;
+    background: #fafafa;
+}
+
+.pageArrow:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.pageNumbers {
+    display: flex;
+    gap: 8px;
+}
+
+.pageNumber {
+    padding: 10px 16px;
+    border: 1px solid #e0e0e0;
+    background: white;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #666;
+    min-width: 44px;
+}
+
+.pageNumber:hover {
+    border-color: #1a1a1a;
+    background: #fafafa;
+    color: #1a1a1a;
+}
+
+.pageNumber.active {
+    background: #1a1a1a;
+    border-color: #1a1a1a;
+    color: white;
 }
 
 @media (max-width: 1024px) {
