@@ -19,6 +19,7 @@ const RateRestaurant = () => {
   const [newManagerPosition, setNewManagerPosition] = useState('');
   const [reviewFilter, setReviewFilter] = useState('recent'); // 'recent' or 'top'
   const [ratingFilter, setRatingFilter] = useState(null); // null or 1-5
+  const [tagFilter, setTagFilter] = useState(null); // null or tag name
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 10;
   const [userVotes, setUserVotes] = useState(() => {
@@ -530,6 +531,13 @@ const RateRestaurant = () => {
       });
     }
     
+    // Filter by tag if selected
+    if (tagFilter !== null) {
+      reviews = reviews.filter(rating => {
+        return rating.tags && rating.tags.includes(tagFilter);
+      });
+    }
+    
     // Sort by filter type
     if (reviewFilter === 'top') {
       // Sort by net likes (likes - dislikes)
@@ -573,7 +581,7 @@ const RateRestaurant = () => {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [reviewFilter, ratingFilter]);
+  }, [reviewFilter, ratingFilter, tagFilter]);
 
   const handleRatingClick = (rating) => {
     // Toggle: if clicking the same rating, clear filter
@@ -581,6 +589,17 @@ const RateRestaurant = () => {
       setRatingFilter(null);
     } else {
       setRatingFilter(rating);
+      setTagFilter(null); // Clear tag filter when selecting rating
+    }
+  };
+
+  const handleTagClick = (tag) => {
+    // Toggle: if clicking the same tag, clear filter
+    if (tagFilter === tag) {
+      setTagFilter(null);
+    } else {
+      setTagFilter(tag);
+      setRatingFilter(null); // Clear rating filter when selecting tag
     }
   };
 
@@ -708,6 +727,18 @@ const RateRestaurant = () => {
                 </button>
               </div>
             )}
+            {tagFilter !== null && (
+              <div className="activeFilterBadge">
+                Showing "{tagFilter}" reviews
+                <button 
+                  className="clearFilterBtn"
+                  onClick={() => setTagFilter(null)}
+                  aria-label="Clear filter"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Rating Distribution */}
@@ -734,9 +765,24 @@ const RateRestaurant = () => {
           <div className="summaryTags">
             <h3>Summary</h3>
             <div className="tags">
-              <span className="tag">Good Management</span>
-              <span className="tag">Good Pay</span>
-              <span className="tag">Bad Scheduling</span>
+              <span 
+                className={`tag ${tagFilter === 'Good Management' ? 'active' : ''}`}
+                onClick={() => handleTagClick('Good Management')}
+              >
+                Good Management
+              </span>
+              <span 
+                className={`tag ${tagFilter === 'Good Pay' ? 'active' : ''}`}
+                onClick={() => handleTagClick('Good Pay')}
+              >
+                Good Pay
+              </span>
+              <span 
+                className={`tag ${tagFilter === 'Bad Scheduling' ? 'active' : ''}`}
+                onClick={() => handleTagClick('Bad Scheduling')}
+              >
+                Bad Scheduling
+              </span>
             </div>
           </div>
         </div>
