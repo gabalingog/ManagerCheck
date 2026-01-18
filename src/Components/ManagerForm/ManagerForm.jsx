@@ -29,8 +29,15 @@ const ManagerForm = () => {
     "Poor Communication"
   ];
 
-  const handleStarClick = (category, starValue, isHalf) => {
-    const newValue = isHalf ? starValue - 0.5 : starValue;
+  const handleStarClick = (category, starValue, event) => {
+    const starElement = event.currentTarget;
+    const rect = starElement.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const starWidth = rect.width;
+    
+    const isLeftHalf = clickX < starWidth / 2;
+    const newValue = isLeftHalf ? starValue - 0.5 : starValue;
+    
     setRatings(prev => ({
       ...prev,
       [category]: prev[category] === newValue ? 0 : newValue
@@ -50,7 +57,6 @@ const ManagerForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validation
     if (Object.values(ratings).some(rating => rating === 0)) {
       alert('Please rate all categories');
       return;
@@ -68,7 +74,6 @@ const ManagerForm = () => {
       return;
     }
 
-    // Get existing ratings from localStorage
     const savedRatings = localStorage.getItem('managerRatings');
     const allRatings = savedRatings ? JSON.parse(savedRatings) : {};
     const existingRatings = allRatings[managerID] || [];
@@ -84,7 +89,9 @@ const ManagerForm = () => {
       date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
       position: position.trim(),
       duration: duration.trim(),
-      tags: selectedTags
+      tags: selectedTags,
+      likes: 0,
+      dislikes: 0
     };
 
     allRatings[managerID] = [...existingRatings, newRating];
@@ -110,8 +117,7 @@ const ManagerForm = () => {
         <div key={i} className="star-container">
           <span
             className={`star-whole ${isFilled ? 'filled' : isHalfFilled ? 'half-filled' : ''}`}
-            onClick={() => handleStarClick(category, i, false)}
-            onDoubleClick={() => handleStarClick(category, i, true)}
+            onClick={(e) => handleStarClick(category, i, e)}
           >
             ★
           </span>
@@ -133,24 +139,25 @@ const ManagerForm = () => {
         <form onSubmit={handleSubmit}>
           {/* Personal Information */}
           <div className="formSection">
-            <h2>Your Information</h2>
-            <div className="inputGroup">
-              <label>Position</label>
-              <input
-                type="text"
-                placeholder="e.g., Server, Host, Bartender"
-                value={position}
-                onChange={(e) => setPosition(e.target.value)}
-              />
-            </div>
-            <div className="inputGroup">
-              <label>Duration</label>
-              <input
-                type="text"
-                placeholder="e.g., 6 months, 2 years"
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
-              />
+            <div className="inputRow">
+              <div className="inputGroup">
+                <label>Position</label>
+                <input
+                  type="text"
+                  placeholder="Server"
+                  value={position}
+                  onChange={(e) => setPosition(e.target.value)}
+                />
+              </div>
+              <div className="inputGroup">
+                <label>Duration</label>
+                <input
+                  type="text"
+                  placeholder="2 years"
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                />
+              </div>
             </div>
           </div>
 
@@ -210,7 +217,7 @@ const ManagerForm = () => {
 
           {/* Recommendation */}
           <div className="formSection">
-            <h2>Would you recommend this manager?</h2>
+            <h2>Would you recommend this manager? <span className="required">*</span></h2>
             <div className="recommendButtons">
               <button
                 type="button"

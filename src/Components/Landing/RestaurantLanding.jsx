@@ -9,8 +9,8 @@ const RestaurantLanding = () => {
     const [restaurants, setRestaurants] = useState(() => {
         const savedRestaurants = localStorage.getItem('restaurants');
         return savedRestaurants ? JSON.parse(savedRestaurants) : [
-            { id: 1, name: "Barcelona Wine Bar"},
-            { id: 2, name: "Olive Garden"}
+            { id: 1, name: "Barcelona Wine Bar", address: "525 Tremont St, Boston, MA 02116" },
+            { id: 2, name: "Olive Garden", address: "234 Main St, Boston, MA 02118" }
         ];
     });
 
@@ -20,6 +20,7 @@ const RestaurantLanding = () => {
     
     const [showAddForm, setShowAddForm] = useState(false);
     const [newRestaurantName, setNewRestaurantName] = useState('');
+    const [newRestaurantAddress, setNewRestaurantAddress] = useState('');
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
     const [restaurantSelected, setRestaurantSelected] = useState(false);
 
@@ -29,8 +30,6 @@ const RestaurantLanding = () => {
 
         if (searched.trim() === ''){
             setFilteredRestaurants([]);
-            setShowAddForm(false);
-            setNewRestaurantName('');
         } else {
             const filtered = restaurants.filter(restaurant =>
                 restaurant.name.toLowerCase().includes(searched.toLowerCase())
@@ -48,26 +47,38 @@ const RestaurantLanding = () => {
 
     const handleEnterRestaurant = () => {
         setShowAddForm(true);
+        setSearchInput('');
+        setFilteredRestaurants([]);
     };
 
     const handleAddRestaurant = () => {
-        if (newRestaurantName.trim() === '') return;
+        if (newRestaurantName.trim() === '') {
+            alert('Please enter the restaurant name');
+            return;
+        }
+        if (newRestaurantAddress.trim() === '') {
+            alert('Please enter the restaurant address');
+            return;
+        }
 
         const newRestaurant = {
             id: restaurants.length + 1,
-            name: newRestaurantName
+            name: newRestaurantName.trim(),
+            address: newRestaurantAddress.trim()
         };
 
-        setRestaurants([...restaurants, newRestaurant]);
+        const updatedRestaurants = [...restaurants, newRestaurant];
+        setRestaurants(updatedRestaurants);
         navigate(`/restaurant/${newRestaurant.id}`, { state: { restaurantName: newRestaurant.name } });
         setNewRestaurantName('');
+        setNewRestaurantAddress('');
         setShowAddForm(false);
-        setSearchInput('');
     };
 
     const handleCancelAdd = () => {
         setShowAddForm(false);
         setNewRestaurantName('');
+        setNewRestaurantAddress('');
     };
 
     return (
@@ -110,22 +121,6 @@ const RestaurantLanding = () => {
                                     <span className='enterName' onClick={handleEnterRestaurant}> Enter name</span></span>
                                 </div>
                             )}
-
-                            {showAddForm && (
-                                <div className="addManagerForm">
-                                    <input
-                                        type="text"
-                                        placeholder="Enter restaurant name"
-                                        className='addManagerInput'
-                                        value={newRestaurantName}
-                                        onChange={(e) => setNewRestaurantName(e.target.value)}
-                                    />
-                                    <div className="formButtons">
-                                        <button onClick={handleAddRestaurant} className='addButton'>Add</button>
-                                        <button onClick={handleCancelAdd} className='cancelButton'>Cancel</button>
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
@@ -141,6 +136,46 @@ const RestaurantLanding = () => {
                     <button className="findRestos">View the top rated restaurants near you</button>
                 </div>
             </div>
+
+            {/* Add Restaurant Modal */}
+            {showAddForm && (
+                <>
+                    <div className="modalOverlay" onClick={handleCancelAdd}></div>
+                    <div className="addRestaurantModal">
+                        <button className="modalCloseBtn" onClick={handleCancelAdd}>✕</button>
+                        <div className="modalContent">
+                            <h2>Add Restaurant</h2>
+                            
+                            <div className="modalInputGroup">
+                                <label>Restaurant Name <span className="required">*</span></label>
+                                <input
+                                    type="text"
+                                    placeholder=""
+                                    value={newRestaurantName}
+                                    onChange={(e) => setNewRestaurantName(e.target.value)}
+                                    className="modalInput"
+                                />
+                            </div>
+
+                            <div className="modalInputGroup">
+                                <label>Address <span className="required">*</span></label>
+                                <input
+                                    type="text"
+                                    placeholder=""
+                                    value={newRestaurantAddress}
+                                    onChange={(e) => setNewRestaurantAddress(e.target.value)}
+                                    className="modalInput"
+                                />
+                            </div>
+
+                            <div className="modalButtons">
+                                <button onClick={handleAddRestaurant} className="modalAddBtn">Add Restaurant</button>
+                                <button onClick={handleCancelAdd} className="modalCancelBtn">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     )
 }

@@ -20,8 +20,6 @@ const RestaurantForm = () => {
   const [wouldRecommend, setWouldRecommend] = useState(null);
   const [position, setPosition] = useState('');
   const [duration, setDuration] = useState('');
-  const [industry, setIndustry] = useState('');
-  const [otherIndustry, setOtherIndustry] = useState('');
 
   const availableTags = [
     "Good Management",
@@ -32,18 +30,17 @@ const RestaurantForm = () => {
     "Low Pay"
   ];
 
-  const industries = [
-    "Service",
-    "Retail",
-    "Healthcare",
-    "Labor",
-    "Entertainment",
-    "Corporate",
-    "Other"
-  ];
-
-  const handleStarClick = (category, starValue, isHalf) => {
-    const newValue = isHalf ? starValue - 0.5 : starValue;
+  const handleStarClick = (category, starValue, event) => {
+    const starElement = event.currentTarget;
+    const rect = starElement.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const starWidth = rect.width;
+    
+    // Click left half for 0.5, right half for 1.0
+    const isLeftHalf = clickX < starWidth / 2;
+    const newValue = isLeftHalf ? starValue - 0.5 : starValue;
+    
+    // If clicking the same rating, clear it
     setRatings(prev => ({
       ...prev,
       [category]: prev[category] === newValue ? 0 : newValue
@@ -58,10 +55,6 @@ const RestaurantForm = () => {
         return [...prev, tag];
       }
     });
-  };
-
-  const handleIndustryClick = (selectedIndustry) => {
-    setIndustry(selectedIndustry);
   };
 
   const handleSubmit = (e) => {
@@ -84,14 +77,6 @@ const RestaurantForm = () => {
       alert('Please provide your position and duration');
       return;
     }
-    if (!industry) {
-      alert('Please select an industry category');
-      return;
-    }
-    if (industry === 'Other' && !otherIndustry.trim()) {
-      alert('Please specify the industry');
-      return;
-    }
 
     // Get existing ratings from localStorage
     const savedRatings = localStorage.getItem('restaurantRatings');
@@ -109,7 +94,6 @@ const RestaurantForm = () => {
       date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
       position: position.trim(),
       duration: duration.trim(),
-      industry: industry === 'Other' ? otherIndustry.trim() : industry,
       tags: selectedTags
     };
 
@@ -136,8 +120,7 @@ const RestaurantForm = () => {
         <div key={i} className="star-container">
           <span
             className={`star-whole ${isFilled ? 'filled' : isHalfFilled ? 'half-filled' : ''}`}
-            onClick={() => handleStarClick(category, i, false)}
-            onDoubleClick={() => handleStarClick(category, i, true)}
+            onClick={(e) => handleStarClick(category, i, e)}
           >
             ★
           </span>
@@ -164,7 +147,7 @@ const RestaurantForm = () => {
                 <label>Position</label>
                 <input
                   type="text"
-                  placeholder="e.g., Server, Host, Bartender"
+                  placeholder="Server"
                   value={position}
                   onChange={(e) => setPosition(e.target.value)}
                 />
@@ -173,39 +156,12 @@ const RestaurantForm = () => {
                 <label>Duration</label>
                 <input
                   type="text"
-                  placeholder="e.g., 6 months, 2 years"
+                  placeholder="2 years"
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
                 />
               </div>
             </div>
-          </div>
-
-          {/* Industry Category */}
-          <div className="formSection">
-            <h2>Industry Category</h2>
-            <div className="industryContainer">
-              {industries.map((ind) => (
-                <button
-                  key={ind}
-                  type="button"
-                  className={`industry-button ${industry === ind ? 'selected' : ''}`}
-                  onClick={() => handleIndustryClick(ind)}
-                >
-                  {ind}
-                </button>
-              ))}
-            </div>
-            {industry === 'Other' && (
-              <div className="otherIndustryInput">
-                <input
-                  type="text"
-                  placeholder="Please specify industry"
-                  value={otherIndustry}
-                  onChange={(e) => setOtherIndustry(e.target.value)}
-                />
-              </div>
-            )}
           </div>
 
           {/* Rating Categories */}

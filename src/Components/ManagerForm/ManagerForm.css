@@ -1,281 +1,413 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: white;
+}
+
 .managerFormPage {
-    min-height: 100vh;
-    background: white;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-  }
-  
+  min-height: 100vh;
+  background: white;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.formContainer {
+  background: white;
+  border-radius: 0;
+  padding: 60px 80px;
+  max-width: 1200px;
+  width: 100%;
+  box-shadow: none;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.formHeader {
+  text-align: left;
+  margin-bottom: 50px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 40px;
+}
+
+.formHeader h1 {
+  font-size: 56px;
+  color: #1a1a1a;
+  margin-bottom: 15px;
+  font-weight: 300;
+  line-height: 1.1;
+}
+
+.restaurantName {
+  color: #555;
+  font-size: 18px;
+  font-weight: 300;
+  margin: 10px 0;
+}
+
+.formSection {
+  margin-bottom: 50px;
+}
+
+.formSection h2 {
+  font-size: 18px;
+  color: #1a1a1a;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.required {
+  color: #ff4444;
+}
+
+/* Input Groups */
+.inputRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 20px;
+}
+
+.inputGroup {
+  margin-bottom: 0;
+}
+
+.inputGroup label {
+  display: block;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 12px;
+  font-weight: 400;
+}
+
+.inputGroup input {
+  width: 100%;
+  padding: 14px 0;
+  border: none;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 16px;
+  transition: border-color 0.2s;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.inputGroup input:focus {
+  outline: none;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.inputGroup input::placeholder {
+  color: #bbb;
+}
+
+/* Star Rating */
+.ratingCategory {
+  margin-bottom: 30px;
+  display: grid;
+  grid-template-columns: 240px 1fr auto;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ratingCategory:last-child {
+  border-bottom: none;
+}
+
+.ratingCategory label {
+  font-size: 15px;
+  color: #1a1a1a;
+  font-weight: 400;
+}
+
+.stars-row {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+.star-container {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.star-whole {
+  font-size: 44px;
+  color: #e0e0e0;
+  transition: color 0.2s;
+  user-select: none;
+}
+
+.star-whole.filled {
+  color: #ffd700;
+}
+
+.star-whole.half-filled {
+  background: linear-gradient(90deg, #ffd700 50%, #e0e0e0 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.star-container:hover .star-whole {
+  color: #ffd700;
+  opacity: 0.7;
+}
+
+.star-container:hover .star-whole.half-filled {
+  background: linear-gradient(90deg, #ffd700 50%, #ffd700 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  opacity: 0.7;
+}
+
+.rating-value {
+  font-size: 14px;
+  color: #999;
+  min-width: 50px;
+  text-align: right;
+  font-weight: 400;
+}
+
+/* Tags */
+.tagsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tag-button {
+  padding: 12px 20px;
+  border: 1px solid #e0e0e0;
+  background: white;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #666;
+  font-weight: 400;
+}
+
+.tag-button:hover {
+  border-color: #1a1a1a;
+  color: #1a1a1a;
+  background: #fafafa;
+}
+
+.tag-button.selected {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+  color: white;
+}
+
+/* Recommendation Buttons */
+.recommendButtons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 500px;
+}
+
+.recommend-btn {
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  background: white;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #666;
+  font-weight: 400;
+}
+
+.recommend-btn:hover {
+  border-color: #1a1a1a;
+  color: #1a1a1a;
+  background: #fafafa;
+}
+
+.recommend-btn.selected {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+  color: white;
+}
+
+/* Comment Box */
+.commentBox {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s;
+  line-height: 1.6;
+  box-sizing: border-box;
+}
+
+.commentBox:focus {
+  outline: none;
+  border-color: #1a1a1a;
+}
+
+.commentBox::placeholder {
+  color: #bbb;
+}
+
+/* Form Actions */
+.formActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 50px;
+  padding-top: 40px;
+  border-top: 1px solid #e0e0e0;
+  max-width: 600px;
+}
+
+.submitBtn,
+.cancelBtn {
+  padding: 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submitBtn {
+  background: #1a1a1a;
+  color: white;
+  border: 1px solid #1a1a1a;
+}
+
+.submitBtn:hover {
+  background: #000;
+  border-color: #000;
+}
+
+.cancelBtn {
+  background: white;
+  color: #666;
+  border: 1px solid #e0e0e0;
+}
+
+.cancelBtn:hover {
+  border-color: #1a1a1a;
+  color: #1a1a1a;
+  background: #fafafa;
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
   .formContainer {
-    background: white;
-    border-radius: 0;
-    padding: 60px 40px;
-    max-width: 800px;
-    width: 100%;
-    box-shadow: none;
-    min-height: 100vh;
+    padding: 60px 80px;
+    max-width: 1000px;
   }
-  
+}
+
+@media (max-width: 1024px) {
+  .formContainer {
+    padding: 40px 60px;
+    max-width: 900px;
+  }
+
+  .formHeader h1 {
+    font-size: 42px;
+  }
+
+  .ratingCategory {
+    grid-template-columns: 200px 1fr auto;
+  }
+
+  .inputRow {
+    gap: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .formContainer {
+    padding: 30px 20px;
+  }
+
   .formHeader {
-    text-align: center;
     margin-bottom: 40px;
+    padding-bottom: 30px;
   }
-  
+
   .formHeader h1 {
     font-size: 32px;
-    color: #333;
-    margin-bottom: 10px;
   }
-  
+
   .restaurantName {
-    color: #666;
     font-size: 16px;
   }
-  
-  .formSection {
-    margin-bottom: 35px;
-    padding-bottom: 25px;
-    border-bottom: 1px solid #eee;
+
+  .inputRow {
+    grid-template-columns: 1fr;
+    gap: 30px;
   }
-  
-  .formSection:last-of-type {
-    border-bottom: none;
-  }
-  
-  .formSection h2 {
-    font-size: 20px;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  /* Input Groups */
-  .inputGroup {
-    margin-bottom: 20px;
-  }
-  
-  .inputGroup label {
-    display: block;
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-  
-  .inputGroup input {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 15px;
-    transition: border-color 0.3s;
-  }
-  
-  .inputGroup input:focus {
-    outline: none;
-    border-color: #667eea;
-  }
-  
-  /* Star Rating */
+
   .ratingCategory {
-    margin-bottom: 25px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 20px 0;
   }
-  
-  .ratingCategory label {
-    font-size: 16px;
-    color: #555;
-    font-weight: 500;
-    min-width: 140px;
-  }
-  
-  .stars-row {
-    display: flex;
-    gap: 5px;
-    flex: 1;
-  }
-  
-  .star-container {
-    position: relative;
-    width: 35px;
-    height: 35px;
-    cursor: pointer;
-    display: inline-block;
-  }
-  
-  .star-whole {
-    font-size: 35px;
-    color: #ddd;
-    transition: color 0.2s;
-    user-select: none;
-  }
-  
-  .star-whole.filled {
-    color: #ffd700;
-  }
-  
-  .star-whole.half-filled {
-    background: linear-gradient(90deg, #ffd700 50%, #ddd 50%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  
-  .star-container:hover .star-whole {
-    color: #ffed4e;
-  }
-  
-  .star-container:hover .star-whole.half-filled {
-    background: linear-gradient(90deg, #ffed4e 50%, #ffed4e 50%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  
+
   .rating-value {
-    font-size: 14px;
-    color: #666;
-    min-width: 45px;
-    text-align: right;
+    text-align: left;
   }
-  
-  /* Tags */
-  .tagsContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .tag-button {
-    padding: 10px 20px;
-    border: 2px solid #e0e0e0;
-    background: white;
-    border-radius: 25px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s;
-    color: #555;
-  }
-  
-  .tag-button:hover {
-    border-color: #667eea;
-    color: #667eea;
-  }
-  
-  .tag-button.selected {
-    background: #667eea;
-    border-color: #667eea;
-    color: white;
-  }
-  
-  /* Recommendation Buttons */
-  .recommendButtons {
-    display: flex;
-    gap: 15px;
-  }
-  
-  .recommend-btn {
-    flex: 1;
-    padding: 15px;
-    border: 2px solid #e0e0e0;
-    background: white;
-    border-radius: 10px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s;
-    color: #555;
-    font-weight: 500;
-  }
-  
-  .recommend-btn:hover {
-    border-color: #667eea;
-    color: #667eea;
-  }
-  
-  .recommend-btn.selected {
-    background: #667eea;
-    border-color: #667eea;
-    color: white;
-  }
-  
-  /* Comment Box */
-  .commentBox {
-    width: 100%;
-    padding: 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 15px;
-    font-family: inherit;
-    resize: vertical;
-    transition: border-color 0.3s;
-  }
-  
-  .commentBox:focus {
-    outline: none;
-    border-color: #667eea;
-  }
-  
-  /* Form Actions */
+
   .formActions {
-    display: flex;
-    gap: 15px;
-    margin-top: 30px;
+    grid-template-columns: 1fr;
+    max-width: 100%;
   }
-  
-  .submitBtn,
-  .cancelBtn {
-    flex: 1;
-    padding: 15px;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
+
+  .recommendButtons {
+    max-width: 100%;
   }
-  
-  .submitBtn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+
+  .stars-row {
+    justify-content: flex-start;
   }
-  
-  .submitBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+
+  .star-container {
+    width: 36px;
+    height: 36px;
   }
-  
-  .cancelBtn {
-    background: #f5f5f5;
-    color: #666;
+
+  .star-whole {
+    font-size: 36px;
   }
-  
-  .cancelBtn:hover {
-    background: #e0e0e0;
+}
+
+@media (max-width: 480px) {
+  .formContainer {
+    padding: 20px 15px;
   }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .formContainer {
-      padding: 30px 20px;
-    }
-  
-    .ratingCategory {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
-    }
-  
-    .ratingCategory label {
-      min-width: auto;
-    }
-  
-    .rating-value {
-      align-self: flex-end;
-    }
-  
-    .formActions {
-      flex-direction: column;
-    }
+
+  .formHeader h1 {
+    font-size: 28px;
   }
+
+  .star-container {
+    width: 32px;
+    height: 32px;
+  }
+
+  .star-whole {
+    font-size: 32px;
+  }
+
+  .stars-row {
+    gap: 8px;
+  }
+}

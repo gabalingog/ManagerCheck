@@ -14,16 +14,20 @@ const RateManager = () => {
   const [filteredManagers, setFilteredManagers] = useState([]);
   const [showManagerDropdown, setShowManagerDropdown] = useState(false);
   const [showRestaurantDropdown, setShowRestaurantDropdown] = useState(false);
+  const [showAddManagerForm, setShowAddManagerForm] = useState(false);
+  const [newManagerName, setNewManagerName] = useState('');
+  const [newManagerPosition, setNewManagerPosition] = useState('');
   const [managerPlaceholder, setManagerPlaceholder] = useState(managerName || 'Manager Name');
   const [restaurantPlaceholder, setRestaurantPlaceholder] = useState('Barcelona Wine Bar');
-
-  const goHome = () => {
-    navigate('/');
-  }
-
-  const goToRatingForm = () => {
-    navigate(`/rate/${managerID}/form`, { state: { managerName } });
-  }
+  const [reviewFilter, setReviewFilter] = useState('recent');
+  const [ratingFilter, setRatingFilter] = useState(null);
+  const [tagFilter, setTagFilter] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 10;
+  const [userVotes, setUserVotes] = useState(() => {
+    const saved = localStorage.getItem('userVotes_manager_' + managerID);
+    return saved ? JSON.parse(saved) : {};
+  });
 
   const [managers, setManagers] = useState(() => {
     const savedManagers = localStorage.getItem('managers');
@@ -65,7 +69,109 @@ const RateManager = () => {
     return defaultRestaurants;
   });
 
-  // Set restaurant placeholder based on current manager's restaurant
+  const goHome = () => {
+    navigate('/');
+  }
+
+  const goToRatingForm = () => {
+    navigate(`/rate/${managerID}/form`, { state: { managerName } });
+  }
+
+  const handleEnterManager = () => {
+    setShowAddManagerForm(true);
+  };
+
+  const handleAddManager = () => {
+    if (newManagerName.trim() === '') {
+      alert('Please enter the manager\'s first name');
+      return;
+    }
+    if (newManagerPosition.trim() === '') {
+      alert('Please enter the manager\'s position');
+      return;
+    }
+
+    const currentManager = managers.find(m => m.id === parseInt(managerID));
+    const restaurantId = currentManager?.restaurantId || 1;
+    const restaurantName = currentManager?.restaurantName || 'Barcelona Wine Bar';
+
+    const savedManagers = localStorage.getItem('managers');
+    const currentManagers = savedManagers ? JSON.parse(savedManagers) : [];
+    
+    const newManager = {
+      id: currentManagers.length > 0 ? Math.max(...currentManagers.map(m => m.id)) + 1 : 1,
+      name: newManagerName.trim(),
+      position: newManagerPosition.trim(),
+      restaurantId: restaurantId,
+      restaurantName: restaurantName
+    };
+
+    const updatedManagers = [...currentManagers, newManager];
+    localStorage.setItem('managers', JSON.stringify(updatedManagers));
+    setManagers(updatedManagers);
+    
+    navigate(`/rate/${newManager.id}`, { state: { managerName: newManager.name } });
+  };
+
+  const handleCancelAdd = () => {
+    setShowAddManagerForm(false);
+    setNewManagerName('');
+    setNewManagerPosition('');
+  };
+
+  const handleVote = (reviewId, voteType) => {
+    const currentVote = userVotes[reviewId];
+    let newVote = null;
+
+    if (currentVote === voteType) {
+      newVote = null;
+    } else {
+      newVote = voteType;
+    }
+
+    const newUserVotes = {
+      ...userVotes,
+      [reviewId]: newVote
+    };
+    setUserVotes(newUserVotes);
+    localStorage.setItem('userVotes_manager_' + managerID, JSON.stringify(newUserVotes));
+
+    const savedRatings = localStorage.getItem('managerRatings');
+    if (savedRatings) {
+      const allRatings = JSON.parse(savedRatings);
+      const managerRatings = allRatings[managerID] || [];
+      
+      const updatedRatings = managerRatings.map(rating => {
+        if (rating.id === reviewId) {
+          const updatedRating = { ...rating };
+          
+          if (currentVote === 'like' && newVote === null) {
+            updatedRating.likes = Math.max(0, (updatedRating.likes || 0) - 1);
+          } else if (currentVote === 'like' && newVote === 'dislike') {
+            updatedRating.likes = Math.max(0, (updatedRating.likes || 0) - 1);
+            updatedRating.dislikes = (updatedRating.dislikes || 0) + 1;
+          } else if (currentVote === 'dislike' && newVote === null) {
+            updatedRating.dislikes = Math.max(0, (updatedRating.dislikes || 0) - 1);
+          } else if (currentVote === 'dislike' && newVote === 'like') {
+            updatedRating.dislikes = Math.max(0, (updatedRating.dislikes || 0) - 1);
+            updatedRating.likes = (updatedRating.likes || 0) + 1;
+          } else if (currentVote === null && newVote === 'like') {
+            updatedRating.likes = (updatedRating.likes || 0) + 1;
+          } else if (currentVote === null && newVote === 'dislike') {
+            updatedRating.dislikes = (updatedRating.dislikes || 0) + 1;
+          }
+          
+          return updatedRating;
+        }
+        return rating;
+      });
+      
+      allRatings[managerID] = updatedRatings;
+      localStorage.setItem('managerRatings', JSON.stringify(allRatings));
+      setAllRatings(allRatings);
+    }
+  };
+
   useEffect(() => {
     const currentManager = managers.find(m => m.id === parseInt(managerID));
     if (currentManager && currentManager.restaurantName) {
@@ -97,13 +203,11 @@ const RateManager = () => {
     const currentRestaurantName = currentManager?.restaurantName || 'Barcelona Wine Bar';
     
     if (showRestaurantDropdown) {
-      // Second click - close dropdown and restore restaurant name
       setShowRestaurantDropdown(false);
       setFilteredRestaurants([]);
       setRestaurantSearchInput('');
       setRestaurantPlaceholder(currentRestaurantName);
     } else {
-      // First click - show all restaurants
       setRestaurantSearchInput('');
       setRestaurantPlaceholder('Search for a restaurant');
       setShowRestaurantDropdown(true);
@@ -116,16 +220,15 @@ const RateManager = () => {
     const searched = e.target.value;
     setManagerSearchInput(searched);
     setShowManagerDropdown(false);
+    setShowAddManagerForm(false);
 
     if (searched.trim() === '') {
       setFilteredManagers([]);
       setManagerPlaceholder(managerName || 'Manager Name');
     } else {
-      // Get current manager's restaurant ID
       const currentManager = managers.find(m => m.id === parseInt(managerID));
       const currentRestaurantId = currentManager?.restaurantId;
       
-      // Filter managers by current restaurant AND search term
       const filtered = managers.filter(manager =>
         manager.restaurantId === currentRestaurantId &&
         manager.name.toLowerCase().includes(searched.toLowerCase())
@@ -145,11 +248,9 @@ const RateManager = () => {
       setManagerPlaceholder('Search for a manager');
       setShowManagerDropdown(true);
       
-      // Get current manager's restaurant ID
       const currentManager = managers.find(m => m.id === parseInt(managerID));
       const currentRestaurantId = currentManager?.restaurantId;
       
-      // Only show managers from the same restaurant
       const restaurantManagers = managers.filter(m => m.restaurantId === currentRestaurantId)
         .sort((a, b) => a.name.localeCompare(b.name));
       setFilteredManagers(restaurantManagers);
@@ -180,7 +281,7 @@ const RateManager = () => {
     if (savedRatings) {
       return JSON.parse(savedRatings);
     } else {
-      return {
+      const defaultRatings = {
         '1': [
           {
             id: 1,
@@ -193,7 +294,9 @@ const RateManager = () => {
             date: "January 7, 2025",
             position: "Host",
             duration: "5 months",
-            tags: ["Good Scheduling"]
+            tags: ["Good Scheduling"],
+            likes: 8,
+            dislikes: 1
           },
           {
             id: 2,
@@ -206,7 +309,9 @@ const RateManager = () => {
             date: "January 6, 2025",
             position: "Server",
             duration: "2 years",
-            tags: ["Good Scheduling"]
+            tags: ["Good Scheduling"],
+            likes: 7,
+            dislikes: 2
           },
           {
             id: 3,
@@ -219,7 +324,9 @@ const RateManager = () => {
             date: "January 5, 2025",
             position: "Bartender",
             duration: "1 year",
-            tags: ["Low Workload", "Good Pay"]
+            tags: ["Low Workload", "Good Pay"],
+            likes: 4,
+            dislikes: 5
           },
           {
             id: 4,
@@ -232,7 +339,9 @@ const RateManager = () => {
             date: "January 3, 2025",
             position: "Server",
             duration: "8 months",
-            tags: ["Bad Scheduling"]
+            tags: ["Bad Scheduling"],
+            likes: 6,
+            dislikes: 1
           },
           {
             id: 5,
@@ -245,7 +354,9 @@ const RateManager = () => {
             date: "December 28, 2024",
             position: "Host",
             duration: "4 months",
-            tags: ["Low Workload"]
+            tags: ["Low Workload"],
+            likes: 3,
+            dislikes: 6
           }
         ],
         '2': [
@@ -260,10 +371,14 @@ const RateManager = () => {
             date: "January 5, 2025",
             position: "Host",
             duration: "3 months",
-            tags: ["Good Pay"]
+            tags: ["Good Pay"],
+            likes: 6,
+            dislikes: 0
           }
         ]
       };
+      localStorage.setItem('managerRatings', JSON.stringify(defaultRatings));
+      return defaultRatings;
     }
   });
 
@@ -297,6 +412,79 @@ const RateManager = () => {
 
   const ratingDistribution = getRatingDistribution();
   const maxCount = Math.max(...Object.values(ratingDistribution));
+
+  const getSortedReviews = () => {
+    let reviews = [...existingRatings];
+    
+    if (ratingFilter !== null) {
+      reviews = reviews.filter(rating => {
+        const avg = Math.round((rating.communication + rating.fairness + rating.approachability + rating.organization) / 4);
+        return avg === ratingFilter;
+      });
+    }
+    
+    if (tagFilter !== null) {
+      reviews = reviews.filter(rating => {
+        return rating.tags && rating.tags.includes(tagFilter);
+      });
+    }
+    
+    if (reviewFilter === 'top') {
+      return reviews.sort((a, b) => {
+        const netA = (a.likes || 0) - (a.dislikes || 0);
+        const netB = (b.likes || 0) - (b.dislikes || 0);
+        return netB - netA;
+      });
+    } else {
+      return reviews.reverse();
+    }
+  };
+
+  const sortedReviews = getSortedReviews();
+
+  const totalPages = Math.ceil(sortedReviews.length / reviewsPerPage);
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+  const currentReviews = sortedReviews.slice(indexOfFirstReview, indexOfLastReview);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 400, behavior: 'smooth' });
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      handlePageChange(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      handlePageChange(currentPage + 1);
+    }
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [reviewFilter, ratingFilter, tagFilter]);
+
+  const handleRatingClick = (rating) => {
+    if (ratingFilter === rating) {
+      setRatingFilter(null);
+    } else {
+      setRatingFilter(rating);
+      setTagFilter(null);
+    }
+  };
+
+  const handleTagClick = (tag) => {
+    if (tagFilter === tag) {
+      setTagFilter(null);
+    } else {
+      setTagFilter(tag);
+      setRatingFilter(null);
+    }
+  };
 
   return (
     <div className='rateManagerPage'> 
@@ -369,7 +557,10 @@ const RateManager = () => {
             )}
             {managerSearchInput && filteredManagers.length === 0 && (
               <div className="searchDropdown">
-                <div className="noResults">No managers found</div>
+                <div className="noResults">
+                  <span className='noManager'>Can't find the manager?
+                  <span className='enterName' onClick={handleEnterManager}> Enter first name</span></span>
+                </div>
               </div>
             )}
           </div>
@@ -398,16 +589,57 @@ const RateManager = () => {
             <div className="recoNum">{existingRatings.length}</div>
             <div className="rateLabel">Total Reviews</div>
           </div>
-          <button className="rateButton" onClick={goToRatingForm}>Rate the manager</button>
+          <button className="rateButton" onClick={goToRatingForm}>Rate this manager</button>
         </div>
       </div>
 
       <div className="contentContainer">
         <div className="leftSection">
-          {/* Rating Distribution */}
+          <div className="reviewFilters">
+            <label htmlFor="filterSelect" className="filterLabel">Sort by:</label>
+            <select 
+              id="filterSelect"
+              className="filterDropdown"
+              value={reviewFilter}
+              onChange={(e) => setReviewFilter(e.target.value)}
+            >
+              <option value="recent">Most Recent</option>
+              <option value="top">Top Reviews</option>
+            </select>
+            {ratingFilter !== null && (
+              <div className="activeFilterBadge">
+                Showing {ratingFilter}-star reviews
+                <button 
+                  className="clearFilterBtn"
+                  onClick={() => setRatingFilter(null)}
+                  aria-label="Clear filter"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+            {tagFilter !== null && (
+              <div className="activeFilterBadge">
+                Showing "{tagFilter}" reviews
+                <button 
+                  className="clearFilterBtn"
+                  onClick={() => setTagFilter(null)}
+                  aria-label="Clear filter"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+          </div>
+
           <div className="ratingDistribution">
             {[5, 4, 3, 2, 1].map((num) => (
-              <div key={num} className="distributionRow">
+              <div 
+                key={num} 
+                className={`distributionRow ${ratingFilter === num ? 'active' : ''}`}
+                onClick={() => handleRatingClick(num)}
+                title={`${ratingDistribution[num]} ${ratingDistribution[num] === 1 ? 'review' : 'reviews'} with ${num} ${num === 1 ? 'star' : 'stars'}`}
+              >
                 <span className="distNum">{num}</span>
                 <div className="distBar">
                   <div 
@@ -419,55 +651,168 @@ const RateManager = () => {
             ))}
           </div>
 
-          {/* Summary Tags */}
           <div className="summaryTags">
             <h3>Summary</h3>
             <div className="tags">
-              <span className="tag">Low Workload</span>
-              <span className="tag">Good Pay</span>
-              <span className="tag">Bad Scheduling</span>
+              <span 
+                className={`tag ${tagFilter === 'Good Scheduling' ? 'active' : ''}`}
+                onClick={() => handleTagClick('Good Scheduling')}
+              >
+                Good Scheduling
+              </span>
+              <span 
+                className={`tag ${tagFilter === 'Good Pay' ? 'active' : ''}`}
+                onClick={() => handleTagClick('Good Pay')}
+              >
+                Good Pay
+              </span>
+              <span 
+                className={`tag ${tagFilter === 'Bad Scheduling' ? 'active' : ''}`}
+                onClick={() => handleTagClick('Bad Scheduling')}
+              >
+                Bad Scheduling
+              </span>
             </div>
           </div>
         </div>
 
         <div className="rightSection">
-          {/* Reviews List */}
           <div className="reviewsList">
             {existingRatings.length === 0 ? (
               <div className="noReviews">
                 <p>No reviews yet. Be the first to review {managerName}!</p>
               </div>
             ) : (
-              existingRatings.map((rating) => (
-                <div key={rating.id} className="reviewCard">
-                  <div className="reviewHeader">
-                    <div className="stars">
-                      {[1, 2, 3, 4, 5].map((star) => {
-                        const avgRating = Math.round((rating.communication + rating.fairness + rating.approachability + rating.organization) / 4);
+              <>
+                {currentReviews.map((rating) => (
+                  <div key={rating.id} className="reviewCard">
+                    <div className="reviewHeader">
+                      <div className="stars">
+                        {[1, 2, 3, 4, 5].map((star) => {
+                          const avgRating = Math.round((rating.communication + rating.fairness + rating.approachability + rating.organization) / 4);
+                          return (
+                            <span key={star} className={`star ${star <= avgRating ? 'filled' : ''}`}>★</span>
+                          );
+                        })}
+                      </div>
+                      <span className="reviewPosition">{rating.position}</span>
+                      <span className="reviewDuration">{rating.duration}</span>
+                    </div>
+                    
+                    <div className="reviewComment">
+                      {rating.comment}
+                    </div>
+                    
+                    <div className="reviewFooter">
+                      <div className="reviewTags">
+                        {rating.tags && rating.tags.map((tag, index) => (
+                          <span key={index} className="reviewTag">{tag}</span>
+                        ))}
+                      </div>
+                      <div className="reviewVotes">
+                        <button 
+                          className={`voteButton ${userVotes[rating.id] === 'like' ? 'active' : ''}`}
+                          onClick={() => handleVote(rating.id, 'like')}
+                          aria-label="Like"
+                        >
+                          <svg className="voteIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 3L12 7H9V13H7V7H4L8 3Z" fill="currentColor"/>
+                          </svg>
+                          <span className="voteCount">{rating.likes || 0}</span>
+                        </button>
+                        <button 
+                          className={`voteButton ${userVotes[rating.id] === 'dislike' ? 'active' : ''}`}
+                          onClick={() => handleVote(rating.id, 'dislike')}
+                          aria-label="Dislike"
+                        >
+                          <svg className="voteIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 13L4 9H7V3H9V9H12L8 13Z" fill="currentColor"/>
+                          </svg>
+                          <span className="voteCount">{rating.dislikes || 0}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {totalPages > 1 && (
+                  <div className="pagination">
+                    <button 
+                      className="pageArrow"
+                      onClick={handlePrevPage}
+                      disabled={currentPage === 1}
+                    >
+                      ←
+                    </button>
+                    
+                    <div className="pageNumbers">
+                      {[...Array(totalPages)].map((_, index) => {
+                        const pageNum = index + 1;
                         return (
-                          <span key={star} className={`star ${star <= avgRating ? 'filled' : ''}`}>★</span>
+                          <button
+                            key={pageNum}
+                            className={`pageNumber ${currentPage === pageNum ? 'active' : ''}`}
+                            onClick={() => handlePageChange(pageNum)}
+                          >
+                            {pageNum}
+                          </button>
                         );
                       })}
                     </div>
-                    <span className="reviewPosition">{rating.position}</span>
-                    <span className="reviewDuration">{rating.duration}</span>
+
+                    <button 
+                      className="pageArrow"
+                      onClick={handleNextPage}
+                      disabled={currentPage === totalPages}
+                    >
+                      →
+                    </button>
                   </div>
-                  
-                  <div className="reviewComment">
-                    {rating.comment}
-                  </div>
-                  
-                  <div className="reviewFooter">
-                    {rating.tags && rating.tags.map((tag, index) => (
-                      <span key={index} className="reviewTag">{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              ))
+                )}
+              </>
             )}
           </div>
         </div>
       </div>
+
+      {showAddManagerForm && (
+        <>
+          <div className="modalOverlay" onClick={handleCancelAdd}></div>
+          <div className="addManagerModal">
+            <button className="modalCloseBtn" onClick={handleCancelAdd}>✕</button>
+            <div className="modalContent">
+              <h2>Manager at {managers.find(m => m.id === parseInt(managerID))?.restaurantName || 'Barcelona Wine Bar'}</h2>
+              
+              <div className="modalInputGroup">
+                <label>First Name <span className="required">*</span></label>
+                <input
+                  type="text"
+                  placeholder=""
+                  value={newManagerName}
+                  onChange={(e) => setNewManagerName(e.target.value)}
+                  className="modalInput"
+                />
+              </div>
+
+              <div className="modalInputGroup">
+                <label>Position <span className="required">*</span></label>
+                <input
+                  type="text"
+                  placeholder=""
+                  value={newManagerPosition}
+                  onChange={(e) => setNewManagerPosition(e.target.value)}
+                  className="modalInput"
+                />
+              </div>
+
+              <div className="modalButtons">
+                <button onClick={handleAddManager} className="modalAddBtn">Add Manager</button>
+                <button onClick={handleCancelAdd} className="modalCancelBtn">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -24,6 +24,7 @@
 }
 .searching {
     width: 100%;
+    position: relative;
 }
 .searching > span {
     display: block;
@@ -61,6 +62,178 @@
 .searchBarMan::placeholder {
     color: black;
 }
+.searchResult {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #333;
+    border-radius: 25px;
+    margin-top: 10px;
+    max-height: 156px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.searchResultItem {
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 18px;
+    border-bottom: 1px solid #e0e0e0;
+    min-height: 52px;
+    box-sizing: border-box;
+}
+.searchResultItem:last-child {
+    border-bottom: none;
+}
+.searchResultItem:hover {
+    background-color: #f5f5f5;
+}
+.noManager {
+    display: block;
+    padding: 15px 20px;
+    color: #666;
+    font-size: 18px;
+    text-align: center;
+}
+.enterName {
+    color: #1a1a1a;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 500;
+}
+.enterName:hover {
+    color: #000;
+}
+
+/* Modal Styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.addRestaurantModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 8px;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    z-index: 1001;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modalCloseBtn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.modalCloseBtn:hover {
+    color: #000;
+}
+
+.modalContent h2 {
+    font-size: 24px;
+    color: #1a1a1a;
+    margin-bottom: 25px;
+    font-weight: 400;
+}
+
+.required {
+    color: #ff4444;
+}
+
+.modalInputGroup {
+    margin-bottom: 24px;
+}
+
+.modalInputGroup label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 400;
+}
+
+.modalInput {
+    width: 100%;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 15px;
+    transition: border-color 0.2s;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+.modalInput:focus {
+    outline: none;
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.modalInput::placeholder {
+    color: #bbb;
+}
+
+.modalButtons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 32px;
+}
+
+.modalAddBtn,
+.modalCancelBtn {
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.modalAddBtn {
+    background: #1a1a1a;
+    color: white;
+    border: 1px solid #1a1a1a;
+}
+
+.modalAddBtn:hover {
+    background: #000;
+    border-color: #000;
+}
+
+.modalCancelBtn {
+    background: white;
+    color: #666;
+    border: 1px solid #e0e0e0;
+}
+
+.modalCancelBtn:hover {
+    border-color: #1a1a1a;
+    color: #1a1a1a;
+}
+
 .bottom {
     display: flex;
     padding: 20px;
@@ -192,6 +365,11 @@
         height: auto;
         min-height: 180px;
     }
+
+    .addRestaurantModal {
+        width: 85%;
+        padding: 35px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -255,5 +433,14 @@
     .findRestos {
         padding: 10px 20px;
         font-size: 14px;
+    }
+
+    .addRestaurantModal {
+        width: 95%;
+        padding: 30px;
+    }
+
+    .modalContent h2 {
+        font-size: 20px;
     }
 }
