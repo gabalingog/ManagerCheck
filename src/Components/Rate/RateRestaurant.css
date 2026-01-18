@@ -176,7 +176,7 @@ body {
 .modalContent h2 {
     font-size: 24px;
     color: #1a1a1a;
-    margin-bottom: 8px;
+    margin-bottom: 25px;
     font-weight: 400;
 }
 
@@ -398,6 +398,7 @@ body {
 
 .rightSection {
     flex: 1;
+    min-width: 0;
 }
 
 .reviewFilters {
@@ -607,6 +608,7 @@ body {
     align-items: center;
     gap: 15px;
     margin-bottom: 16px;
+    flex-wrap: wrap;
 }
 
 .reviewHeader .stars {
@@ -642,6 +644,7 @@ body {
     line-height: 1.7;
     margin-bottom: 16px;
     color: #555;
+    word-wrap: break-word;
 }
 
 .reviewFooter {
@@ -719,6 +722,7 @@ body {
     gap: 12px;
     margin-top: 40px;
     padding: 20px 0;
+    flex-wrap: wrap;
 }
 
 .pageArrow {
@@ -745,6 +749,8 @@ body {
 .pageNumbers {
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .pageNumber {
@@ -771,7 +777,30 @@ body {
     color: white;
 }
 
+/* Responsive Design - Tablet and smaller screens */
+@media (max-width: 1200px) {
+    .header {
+        padding: 40px 60px;
+    }
+
+    .restaurantName {
+        font-size: 64px;
+    }
+
+    .contentContainer {
+        padding: 30px;
+    }
+
+    .leftSection {
+        flex: 0 0 280px;
+    }
+}
+
 @media (max-width: 1024px) {
+    .topBar {
+        padding: 20px 30px;
+    }
+
     .header {
         flex-direction: column;
         align-items: flex-start;
@@ -785,8 +814,12 @@ body {
 
     .ratingSummary {
         width: 100%;
-        align-items: flex-start;
-        text-align: left;
+        gap: 40px;
+        justify-content: flex-start;
+    }
+
+    .rateNum, .recoNum {
+        font-size: 48px;
     }
 
     .contentContainer {
@@ -796,6 +829,13 @@ body {
 
     .leftSection {
         flex: 1;
+        position: static;
+        max-height: none;
+        width: 100%;
+    }
+
+    .rightSection {
+        width: 100%;
     }
 }
 
@@ -816,6 +856,11 @@ body {
         width: 100%;
     }
 
+    .searchSection input {
+        font-size: 16px;
+        padding: 12px 16px;
+    }
+
     .homeBtn {
         width: 100%;
     }
@@ -828,11 +873,94 @@ body {
         font-size: 40px;
     }
 
+    .location {
+        font-size: 16px;
+    }
+
     .star {
         font-size: 28px;
     }
 
+    .ratingSummary {
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
     .rateNum, .recoNum {
         font-size: 42px;
+    }
+
+    .rateButton {
+        width: 100%;
+        padding: 12px 24px;
+    }
+
+    .contentContainer {
+        padding: 15px;
+    }
+
+    .reviewCard {
+        padding: 20px;
+    }
+
+    .reviewHeader {
+        gap: 10px;
+    }
+
+    .reviewPosition {
+        font-size: 14px;
+    }
+
+    .reviewDuration {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 5px;
+    }
+
+    .reviewComment {
+        font-size: 14px;
+    }
+
+    .addManagerModal {
+        padding: 30px;
+        width: 95%;
+    }
+
+    .modalContent h2 {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .restaurantName {
+        font-size: 32px;
+    }
+
+    .rateNum, .recoNum {
+        font-size: 36px;
+    }
+
+    .rateLabel {
+        font-size: 12px;
+    }
+
+    .star {
+        font-size: 24px;
+    }
+
+    .reviewCard {
+        padding: 16px;
+    }
+
+    .pagination {
+        gap: 8px;
+    }
+
+    .pageArrow,
+    .pageNumber {
+        padding: 8px 12px;
+        font-size: 14px;
+        min-width: 36px;
     }
 }

@@ -895,14 +895,13 @@ const RateRestaurant = () => {
           <div className="addManagerModal">
             <button className="modalCloseBtn" onClick={handleCancelAdd}>✕</button>
             <div className="modalContent">
-              <h2>Add Manager</h2>
-              <p className="modalSubtext">Adding manager to <strong>{restaurantName}</strong></p>
+              <h2>Manager at {restaurantName}</h2>
               
               <div className="modalInputGroup">
                 <label>First Name <span className="required">*</span></label>
                 <input
                   type="text"
-                  placeholder="e.g., John"
+                  placeholder=""
                   value={newManagerName}
                   onChange={(e) => setNewManagerName(e.target.value)}
                   className="modalInput"
@@ -913,7 +912,7 @@ const RateRestaurant = () => {
                 <label>Position <span className="required">*</span></label>
                 <input
                   type="text"
-                  placeholder="e.g., General Manager, Shift Manager"
+                  placeholder=""
                   value={newManagerPosition}
                   onChange={(e) => setNewManagerPosition(e.target.value)}
                   className="modalInput"
