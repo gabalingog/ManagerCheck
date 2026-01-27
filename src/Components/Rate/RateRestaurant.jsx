@@ -19,6 +19,14 @@ const RateRestaurant = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 10;
 
+  // Search state
+  const [managerSearchInput, setManagerSearchInput] = useState('');
+  const [restaurantSearchInput, setRestaurantSearchInput] = useState('');
+  const [filteredManagers, setFilteredManagers] = useState([]);
+  const [filteredRestaurants, setFilteredRestaurants] = useState([]);
+  const [managers, setManagers] = useState([]);
+  const [restaurants, setRestaurants] = useState([]);
+
   // Fetch restaurant data
   useEffect(() => {
     const fetchRestaurant = async () => {
@@ -36,6 +44,42 @@ const RateRestaurant = () => {
     };
 
     fetchRestaurant();
+  }, [restaurantID]);
+
+  // Fetch all restaurants for search
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      const { data, error } = await supabase
+        .from('restaurants')
+        .select('*')
+        .order('name');
+
+      if (error) {
+        console.error('Error fetching restaurants:', error);
+      } else {
+        setRestaurants(data || []);
+      }
+    };
+
+    fetchRestaurants();
+  }, []);
+
+  // Fetch managers for this restaurant
+  useEffect(() => {
+    const fetchManagers = async () => {
+      const { data, error } = await supabase
+        .from('managers')
+        .select('*')
+        .eq('restaurant_id', restaurantID);
+
+      if (error) {
+        console.error('Error fetching managers:', error);
+      } else {
+        setManagers(data || []);
+      }
+    };
+
+    fetchManagers();
   }, [restaurantID]);
 
   // Fetch ratings
@@ -93,6 +137,46 @@ const RateRestaurant = () => {
   
   const goToRatingForm = () => {
     navigate(`/restaurant/${restaurantID}/form`, { state: { restaurantName: restaurant?.name || restaurantName } });
+  };
+
+  const handleRestaurantSearch = (e) => {
+    const searched = e.target.value;
+    setRestaurantSearchInput(searched);
+
+    if (searched.trim() === '') {
+      setFilteredRestaurants([]);
+    } else {
+      const filtered = restaurants.filter(restaurant =>
+        restaurant.name.toLowerCase().includes(searched.toLowerCase())
+      );
+      setFilteredRestaurants(filtered);
+    }
+  };
+
+  const handleSelectRestaurant = (restaurant) => {
+    setRestaurantSearchInput('');
+    setFilteredRestaurants([]);
+    navigate(`/restaurant/${restaurant.id}`, { state: { restaurantName: restaurant.name } });
+  };
+
+  const handleManagerSearch = (e) => {
+    const searched = e.target.value;
+    setManagerSearchInput(searched);
+
+    if (searched.trim() === '') {
+      setFilteredManagers([]);
+    } else {
+      const filtered = managers.filter(manager =>
+        manager.name.toLowerCase().includes(searched.toLowerCase())
+      );
+      setFilteredManagers(filtered);
+    }
+  };
+
+  const handleSelectManager = (manager) => {
+    setManagerSearchInput('');
+    setFilteredManagers([]);
+    navigate(`/rate/${manager.id}`, { state: { managerName: manager.name } });
   };
 
   const calAverage = (quality) => {
@@ -187,6 +271,63 @@ const RateRestaurant = () => {
   return (
     <div className='rateRestaurantPage'> 
       <div className="topBar">
+        <div className="dualSearchBar">
+          <div className="searchSection">
+            <input 
+              type="text" 
+              placeholder={restaurant?.name || "Restaurant"}
+              value={restaurantSearchInput}
+              onChange={handleRestaurantSearch}
+              className="restaurantSearchInput"
+            />
+            {restaurantSearchInput && filteredRestaurants.length > 0 && (
+              <div className="searchDropdown">
+                {filteredRestaurants.map((rest) => (
+                  <div
+                    key={rest.id}
+                    className="searchDropdownItem"
+                    onClick={() => handleSelectRestaurant(rest)}
+                  >
+                    {rest.name}
+                  </div>
+                ))}
+              </div>
+            )}
+            {restaurantSearchInput && filteredRestaurants.length === 0 && (
+              <div className="searchDropdown">
+                <div className="noResults">No restaurants found</div>
+              </div>
+            )}
+          </div>
+
+          <div className="searchSection">
+            <input 
+              type="text" 
+              placeholder="Search for a manager"
+              value={managerSearchInput}
+              onChange={handleManagerSearch}
+            />
+            {managerSearchInput && filteredManagers.length > 0 && (
+              <div className="searchDropdown">
+                {filteredManagers.map((manager) => (
+                  <div
+                    key={manager.id}
+                    className="searchDropdownItem"
+                    onClick={() => handleSelectManager(manager)}
+                  >
+                    {manager.name}
+                  </div>
+                ))}
+              </div>
+            )}
+            {managerSearchInput && filteredManagers.length === 0 && (
+              <div className="searchDropdown">
+                <div className="noResults">No managers found</div>
+              </div>
+            )}
+          </div>
+        </div>
+
         <button className="homeBtn" onClick={goHome}>Home</button>
       </div>
 
