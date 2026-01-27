@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
+import { useAuth } from '../../authContext';
+import AuthModal from '../AuthModal/AuthModal';
 import './ManagerForm.css';
 
 const ManagerForm = () => {
@@ -8,6 +10,7 @@ const ManagerForm = () => {
   const location = useLocation();
   const managerName = location.state?.managerName;
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [ratings, setRatings] = useState({
     communication: 0,
@@ -22,6 +25,7 @@ const ManagerForm = () => {
   const [position, setPosition] = useState('');
   const [duration, setDuration] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const availableTags = [
     "Good Scheduling",
@@ -58,6 +62,12 @@ const ManagerForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check if user is logged in
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
 
     // Validation
     if (Object.values(ratings).some(rating => rating === 0)) {
@@ -268,6 +278,13 @@ const ManagerForm = () => {
           </div>
         </form>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)}
+        mode="signup"
+      />
     </div>
   );
 };

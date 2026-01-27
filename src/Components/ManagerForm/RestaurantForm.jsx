@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { supabase } from '../../supabaseClient';
+import { useAuth } from '../../authContext';
+import AuthModal from '../AuthModal/AuthModal';
 import './RestaurantForm.css';
 
 const RestaurantForm = () => {
@@ -7,6 +10,7 @@ const RestaurantForm = () => {
   const location = useLocation();
   const restaurantName = location.state?.restaurantName;
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [ratings, setRatings] = useState({
     teamEnvironment: 0,
@@ -20,6 +24,8 @@ const RestaurantForm = () => {
   const [wouldRecommend, setWouldRecommend] = useState(null);
   const [position, setPosition] = useState('');
   const [duration, setDuration] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const availableTags = [
     "Good Management",
@@ -36,11 +42,9 @@ const RestaurantForm = () => {
     const clickX = event.clientX - rect.left;
     const starWidth = rect.width;
     
-    // Click left half for 0.5, right half for 1.0
     const isLeftHalf = clickX < starWidth / 2;
     const newValue = isLeftHalf ? starValue - 0.5 : starValue;
     
-    // If clicking the same rating, clear it
     setRatings(prev => ({
       ...prev,
       [category]: prev[category] === newValue ? 0 : newValue
@@ -57,8 +61,14 @@ const RestaurantForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check if user is logged in
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
 
     // Validation
     if (Object.values(ratings).some(rating => rating === 0)) {
@@ -78,27 +88,36 @@ const RestaurantForm = () => {
       return;
     }
 
-    // Get existing ratings from localStorage
-    const savedRatings = localStorage.getItem('restaurantRatings');
-    const allRatings = savedRatings ? JSON.parse(savedRatings) : {};
-    const existingRatings = allRatings[restaurantID] || [];
+    setSubmitting(true);
 
-    const newRating = {
-      id: existingRatings.length > 0 ? Math.max(...existingRatings.map(r => r.id)) + 1 : 1,
-      teamEnvironment: ratings.teamEnvironment,
-      shiftAvailability: ratings.shiftAvailability,
-      pay: ratings.pay,
-      staffWorkloadRatio: ratings.staffWorkloadRatio,
-      wouldRecommend,
-      comment: comment.trim(),
-      date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-      position: position.trim(),
-      duration: duration.trim(),
-      tags: selectedTags
-    };
+    // Insert into Supabase
+    const { data, error } = await supabase
+      .from('restaurant_ratings')
+      .insert([
+        {
+          restaurant_id: parseInt(restaurantID),
+          team_environment: ratings.teamEnvironment,
+          shift_availability: ratings.shiftAvailability,
+          pay: ratings.pay,
+          staff_workload_ratio: ratings.staffWorkloadRatio,
+          would_recommend: wouldRecommend,
+          comment: comment.trim(),
+          position: position.trim(),
+          duration: duration.trim(),
+          tags: selectedTags,
+          likes: 0,
+          dislikes: 0
+        }
+      ])
+      .select();
 
-    allRatings[restaurantID] = [...existingRatings, newRating];
-    localStorage.setItem('restaurantRatings', JSON.stringify(allRatings));
+    setSubmitting(false);
+
+    if (error) {
+      console.error('Error inserting rating:', error);
+      alert('Error submitting rating: ' + error.message);
+      return;
+    }
 
     alert('Rating submitted successfully!');
     navigate(`/restaurant/${restaurantID}`, { state: { restaurantName } });
@@ -253,11 +272,20 @@ const RestaurantForm = () => {
 
           {/* Submit Buttons */}
           <div className="formActions">
-            <button type="submit" className="submitBtn">Submit Rating</button>
+            <button type="submit" className="submitBtn" disabled={submitting}>
+              {submitting ? 'Submitting...' : 'Submit Rating'}
+            </button>
             <button type="button" className="cancelBtn" onClick={handleCancel}>Cancel</button>
           </div>
         </form>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)}
+        mode="signup"
+      />
     </div>
   );
 };

@@ -9,26 +9,24 @@ import ManagerForm from './Components/ManagerForm/ManagerForm.jsx'
 import RestaurantForm from './Components/ManagerForm/RestaurantForm.jsx';
 import RestaurantLanding from './Components/Landing/RestaurantLanding.jsx';
 import RateRestaurant from './Components/Rate/RateRestaurant.jsx';
+import { AuthProvider } from './authContext.js';
 
 function App() {
   return (
-    <div>
+    <AuthProvider>
       <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/rate/:managerID' element={<RateManager/>}/>
-        <Route path="/restaurants" element={<RestaurantLanding />} />
-        <Route path="/restaurant/:restaurantID" element={<RateRestaurant />} />
-        <Route path="/rate/:managerID/form" element={<ManagerForm />} />
-        <Route path="/restaurant/:restaurantID/form" element={<RestaurantForm />} />
-        {/* <Route path='/rate' element={<RateManager/>}>
-          <Route path=':managerID' element={<Managers/>}/>
-        </Route> */}
-      </Routes>
+        <Navbar />
+        <Routes>
+          <Route path='/' element={<Home/>}/>
+          <Route path='/rate/:managerID' element={<RateManager/>}/>
+          <Route path="/restaurants" element={<RestaurantLanding />} />
+          <Route path="/restaurant/:restaurantID" element={<RateRestaurant />} />
+          <Route path="/rate/:managerID/form" element={<ManagerForm />} />
+          <Route path="/restaurant/:restaurantID/form" element={<RestaurantForm />} />
+        </Routes>
       </BrowserRouter>
-    </div>
+    </AuthProvider>
   );
 }
 
 export default App;
- 
