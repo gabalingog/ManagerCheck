@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { supabase } from '../../supabaseClient';
 import './ManagerForm.css';
 
 const ManagerForm = () => {
@@ -20,6 +21,7 @@ const ManagerForm = () => {
   const [wouldRecommend, setWouldRecommend] = useState(null);
   const [position, setPosition] = useState('');
   const [duration, setDuration] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const availableTags = [
     "Good Scheduling",
@@ -54,9 +56,10 @@ const ManagerForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validation
     if (Object.values(ratings).some(rating => rating === 0)) {
       alert('Please rate all categories');
       return;
@@ -74,28 +77,36 @@ const ManagerForm = () => {
       return;
     }
 
-    const savedRatings = localStorage.getItem('managerRatings');
-    const allRatings = savedRatings ? JSON.parse(savedRatings) : {};
-    const existingRatings = allRatings[managerID] || [];
+    setSubmitting(true);
 
-    const newRating = {
-      id: existingRatings.length > 0 ? Math.max(...existingRatings.map(r => r.id)) + 1 : 1,
-      communication: ratings.communication,
-      fairness: ratings.fairness,
-      approachability: ratings.approachability,
-      organization: ratings.organization,
-      wouldRecommend,
-      comment: comment.trim(),
-      date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-      position: position.trim(),
-      duration: duration.trim(),
-      tags: selectedTags,
-      likes: 0,
-      dislikes: 0
-    };
+    // Insert into Supabase
+    const { data, error } = await supabase
+      .from('manager_ratings')
+      .insert([
+        {
+          manager_id: parseInt(managerID),
+          communication: ratings.communication,
+          fairness: ratings.fairness,
+          approachability: ratings.approachability,
+          organization: ratings.organization,
+          would_recommend: wouldRecommend,
+          comment: comment.trim(),
+          position: position.trim(),
+          duration: duration.trim(),
+          tags: selectedTags,
+          likes: 0,
+          dislikes: 0
+        }
+      ])
+      .select();
 
-    allRatings[managerID] = [...existingRatings, newRating];
-    localStorage.setItem('managerRatings', JSON.stringify(allRatings));
+    setSubmitting(false);
+
+    if (error) {
+      console.error('Error inserting rating:', error);
+      alert('Error submitting rating: ' + error.message);
+      return;
+    }
 
     alert('Rating submitted successfully!');
     navigate(`/rate/${managerID}`, { state: { managerName } });
@@ -250,7 +261,9 @@ const ManagerForm = () => {
 
           {/* Submit Buttons */}
           <div className="formActions">
-            <button type="submit" className="submitBtn">Submit Rating</button>
+            <button type="submit" className="submitBtn" disabled={submitting}>
+              {submitting ? 'Submitting...' : 'Submit Rating'}
+            </button>
             <button type="button" className="cancelBtn" onClick={handleCancel}>Cancel</button>
           </div>
         </form>
