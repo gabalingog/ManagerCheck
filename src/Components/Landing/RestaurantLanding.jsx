@@ -1,28 +1,35 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../supabaseClient';
 import './RestaurantLanding.css';
 import search from './../Assets/Search.png';
 
 const RestaurantLanding = () => {
     const navigate = useNavigate();
     const [searchInput, setSearchInput] = useState('');
-    const [restaurants, setRestaurants] = useState(() => {
-        const savedRestaurants = localStorage.getItem('restaurants');
-        return savedRestaurants ? JSON.parse(savedRestaurants) : [
-            { id: 1, name: "Barcelona Wine Bar", address: "525 Tremont St, Boston, MA 02116" },
-            { id: 2, name: "Olive Garden", address: "234 Main St, Boston, MA 02118" }
-        ];
-    });
-
-    useEffect(() => {
-        localStorage.setItem('restaurants', JSON.stringify(restaurants));
-    }, [restaurants]);
-    
+    const [restaurants, setRestaurants] = useState([]);
     const [showAddForm, setShowAddForm] = useState(false);
     const [newRestaurantName, setNewRestaurantName] = useState('');
     const [newRestaurantAddress, setNewRestaurantAddress] = useState('');
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
-    const [restaurantSelected, setRestaurantSelected] = useState(false);
+
+    // Fetch restaurants from Supabase
+    useEffect(() => {
+        fetchRestaurants();
+    }, []);
+
+    const fetchRestaurants = async () => {
+        const { data, error } = await supabase
+            .from('restaurants')
+            .select('*')
+            .order('name');
+
+        if (error) {
+            console.error('Error fetching restaurants:', error);
+        } else {
+            setRestaurants(data || []);
+        }
+    };
 
     const handleSearch = (e) => {
         const searched = e.target.value;
@@ -41,7 +48,6 @@ const RestaurantLanding = () => {
     const handleSelectRestaurant = (restaurant) => {
         setSearchInput('');
         setFilteredRestaurants([]);
-        setRestaurantSelected(true);
         navigate(`/restaurant/${restaurant.id}`, { state: { restaurantName: restaurant.name } });
     };
 
@@ -51,7 +57,7 @@ const RestaurantLanding = () => {
         setFilteredRestaurants([]);
     };
 
-    const handleAddRestaurant = () => {
+    const handleAddRestaurant = async () => {
         if (newRestaurantName.trim() === '') {
             alert('Please enter the restaurant name');
             return;
@@ -61,15 +67,30 @@ const RestaurantLanding = () => {
             return;
         }
 
-        const newRestaurant = {
-            id: restaurants.length + 1,
-            name: newRestaurantName.trim(),
-            address: newRestaurantAddress.trim()
-        };
+        const { data, error } = await supabase
+            .from('restaurants')
+            .insert([
+                {
+                    name: newRestaurantName.trim(),
+                    address: newRestaurantAddress.trim(),
+                    location: 'Boston, MA' // Default location
+                }
+            ])
+            .select()
+            .single();
 
-        const updatedRestaurants = [...restaurants, newRestaurant];
-        setRestaurants(updatedRestaurants);
-        navigate(`/restaurant/${newRestaurant.id}`, { state: { restaurantName: newRestaurant.name } });
+        if (error) {
+            console.error('Error adding restaurant:', error);
+            alert('Error adding restaurant: ' + error.message);
+            return;
+        }
+
+        // Navigate to new restaurant's page
+        navigate(`/restaurant/${data.id}`, { state: { restaurantName: data.name } });
+        
+        // Refresh restaurants list
+        fetchRestaurants();
+        
         setNewRestaurantName('');
         setNewRestaurantAddress('');
         setShowAddForm(false);

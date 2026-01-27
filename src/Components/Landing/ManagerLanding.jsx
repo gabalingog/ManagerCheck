@@ -1,33 +1,48 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../supabaseClient';
 import './ManagerLanding.css';
 import search from './../Assets/Search.png';
 
 const Landing = () => {
     const navigate = useNavigate();
     const [searchInput, setSearchInput] = useState('');
-    const [managers, setManagers] = useState(() => {
-        const savedManagers = localStorage.getItem('managers');
-        if (savedManagers) {
-            return JSON.parse(savedManagers);
-        } else {
-            const defaultManagers = [
-                { id: 1, name: "Gab", restaurantId: 1, restaurantName: "Barcelona Wine Bar" },
-                { id: 2, name: "Janelle", restaurantId: 2, restaurantName: "Atlantic Fish Company" }
-            ];
-            localStorage.setItem('managers', JSON.stringify(defaultManagers));
-            return defaultManagers;
-        }
-    });
-
-    useEffect(() => {
-        localStorage.setItem('managers', JSON.stringify(managers));
-    }, [managers]);
-    
+    const [managers, setManagers] = useState([]);
     const [showAddForm, setShowAddForm] = useState(false);
     const [newManagerName, setNewManagerName] = useState('');
     const [filteredManagers, setFilteredManagers] = useState([]);
-    const [managerSelected, setManagerSelected] = useState(false);
+
+    // Fetch managers from Supabase
+    useEffect(() => {
+        fetchManagers();
+    }, []);
+
+    const fetchManagers = async () => {
+        const { data, error } = await supabase
+            .from('managers')
+            .select(`
+                id,
+                name,
+                position,
+                restaurant_id,
+                restaurants (
+                    name
+                )
+            `);
+
+        if (error) {
+            console.error('Error fetching managers:', error);
+        } else {
+            // Format data to match expected structure
+            const formattedManagers = data.map(m => ({
+                id: m.id,
+                name: m.name,
+                restaurantId: m.restaurant_id,
+                restaurantName: m.restaurants?.name || 'Unknown Restaurant'
+            }));
+            setManagers(formattedManagers);
+        }
+    };
 
     const handleSearch = (e) => {
         const searched = e.target.value;
@@ -48,7 +63,6 @@ const Landing = () => {
     const handleSelectManager = (manager) => {
         setSearchInput('');
         setFilteredManagers([]);
-        setManagerSelected(true);
         navigate(`/rate/${manager.id}`, { state: { managerName: manager.name } });
     };
 
@@ -56,18 +70,35 @@ const Landing = () => {
         setShowAddForm(true);
     };
 
-    const handleAddManager = () => {
+    const handleAddManager = async () => {
         if (newManagerName.trim() === '') return;
 
-        const newManager = {
-            id: managers.length + 1,
-            name: newManagerName,
-            restaurantId: 1,
-            restaurantName: "Barcelona Wine Bar"
-        };
+        // For now, add to default restaurant (id: 1)
+        // You can make this more sophisticated later
+        const { data, error } = await supabase
+            .from('managers')
+            .insert([
+                {
+                    name: newManagerName.trim(),
+                    position: 'Manager',
+                    restaurant_id: 1 // Default restaurant
+                }
+            ])
+            .select()
+            .single();
 
-        setManagers([...managers, newManager]);
-        navigate(`/rate/${newManager.id}`, { state: { managerName: newManager.name } });
+        if (error) {
+            console.error('Error adding manager:', error);
+            alert('Error adding manager. Please make sure a restaurant exists first.');
+            return;
+        }
+
+        // Navigate to new manager's page
+        navigate(`/rate/${data.id}`, { state: { managerName: data.name } });
+        
+        // Refresh managers list
+        fetchManagers();
+        
         setNewManagerName('');
         setShowAddForm(false);
         setSearchInput('');
