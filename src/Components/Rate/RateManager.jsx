@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../../supabaseClient'
+import { useAuth } from '../../authContext';
+import AuthModal from '../AuthModal/AuthModal';
 import './RateManager.css'
 
 const RateManager = () => {
@@ -8,6 +10,8 @@ const RateManager = () => {
   const location = useLocation();
   const managerName = location.state?.managerName;
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const [manager, setManager] = useState(null);
   const [ratings, setRatings] = useState([]);
@@ -66,15 +70,12 @@ const RateManager = () => {
   }, [managerID]);
 
   const handleVote = async (reviewId, voteType) => {
-    // Find the current rating
     const rating = ratings.find(r => r.id === reviewId);
     if (!rating) return;
 
-    // Simple vote increment/decrement
     const likeDelta = voteType === 'like' ? 1 : 0;
     const dislikeDelta = voteType === 'dislike' ? 1 : 0;
 
-    // Update rating in database
     const { error } = await supabase
       .from('manager_ratings')
       .update({
@@ -88,7 +89,6 @@ const RateManager = () => {
       return;
     }
 
-    // Refresh ratings
     const { data } = await supabase
       .from('manager_ratings')
       .select('*')
@@ -103,6 +103,10 @@ const RateManager = () => {
   const goHome = () => navigate('/');
   
   const goToRatingForm = () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
     navigate(`/rate/${managerID}/form`, { state: { managerName: manager?.name || managerName } });
   };
 
@@ -401,6 +405,12 @@ const RateManager = () => {
           </div>
         </div>
       </div>
+
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)}
+        mode="signup"
+      />
     </div>
   )
 }

@@ -81,13 +81,16 @@
     color: #bbb;
   }
   
-  .modalButtons {
+  /* New Button Row Layout */
+  .modalButtonsRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
     margin-top: 24px;
-    margin-bottom: 20px;
   }
   
-  .modalAddBtn {
-    width: 100%;
+  .modalSecondaryBtn,
+  .modalPrimaryBtn {
     padding: 14px;
     border: none;
     border-radius: 8px;
@@ -95,36 +98,36 @@
     cursor: pointer;
     transition: all 0.2s;
     font-weight: 500;
-    background: #1a1a1a;
-    color: white;
   }
   
-  .modalAddBtn:hover:not(:disabled) {
+  .modalSecondaryBtn {
+    background: white;
+    color: #666;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .modalSecondaryBtn:hover:not(:disabled) {
+    border-color: #1a1a1a;
+    color: #1a1a1a;
+    transform: translateY(-1px);
+  }
+  
+  .modalPrimaryBtn {
+    background: #1a1a1a;
+    color: white;
+    border: 1px solid #1a1a1a;
+  }
+  
+  .modalPrimaryBtn:hover:not(:disabled) {
     background: #000;
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
   
-  .modalAddBtn:disabled {
+  .modalSecondaryBtn:disabled,
+  .modalPrimaryBtn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-  }
-  
-  .authToggle {
-    text-align: center;
-    font-size: 14px;
-    color: #666;
-  }
-  
-  .toggleLink {
-    color: #1a1a1a;
-    cursor: pointer;
-    font-weight: 500;
-    text-decoration: underline;
-  }
-  
-  .toggleLink:hover {
-    color: #000;
   }
   
   @media (max-width: 768px) {
@@ -135,5 +138,15 @@
   
     .modalContent h2 {
       font-size: 24px;
+    }
+  
+    .modalButtonsRow {
+      gap: 10px;
+    }
+  
+    .modalSecondaryBtn,
+    .modalPrimaryBtn {
+      padding: 12px;
+      font-size: 14px;
     }
   }
