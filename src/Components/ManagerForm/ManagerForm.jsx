@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
 import './ManagerForm.css';
+import { useAuth } from '../../authContext';
+import AuthModal from '../AuthModal/AuthModal';
 
 const ManagerForm = () => {
   const { managerID } = useParams();
