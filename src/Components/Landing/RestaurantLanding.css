@@ -444,3 +444,11 @@
         font-size: 20px;
     }
 }
+
+.webLogo{
+    width: 500px;   
+    height: auto;   
+    object-fit: contain;
+    display: block;
+  }
+  

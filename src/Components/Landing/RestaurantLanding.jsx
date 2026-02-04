@@ -1,35 +1,29 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../../supabaseClient';
 import './RestaurantLanding.css';
 import search from './../Assets/Search.png';
+import logo from './../Assets/finalLogo.png';
 
 const RestaurantLanding = () => {
     const navigate = useNavigate();
     const [searchInput, setSearchInput] = useState('');
-    const [restaurants, setRestaurants] = useState([]);
+    const [restaurants, setRestaurants] = useState(() => {
+        const savedRestaurants = localStorage.getItem('restaurants');
+        return savedRestaurants ? JSON.parse(savedRestaurants) : [
+            { id: 1, name: "Barcelona Wine Bar", address: "525 Tremont St, Boston, MA 02116" },
+            { id: 2, name: "Olive Garden", address: "234 Main St, Boston, MA 02118" }
+        ];
+    });
+
+    useEffect(() => {
+        localStorage.setItem('restaurants', JSON.stringify(restaurants));
+    }, [restaurants]);
+    
     const [showAddForm, setShowAddForm] = useState(false);
     const [newRestaurantName, setNewRestaurantName] = useState('');
     const [newRestaurantAddress, setNewRestaurantAddress] = useState('');
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
-
-    // Fetch restaurants from Supabase
-    useEffect(() => {
-        fetchRestaurants();
-    }, []);
-
-    const fetchRestaurants = async () => {
-        const { data, error } = await supabase
-            .from('restaurants')
-            .select('*')
-            .order('name');
-
-        if (error) {
-            console.error('Error fetching restaurants:', error);
-        } else {
-            setRestaurants(data || []);
-        }
-    };
+    const [restaurantSelected, setRestaurantSelected] = useState(false);
 
     const handleSearch = (e) => {
         const searched = e.target.value;
@@ -48,6 +42,7 @@ const RestaurantLanding = () => {
     const handleSelectRestaurant = (restaurant) => {
         setSearchInput('');
         setFilteredRestaurants([]);
+        setRestaurantSelected(true);
         navigate(`/restaurant/${restaurant.id}`, { state: { restaurantName: restaurant.name } });
     };
 
@@ -57,7 +52,7 @@ const RestaurantLanding = () => {
         setFilteredRestaurants([]);
     };
 
-    const handleAddRestaurant = async () => {
+    const handleAddRestaurant = () => {
         if (newRestaurantName.trim() === '') {
             alert('Please enter the restaurant name');
             return;
@@ -67,30 +62,15 @@ const RestaurantLanding = () => {
             return;
         }
 
-        const { data, error } = await supabase
-            .from('restaurants')
-            .insert([
-                {
-                    name: newRestaurantName.trim(),
-                    address: newRestaurantAddress.trim(),
-                    location: 'Boston, MA' // Default location
-                }
-            ])
-            .select()
-            .single();
+        const newRestaurant = {
+            id: restaurants.length + 1,
+            name: newRestaurantName.trim(),
+            address: newRestaurantAddress.trim()
+        };
 
-        if (error) {
-            console.error('Error adding restaurant:', error);
-            alert('Error adding restaurant: ' + error.message);
-            return;
-        }
-
-        // Navigate to new restaurant's page
-        navigate(`/restaurant/${data.id}`, { state: { restaurantName: data.name } });
-        
-        // Refresh restaurants list
-        fetchRestaurants();
-        
+        const updatedRestaurants = [...restaurants, newRestaurant];
+        setRestaurants(updatedRestaurants);
+        navigate(`/restaurant/${newRestaurant.id}`, { state: { restaurantName: newRestaurant.name } });
         setNewRestaurantName('');
         setNewRestaurantAddress('');
         setShowAddForm(false);
@@ -107,7 +87,8 @@ const RestaurantLanding = () => {
             <div className="bgmain">
                 <div className="main">
                     <div className="left">
-                        <span className='title'>Manager<br />Check</span>
+                        {/* <span className='title'>Manager<br />Check</span> */}
+                        <img src={logo} alt="Logo" className="webLogo" />
                     </div>
                     <div className="right">
                         <div className="searching">

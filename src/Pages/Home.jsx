@@ -6,7 +6,6 @@ import RestaurantLanding from '../Components/Landing/RestaurantLanding';
 const Home = () => {
   return (
     <div>
-      <Navbar/>
       {/* <ManagerLanding/> */}
       <RestaurantLanding/>
     </div>
