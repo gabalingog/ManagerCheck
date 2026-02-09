@@ -164,7 +164,14 @@ const RateManager = () => {
   }
 
   const goToAllManagers = () => {
-    navigate('/managers');
+    if (currentManager?.restaurant_id) {
+      navigate(`/restaurant/${currentManager.restaurant_id}/managers`, { 
+        state: { restaurantName: currentManager.restaurantName } 
+      });
+    } else {
+      // Fallback if restaurant_id is not available
+      console.error('Restaurant ID not available');
+    }
   }
 
   const handleEnterManager = () => {

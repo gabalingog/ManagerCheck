@@ -4,7 +4,7 @@ import { supabase } from './../../supabaseClient'
 import './ManagersList.css'
 
 const ManagersList = () => {
-  const { restaurantID } = useParams(); // Get restaurant ID from URL
+  const { restaurantID } = useParams();
   const navigate = useNavigate();
   const [managers, setManagers] = useState([]);
   const [restaurant, setRestaurant] = useState(null);
@@ -12,8 +12,11 @@ const ManagersList = () => {
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
   const [filteredManagers, setFilteredManagers] = useState([]);
-  const [sortBy, setSortBy] = useState('name'); // name, rating, reviews
+  const [sortBy, setSortBy] = useState('name');
   const [error, setError] = useState(null);
+  const [showAddManagerForm, setShowAddManagerForm] = useState(false);
+  const [newManagerName, setNewManagerName] = useState('');
+  const [newManagerPosition, setNewManagerPosition] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -24,8 +27,6 @@ const ManagersList = () => {
       setLoading(true);
       setError(null);
       
-      console.log('Fetching data for restaurant ID:', restaurantID);
-      
       // Fetch the current restaurant
       const { data: restaurantData, error: restaurantError } = await supabase
         .from('restaurants')
@@ -34,35 +35,31 @@ const ManagersList = () => {
         .single();
       
       if (restaurantError) {
-        console.error('Error fetching restaurant:', restaurantError);
         throw restaurantError;
       }
       
-      console.log('Restaurant fetched:', restaurantData);
       setRestaurant(restaurantData);
 
       // Fetch managers for THIS restaurant only
       const { data: managersData, error: managersError } = await supabase
         .from('managers')
-        .select('*, restaurants(name)')
+        .select('*')
         .eq('restaurant_id', restaurantID)
         .order('name');
       
       if (managersError) {
-        console.error('Error fetching managers:', managersError);
         throw managersError;
       }
       
-      console.log('Managers fetched for this restaurant:', managersData);
-      
       const managersWithRestaurantName = managersData?.map(m => ({
         ...m,
-        restaurantName: m.restaurants?.name || 'Unknown'
+        restaurantName: restaurantData?.name || 'Unknown'
       })) || [];
       
       setManagers(managersWithRestaurantName);
+      setFilteredManagers(managersWithRestaurantName);
 
-      // Fetch all ratings for these managers only
+      // Fetch ratings
       const managerIds = managersWithRestaurantName.map(m => m.id);
       
       let ratingsData = [];
@@ -79,9 +76,7 @@ const ManagersList = () => {
         }
       }
       
-      console.log('Ratings fetched:', ratingsData);
-      
-      // Calculate stats for each manager
+      // Calculate stats
       const ratingsMap = {};
       managersWithRestaurantName.forEach(manager => {
         const managerReviews = ratingsData.filter(r => r.manager_id === manager.id);
@@ -114,10 +109,7 @@ const ManagersList = () => {
         }
       });
       
-      console.log('Ratings map:', ratingsMap);
-      
       setManagerRatings(ratingsMap);
-      setFilteredManagers(managersWithRestaurantName);
       setLoading(false);
     } catch (err) {
       console.error('Error in fetchData:', err);
@@ -181,6 +173,47 @@ const ManagersList = () => {
     });
   };
 
+  const handleAddFirstManager = () => {
+    setShowAddManagerForm(true);
+  };
+
+  const handleAddManager = async () => {
+    if (newManagerName.trim() === '') {
+      alert('Please enter the manager\'s first name');
+      return;
+    }
+    if (newManagerPosition.trim() === '') {
+      alert('Please enter the manager\'s position');
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('managers')
+      .insert([{
+        name: newManagerName.trim(),
+        position: newManagerPosition.trim(),
+        restaurant_id: parseInt(restaurantID)
+      }])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error adding manager:', error);
+      alert('Failed to add manager');
+    } else {
+      setShowAddManagerForm(false);
+      setNewManagerName('');
+      setNewManagerPosition('');
+      fetchData(); // Refresh the list
+    }
+  };
+
+  const handleCancelAdd = () => {
+    setShowAddManagerForm(false);
+    setNewManagerName('');
+    setNewManagerPosition('');
+  };
+
   if (loading) {
     return (
       <div className="managersListPage">
@@ -227,108 +260,161 @@ const ManagersList = () => {
       </div>
 
       <div className="managersContainer">
-        <div className="controlsBar">
-          <input
-            type="text"
-            placeholder="Search managers or positions..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            className="searchInput"
-          />
-          
-          <div className="sortControls">
-            <label htmlFor="sortSelect">Sort by:</label>
-            <select
-              id="sortSelect"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="sortDropdown"
-            >
-              <option value="name">Name (A-Z)</option>
-              <option value="rating">Highest Rated</option>
-              <option value="reviews">Most Reviews</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="managersCount">
-          Showing {sortedManagers.length} {sortedManagers.length === 1 ? 'manager' : 'managers'}
-        </div>
-
-        <div className="managersList">
-          {sortedManagers.length === 0 ? (
-            <div className="noManagers">
-              <p>No managers found matching your search.</p>
+        {managers.length === 0 ? (
+          <div className="noManagersAtAll">
+            <div className="emptyState">
+              <h2>No Managers Yet</h2>
+              <p>Be the first to add a manager at {restaurant?.name}!</p>
+              <button className="addFirstManagerBtn" onClick={handleAddFirstManager}>
+                Add First Manager
+              </button>
             </div>
-          ) : (
-            sortedManagers.map((manager) => {
-              const stats = managerRatings[manager.id];
-              const hasReviews = stats && stats.count > 0;
+          </div>
+        ) : (
+          <>
+            <div className="controlsBar">
+              <input
+                type="text"
+                placeholder="Search managers or positions..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="searchInput"
+              />
               
-              return (
-                <div
-                  key={manager.id}
-                  className="managerRow"
-                  onClick={() => handleManagerClick(manager)}
+              <div className="sortControls">
+                <label htmlFor="sortSelect">Sort by:</label>
+                <select
+                  id="sortSelect"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="sortDropdown"
                 >
-                  <div className="managerBasicInfo">
-                    <h3 className="managerRowName">{manager.name}</h3>
-                    <p className="managerRowPosition">{manager.position}</p>
-                  </div>
+                  <option value="name">Name (A-Z)</option>
+                  <option value="rating">Highest Rated</option>
+                  <option value="reviews">Most Reviews</option>
+                </select>
+              </div>
+            </div>
 
-                  {hasReviews ? (
-                    <>
-                      <div className="managerRatingInfo">
-                        <div className="overallRatingBadge">
-                          <span className="ratingNumber">{stats.overallRating}</span>
-                          <div className="stars">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <span
-                                key={star}
-                                className={`star ${star <= Math.round(parseFloat(stats.overallRating)) ? 'filled' : ''}`}
-                              >
-                                ★
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                        <p className="reviewCount">{stats.count} {stats.count === 1 ? 'review' : 'reviews'}</p>
-                      </div>
+            <div className="managersCount">
+              Showing {sortedManagers.length} {sortedManagers.length === 1 ? 'manager' : 'managers'}
+            </div>
 
-                      <div className="managerRatingBreakdown">
-                        <div className="ratingItem">
-                          <span className="ratingLabel">Communication</span>
-                          <span className="ratingValue">{stats.communication}</span>
-                        </div>
-                        <div className="ratingItem">
-                          <span className="ratingLabel">Fairness</span>
-                          <span className="ratingValue">{stats.fairness}</span>
-                        </div>
-                        <div className="ratingItem">
-                          <span className="ratingLabel">Approachability</span>
-                          <span className="ratingValue">{stats.approachability}</span>
-                        </div>
-                        <div className="ratingItem">
-                          <span className="ratingLabel">Organization</span>
-                          <span className="ratingValue">{stats.organization}</span>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="noReviewsYet">
-                      <p>No reviews yet</p>
-                      <button className="beFirstBtn" onClick={(e) => {
-                        e.stopPropagation();
-                        handleManagerClick(manager);
-                      }}>Be the first to review</button>
-                    </div>
-                  )}
+            <div className="managersList">
+              {sortedManagers.length === 0 ? (
+                <div className="noManagers">
+                  <p>No managers found matching your search.</p>
                 </div>
-              );
-            })
-          )}
-        </div>
+              ) : (
+                sortedManagers.map((manager) => {
+                  const stats = managerRatings[manager.id];
+                  const hasReviews = stats && stats.count > 0;
+                  
+                  return (
+                    <div
+                      key={manager.id}
+                      className="managerRow"
+                      onClick={() => handleManagerClick(manager)}
+                    >
+                      <div className="managerBasicInfo">
+                        <h3 className="managerRowName">{manager.name}</h3>
+                        <p className="managerRowPosition">{manager.position}</p>
+                      </div>
+
+                      {hasReviews ? (
+                        <>
+                          <div className="managerRatingInfo">
+                            <div className="overallRatingBadge">
+                              <span className="ratingNumber">{stats.overallRating}</span>
+                              <div className="stars">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <span
+                                    key={star}
+                                    className={`star ${star <= Math.round(parseFloat(stats.overallRating)) ? 'filled' : ''}`}
+                                  >
+                                    ★
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <p className="reviewCount">{stats.count} {stats.count === 1 ? 'review' : 'reviews'}</p>
+                          </div>
+
+                          <div className="managerRatingBreakdown">
+                            <div className="ratingItem">
+                              <span className="ratingLabel">Communication</span>
+                              <span className="ratingValue">{stats.communication}</span>
+                            </div>
+                            <div className="ratingItem">
+                              <span className="ratingLabel">Fairness</span>
+                              <span className="ratingValue">{stats.fairness}</span>
+                            </div>
+                            <div className="ratingItem">
+                              <span className="ratingLabel">Approachability</span>
+                              <span className="ratingValue">{stats.approachability}</span>
+                            </div>
+                            <div className="ratingItem">
+                              <span className="ratingLabel">Organization</span>
+                              <span className="ratingValue">{stats.organization}</span>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="noReviewsYet">
+                          <p>No reviews yet</p>
+                          <button className="beFirstBtn" onClick={(e) => {
+                            e.stopPropagation();
+                            handleManagerClick(manager);
+                          }}>Be the first to review</button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </>
+        )}
       </div>
+
+      {showAddManagerForm && (
+        <>
+          <div className="modalOverlay" onClick={handleCancelAdd}></div>
+          <div className="addManagerModal">
+            <button className="modalCloseBtn" onClick={handleCancelAdd}>✕</button>
+            <div className="modalContent">
+              <h2>Manager at {restaurant?.name}</h2>
+              
+              <div className="modalInputGroup">
+                <label>First Name <span className="required">*</span></label>
+                <input
+                  type="text"
+                  placeholder=""
+                  value={newManagerName}
+                  onChange={(e) => setNewManagerName(e.target.value)}
+                  className="modalInput"
+                />
+              </div>
+
+              <div className="modalInputGroup">
+                <label>Position <span className="required">*</span></label>
+                <input
+                  type="text"
+                  placeholder=""
+                  value={newManagerPosition}
+                  onChange={(e) => setNewManagerPosition(e.target.value)}
+                  className="modalInput"
+                />
+              </div>
+
+              <div className="modalButtons">
+                <button onClick={handleAddManager} className="modalAddBtn">Add Manager</button>
+                <button onClick={handleCancelAdd} className="modalCancelBtn">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

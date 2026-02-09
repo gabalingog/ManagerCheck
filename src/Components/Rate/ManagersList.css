@@ -24,8 +24,33 @@ body {
     margin: 0;
 }
 
+.topBarButtons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.backBtn {
+    padding: 14px 32px;
+    font-size: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: white;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.backBtn:hover {
+    background-color: #1a1a1a;
+    color: white;
+    border-color: #1a1a1a;
+}
+
 .homeBtn {
-    padding: 12px 30px;
+    padding: 14px 32px;
     font-size: 16px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -33,6 +58,7 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     font-weight: 400;
+    white-space: nowrap;
 }
 
 .homeBtn:hover {
@@ -45,6 +71,56 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     padding: 40px;
+}
+
+/* Empty state when no managers exist */
+.noManagersAtAll {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.emptyState {
+    text-align: center;
+    padding: 60px 40px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    max-width: 500px;
+}
+
+.emptyState h2 {
+    font-size: 28px;
+    font-weight: 400;
+    color: #1a1a1a;
+    margin: 0 0 16px 0;
+}
+
+.emptyState p {
+    font-size: 16px;
+    color: #666;
+    margin: 0 0 32px 0;
+    line-height: 1.6;
+}
+
+.addFirstManagerBtn {
+    padding: 14px 32px;
+    font-size: 16px;
+    border: 1px solid #1a1a1a;
+    border-radius: 8px;
+    background-color: white;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.addFirstManagerBtn:hover {
+    background-color: #1a1a1a;
+    color: white;
+    border-color: #1a1a1a;
 }
 
 .controlsBar {
@@ -169,13 +245,6 @@ body {
     font-weight: 400;
 }
 
-.managerRowRestaurant {
-    font-size: 14px;
-    color: #999;
-    margin: 0;
-    font-weight: 300;
-}
-
 .managerRatingInfo {
     display: flex;
     flex-direction: column;
@@ -282,9 +351,166 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    padding: 80px 40px;
     font-size: 18px;
     color: #666;
+}
+
+.error {
+    text-align: center;
+    padding: 80px 40px;
+    color: #ff4444;
+    font-size: 16px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.error p {
+    margin-bottom: 20px;
+}
+
+.retryBtn {
+    padding: 12px 30px;
+    font-size: 16px;
+    border: 1px solid #1a1a1a;
+    border-radius: 8px;
+    background-color: #1a1a1a;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 400;
+}
+
+.retryBtn:hover {
+    background-color: #000;
+    border-color: #000;
+}
+
+/* Modal styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.addManagerModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 8px;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    z-index: 1001;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modalCloseBtn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.modalCloseBtn:hover {
+    color: #000;
+}
+
+.modalContent h2 {
+    font-size: 24px;
+    color: #1a1a1a;
+    margin-bottom: 25px;
+    font-weight: 400;
+}
+
+.required {
+    color: #ff4444;
+}
+
+.modalInputGroup {
+    margin-bottom: 24px;
+}
+
+.modalInputGroup label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 400;
+}
+
+.modalInput {
+    width: 100%;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 15px;
+    transition: border-color 0.2s;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+.modalInput:focus {
+    outline: none;
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.modalInput::placeholder {
+    color: #bbb;
+}
+
+.modalButtons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 32px;
+}
+
+.modalAddBtn,
+.modalCancelBtn {
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.modalAddBtn {
+    background: #1a1a1a;
+    color: white;
+    border: 1px solid #1a1a1a;
+}
+
+.modalAddBtn:hover {
+    background: #000;
+    border-color: #000;
+}
+
+.modalCancelBtn {
+    background: white;
+    color: #666;
+    border: 1px solid #e0e0e0;
+}
+
+.modalCancelBtn:hover {
+    border-color: #1a1a1a;
+    color: #1a1a1a;
 }
 
 /* Responsive Design */
@@ -306,10 +532,23 @@ body {
 @media (max-width: 768px) {
     .topBar {
         padding: 20px;
+        flex-direction: column;
+        gap: 15px;
     }
 
     .pageTitle {
         font-size: 24px;
+    }
+
+    .topBarButtons {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .backBtn,
+    .homeBtn {
+        width: 100%;
     }
 
     .managersContainer {
@@ -345,6 +584,15 @@ body {
     .managerRatingBreakdown {
         grid-template-columns: 1fr;
     }
+
+    .addManagerModal {
+        padding: 30px;
+        width: 95%;
+    }
+
+    .modalContent h2 {
+        font-size: 20px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -352,6 +600,7 @@ body {
         font-size: 20px;
     }
 
+    .backBtn,
     .homeBtn {
         padding: 10px 20px;
         font-size: 14px;
@@ -367,73 +616,5 @@ body {
 
     .star {
         font-size: 18px;
-    }
-}
-
-.error {
-    text-align: center;
-    padding: 80px 40px;
-    color: #ff4444;
-    font-size: 16px;
-    background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-}
-
-.error p {
-    margin-bottom: 20px;
-}
-
-.retryBtn {
-    padding: 12px 30px;
-    font-size: 16px;
-    border: 1px solid #1a1a1a;
-    border-radius: 8px;
-    background-color: #1a1a1a;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 400;
-}
-
-.retryBtn:hover {
-    background-color: #000;
-    border-color: #000;
-}
-
-/* Additional styles for top bar buttons */
-.topBarButtons {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-.backBtn {
-    padding: 12px 24px;
-    font-size: 16px;
-    border: 1px solid #1a1a1a;
-    border-radius: 8px;
-    background-color: #1a1a1a;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 400;
-}
-
-.backBtn:hover {
-    background-color: #000;
-    border-color: #000;
-}
-
-@media (max-width: 768px) {
-    .topBarButtons {
-        flex-direction: column;
-        width: 100%;
-        gap: 8px;
-    }
-
-    .backBtn,
-    .homeBtn {
-        width: 100%;
     }
 }
