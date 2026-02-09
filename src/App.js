@@ -3,8 +3,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './Components/Navbar/Navbar';
 import Home from './Pages/Home';
 import RateManager from './Components/Rate/RateManager';
-import Managers from './Pages/Managers';
-import Landing from './Components/Landing/ManagerLanding';
 import ManagerForm from './Components/ManagerForm/ManagerForm.jsx'
 import RestaurantForm from './Components/ManagerForm/RestaurantForm.jsx';
 import RestaurantLanding from './Components/Landing/RestaurantLanding.jsx';
