@@ -156,6 +156,12 @@ const RateRestaurant = () => {
     navigate(`/restaurant/${restaurantID}/form`, { state: { restaurantName } });
   }
 
+  const goToAllManagers = () => {
+    navigate(`/restaurant/${restaurantID}/managers`, { 
+      state: { restaurantName: currentRestaurant?.name || restaurantName } 
+    });
+  }
+
   const handleManagerSearch = (e) => {
     const searched = e.target.value;
     setManagerSearchInput(searched);
@@ -533,6 +539,7 @@ const RateRestaurant = () => {
             <div className="rateLabel">Total Reviews</div>
           </div>
           <button className="rateButton" onClick={goToRatingForm}>Rate this restaurant</button>
+          <button className="seeAllButton" onClick={goToAllManagers}>See All Managers</button>
         </div>
       </div>
 

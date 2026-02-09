@@ -1,0 +1,439 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.managersListPage {
+    min-height: 100vh;
+    background-color: #fafafa;
+}
+
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: white;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.pageTitle {
+    font-size: 32px;
+    font-weight: 300;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.homeBtn {
+    padding: 12px 30px;
+    font-size: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 400;
+}
+
+.homeBtn:hover {
+    background-color: #1a1a1a;
+    color: white;
+    border-color: #1a1a1a;
+}
+
+.managersContainer {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px;
+}
+
+.controlsBar {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.searchInput {
+    flex: 1;
+    min-width: 300px;
+    padding: 15px 20px;
+    font-size: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: #1a1a1a;
+}
+
+.sortControls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sortControls label {
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+}
+
+.sortDropdown {
+    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    background: white;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #1a1a1a;
+    font-weight: 400;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%231a1a1a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+}
+
+.sortDropdown:hover {
+    border-color: #1a1a1a;
+}
+
+.sortDropdown:focus {
+    outline: none;
+    border-color: #1a1a1a;
+}
+
+.managersCount {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+.managersList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.noManagers {
+    text-align: center;
+    padding: 80px 40px;
+    color: #999;
+    font-size: 16px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.managerRow {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 3fr;
+    gap: 30px;
+    padding: 30px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    align-items: center;
+}
+
+.managerRow:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: #1a1a1a;
+}
+
+.managerBasicInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.managerRowName {
+    font-size: 24px;
+    font-weight: 400;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.managerRowPosition {
+    font-size: 15px;
+    color: #666;
+    margin: 0;
+    font-weight: 400;
+}
+
+.managerRowRestaurant {
+    font-size: 14px;
+    color: #999;
+    margin: 0;
+    font-weight: 300;
+}
+
+.managerRatingInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.overallRatingBadge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.ratingNumber {
+    font-size: 42px;
+    font-weight: 300;
+    color: #1a1a1a;
+}
+
+.stars {
+    display: flex;
+    gap: 4px;
+}
+
+.star {
+    font-size: 20px;
+    color: #e0e0e0;
+}
+
+.star.filled {
+    color: #ffd700;
+}
+
+.reviewCount {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+    font-weight: 400;
+}
+
+.managerRatingBreakdown {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.ratingItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+}
+
+.ratingLabel {
+    font-size: 13px;
+    color: #666;
+    font-weight: 400;
+}
+
+.ratingValue {
+    font-size: 18px;
+    font-weight: 500;
+    color: #1a1a1a;
+}
+
+.noReviewsYet {
+    grid-column: 2 / 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px;
+}
+
+.noReviewsYet p {
+    font-size: 15px;
+    color: #999;
+    margin: 0;
+}
+
+.beFirstBtn {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: 1px solid #1a1a1a;
+    border-radius: 6px;
+    background-color: white;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 400;
+}
+
+.beFirstBtn:hover {
+    background-color: #1a1a1a;
+    color: white;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-size: 18px;
+    color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .managerRow {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .managerRatingBreakdown {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .noReviewsYet {
+        grid-column: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .topBar {
+        padding: 20px;
+    }
+
+    .pageTitle {
+        font-size: 24px;
+    }
+
+    .managersContainer {
+        padding: 20px;
+    }
+
+    .controlsBar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .searchInput {
+        min-width: 100%;
+    }
+
+    .sortControls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .managerRow {
+        padding: 20px;
+    }
+
+    .managerRowName {
+        font-size: 20px;
+    }
+
+    .ratingNumber {
+        font-size: 36px;
+    }
+
+    .managerRatingBreakdown {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .pageTitle {
+        font-size: 20px;
+    }
+
+    .homeBtn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .managerRowName {
+        font-size: 18px;
+    }
+
+    .ratingNumber {
+        font-size: 32px;
+    }
+
+    .star {
+        font-size: 18px;
+    }
+}
+
+.error {
+    text-align: center;
+    padding: 80px 40px;
+    color: #ff4444;
+    font-size: 16px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.error p {
+    margin-bottom: 20px;
+}
+
+.retryBtn {
+    padding: 12px 30px;
+    font-size: 16px;
+    border: 1px solid #1a1a1a;
+    border-radius: 8px;
+    background-color: #1a1a1a;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 400;
+}
+
+.retryBtn:hover {
+    background-color: #000;
+    border-color: #000;
+}
+
+/* Additional styles for top bar buttons */
+.topBarButtons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.backBtn {
+    padding: 12px 24px;
+    font-size: 16px;
+    border: 1px solid #1a1a1a;
+    border-radius: 8px;
+    background-color: #1a1a1a;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 400;
+}
+
+.backBtn:hover {
+    background-color: #000;
+    border-color: #000;
+}
+
+@media (max-width: 768px) {
+    .topBarButtons {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .backBtn,
+    .homeBtn {
+        width: 100%;
+    }
+}

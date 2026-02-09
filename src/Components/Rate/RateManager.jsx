@@ -163,6 +163,10 @@ const RateManager = () => {
     navigate(`/rate/${managerID}/form`, { state: { managerName } });
   }
 
+  const goToAllManagers = () => {
+    navigate('/managers');
+  }
+
   const handleEnterManager = () => {
     setShowAddManagerForm(true);
   };
@@ -589,6 +593,7 @@ const RateManager = () => {
             <div className="rateLabel">Total Reviews</div>
           </div>
           <button className="rateButton" onClick={goToRatingForm}>Rate this manager</button>
+          <button className="seeAllButton" onClick={goToAllManagers}>See All Managers</button>
         </div>
       </div>
 

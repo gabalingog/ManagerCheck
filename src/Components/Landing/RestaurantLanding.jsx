@@ -6,6 +6,7 @@ import logo from './../Assets/finalLogo.png';
 import bg from './../Assets/background.png';
 import waitress from './../Assets/waitress.png';
 import pic from './../Assets/other.png';
+import logo2 from './../Assets/trialLogo.png';
 
 const RestaurantLanding = () => {
     const navigate = useNavigate();
@@ -95,7 +96,8 @@ const RestaurantLanding = () => {
                 <div className="mainBackground">
                     <div className="main">
                         <div className="left">
-                            <img src={logo} alt="Logo" className="webLogo" />
+                            {/* <img src={logo} alt="Logo" className="webLogo" /> */}
+                            <img src={logo2} alt="Logo" className='webLogo' />
                         </div>
                         <div className="right">
                             <div className="searching">
