@@ -26,7 +26,6 @@ const RestaurantLanding = () => {
     const [newRestaurantName, setNewRestaurantName] = useState('');
     const [newRestaurantAddress, setNewRestaurantAddress] = useState('');
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
-    const [restaurantSelected, setRestaurantSelected] = useState(false);
 
     const handleSearch = (e) => {
         const searched = e.target.value;
@@ -45,7 +44,6 @@ const RestaurantLanding = () => {
     const handleSelectRestaurant = (restaurant) => {
         setSearchInput('');
         setFilteredRestaurants([]);
-        setRestaurantSelected(true);
         navigate(`/restaurant/${restaurant.id}`, { state: { restaurantName: restaurant.name } });
     };
 
