@@ -328,7 +328,7 @@ body {
     border-radius: 20px 20px 0 0;
 }
 
-.anonBox .header {
+.headerBox {
     font-size: 40px;
     font-weight: 400;
     margin: 15px 0 15px 0;
@@ -336,6 +336,7 @@ body {
     text-align: center;
     line-height: 1.2;
     padding: 0 40px;
+    background-color: transparent !important;
 }
 
 .viewRatings {
