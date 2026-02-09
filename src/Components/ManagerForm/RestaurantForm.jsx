@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { supabase } from './../../supabaseClient'
+import { supabase } from '../../supabaseClient';
+import { useAuth } from '../../authContext';
+import AuthModal from '../AuthModal/AuthModal';
 import './RestaurantForm.css';
 
 const RestaurantForm = () => {
@@ -8,7 +10,7 @@ const RestaurantForm = () => {
   const location = useLocation();
   const restaurantName = location.state?.restaurantName;
   const navigate = useNavigate();
-  const [currentUserId, setCurrentUserId] = useState(null);
+  const { user } = useAuth();
 
   const [ratings, setRatings] = useState({
     teamEnvironment: 0,
@@ -22,6 +24,8 @@ const RestaurantForm = () => {
   const [wouldRecommend, setWouldRecommend] = useState(null);
   const [position, setPosition] = useState('');
   const [duration, setDuration] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const availableTags = [
     "Good Management",
@@ -93,26 +97,36 @@ const RestaurantForm = () => {
       return;
     }
 
-    const newRating = {
-      restaurant_id: parseInt(restaurantID),
-      user_id: currentUserId,
-      team_environment: ratings.teamEnvironment,
-      shift_availability: ratings.shiftAvailability,
-      pay: ratings.pay,
-      staff_workload_ratio: ratings.staffWorkloadRatio,
-      would_recommend: wouldRecommend,
-      comment: comment.trim(),
-      date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-      position: position.trim(),
-      duration: duration.trim(),
-      tags: selectedTags,
-      likes: 0,
-      dislikes: 0
-    };
+    setSubmitting(true);
 
-    const { error } = await supabase
+    // Insert into Supabase
+    const { data, error } = await supabase
       .from('restaurant_ratings')
-      .insert([newRating]);
+      .insert([
+        {
+          restaurant_id: parseInt(restaurantID),
+          team_environment: ratings.teamEnvironment,
+          shift_availability: ratings.shiftAvailability,
+          pay: ratings.pay,
+          staff_workload_ratio: ratings.staffWorkloadRatio,
+          would_recommend: wouldRecommend,
+          comment: comment.trim(),
+          position: position.trim(),
+          duration: duration.trim(),
+          tags: selectedTags,
+          likes: 0,
+          dislikes: 0
+        }
+      ])
+      .select();
+
+    setSubmitting(false);
+
+    if (error) {
+      console.error('Error inserting rating:', error);
+      alert('Error submitting rating: ' + error.message);
+      return;
+    }
 
     if (error) {
       console.error('Error submitting rating:', error);
@@ -272,11 +286,20 @@ const RestaurantForm = () => {
 
           {/* Submit Buttons */}
           <div className="formActions">
-            <button type="submit" className="submitBtn">Submit Rating</button>
+            <button type="submit" className="submitBtn" disabled={submitting}>
+              {submitting ? 'Submitting...' : 'Submit Rating'}
+            </button>
             <button type="button" className="cancelBtn" onClick={handleCancel}>Cancel</button>
           </div>
         </form>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)}
+        mode="signup"
+      />
     </div>
   );
 };

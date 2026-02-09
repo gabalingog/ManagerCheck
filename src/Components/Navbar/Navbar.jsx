@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../authContext'
+import { useAuth } from '../../authContext';
 import AuthModal from '../AuthModal/AuthModal';
 import './Navbar.css';
 

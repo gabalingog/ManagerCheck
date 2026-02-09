@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { supabase } from './../../supabaseClient'
+import { supabase } from '../../supabaseClient'
+import { useAuth } from '../../authContext';
+import AuthModal from '../AuthModal/AuthModal';
 import './RateManager.css'
 
 const RateManager = () => {
@@ -8,6 +10,8 @@ const RateManager = () => {
   const location = useLocation();
   const managerName = location.state?.managerName;
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const [restaurantSearchInput, setRestaurantSearchInput] = useState('');
   const [managerSearchInput, setManagerSearchInput] = useState('');
@@ -204,72 +208,12 @@ const RateManager = () => {
   };
 
   const handleVote = async (reviewId, voteType) => {
-    if (!currentUserId) return;
-
-    const currentVote = userVotes[reviewId];
-    let newVote = null;
-
-    if (currentVote === voteType) {
-      newVote = null;
-    } else {
-      newVote = voteType;
-    }
-
-    // Update local state immediately for responsiveness
-    const newUserVotes = {
-      ...userVotes,
-      [reviewId]: newVote
-    };
-    setUserVotes(newUserVotes);
-
-    // Update in database
-    if (newVote === null) {
-      // Delete vote
-      await supabase
-        .from('user_votes')
-        .delete()
-        .eq('user_id', currentUserId)
-        .eq('review_type', 'manager')
-        .eq('review_id', reviewId);
-    } else {
-      // Upsert vote
-      await supabase
-        .from('user_votes')
-        .upsert({
-          user_id: currentUserId,
-          review_type: 'manager',
-          review_id: reviewId,
-          vote_type: newVote,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id,review_type,review_id'
-        });
-    }
-
-    // Calculate new like/dislike counts
-    const rating = allRatings.find(r => r.id === reviewId);
+    const rating = ratings.find(r => r.id === reviewId);
     if (!rating) return;
 
-    let newLikes = rating.likes || 0;
-    let newDislikes = rating.dislikes || 0;
+    const likeDelta = voteType === 'like' ? 1 : 0;
+    const dislikeDelta = voteType === 'dislike' ? 1 : 0;
 
-    if (currentVote === 'like' && newVote === null) {
-      newLikes = Math.max(0, newLikes - 1);
-    } else if (currentVote === 'like' && newVote === 'dislike') {
-      newLikes = Math.max(0, newLikes - 1);
-      newDislikes = newDislikes + 1;
-    } else if (currentVote === 'dislike' && newVote === null) {
-      newDislikes = Math.max(0, newDislikes - 1);
-    } else if (currentVote === 'dislike' && newVote === 'like') {
-      newDislikes = Math.max(0, newDislikes - 1);
-      newLikes = newLikes + 1;
-    } else if (currentVote === null && newVote === 'like') {
-      newLikes = newLikes + 1;
-    } else if (currentVote === null && newVote === 'dislike') {
-      newDislikes = newDislikes + 1;
-    }
-
-    // Update rating counts in database
     const { error } = await supabase
       .from('manager_ratings')
       .update({ likes: newLikes, dislikes: newDislikes })
@@ -307,28 +251,11 @@ const RateManager = () => {
     }
   };
 
-  const handleClearRestaurantSearch = () => {
-    const currentRestaurantName = currentManager?.restaurantName || 'Barcelona Wine Bar';
-    
-    if (showRestaurantDropdown) {
-      setShowRestaurantDropdown(false);
-      setFilteredRestaurants([]);
-      setRestaurantSearchInput('');
-      setRestaurantPlaceholder(currentRestaurantName);
-    } else {
-      setRestaurantSearchInput('');
-      setRestaurantPlaceholder('Search for a restaurant');
-      setShowRestaurantDropdown(true);
-      const sortedRestaurants = [...restaurants].sort((a, b) => a.name.localeCompare(b.name));
-      setFilteredRestaurants(sortedRestaurants);
-    }
-  };
-
-  const handleManagerSearch = (e) => {
-    const searched = e.target.value;
-    setManagerSearchInput(searched);
-    setShowManagerDropdown(false);
-    setShowAddManagerForm(false);
+    const { data } = await supabase
+      .from('manager_ratings')
+      .select('*')
+      .eq('manager_id', managerID)
+      .order('created_at', { ascending: false });
 
     if (searched.trim() === '') {
       setFilteredManagers([]);
@@ -344,23 +271,14 @@ const RateManager = () => {
     }
   };
 
-  const handleClearManagerSearch = () => {
-    if (showManagerDropdown) {
-      setShowManagerDropdown(false);
-      setFilteredManagers([]);
-      setManagerSearchInput('');
-      setManagerPlaceholder(managerName || 'Manager Name');
-    } else {
-      setManagerSearchInput('');
-      setManagerPlaceholder('Search for a manager');
-      setShowManagerDropdown(true);
-      
-      const currentRestaurantId = currentManager?.restaurant_id;
-      
-      const restaurantManagers = managers.filter(m => m.restaurant_id === currentRestaurantId)
-        .sort((a, b) => a.name.localeCompare(b.name));
-      setFilteredManagers(restaurantManagers);
+  const goHome = () => navigate('/');
+  
+  const goToRatingForm = () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
     }
+    navigate(`/rate/${managerID}/form`, { state: { managerName: manager?.name || managerName } });
   };
 
   const handleSelectRestaurant = (restaurant) => {
@@ -774,44 +692,11 @@ const RateManager = () => {
         </div>
       </div>
 
-      {showAddManagerForm && (
-        <>
-          <div className="modalOverlay" onClick={handleCancelAdd}></div>
-          <div className="addManagerModal">
-            <button className="modalCloseBtn" onClick={handleCancelAdd}>✕</button>
-            <div className="modalContent">
-              <h2>Manager at {currentManager?.restaurantName || 'Barcelona Wine Bar'}</h2>
-              
-              <div className="modalInputGroup">
-                <label>First Name <span className="required">*</span></label>
-                <input
-                  type="text"
-                  placeholder=""
-                  value={newManagerName}
-                  onChange={(e) => setNewManagerName(e.target.value)}
-                  className="modalInput"
-                />
-              </div>
-
-              <div className="modalInputGroup">
-                <label>Position <span className="required">*</span></label>
-                <input
-                  type="text"
-                  placeholder=""
-                  value={newManagerPosition}
-                  onChange={(e) => setNewManagerPosition(e.target.value)}
-                  className="modalInput"
-                />
-              </div>
-
-              <div className="modalButtons">
-                <button onClick={handleAddManager} className="modalAddBtn">Add Manager</button>
-                <button onClick={handleCancelAdd} className="modalCancelBtn">Cancel</button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)}
+        mode="signup"
+      />
     </div>
   )
 }

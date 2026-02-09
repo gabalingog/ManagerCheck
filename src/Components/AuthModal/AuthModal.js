@@ -12,6 +12,11 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
 
   const { signIn, signUp } = useAuth();
 
+  // Update authMode when mode prop changes
+  React.useEffect(() => {
+    setAuthMode(mode);
+  }, [mode]);
+
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     setError('');
@@ -41,8 +46,14 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
     setLoading(false);
   };
 
-  const toggleMode = () => {
-    setAuthMode(authMode === 'signin' ? 'signup' : 'signin');
+  const switchToSignIn = () => {
+    setAuthMode('signin');
+    setError('');
+    setMessage('');
+  };
+
+  const switchToSignUp = () => {
+    setAuthMode('signup');
     setError('');
     setMessage('');
   };
@@ -92,34 +103,44 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
               />
             </div>
 
-            <div className="modalButtons">
-              <button 
-                type="submit" 
-                className="modalAddBtn" 
-                disabled={loading}
-              >
-                {loading ? 'Loading...' : (authMode === 'signin' ? 'Sign In' : 'Sign Up')}
-              </button>
+            <div className="modalButtonsRow">
+              {authMode === 'signin' ? (
+                <>
+                  <button 
+                    type="button"
+                    className="modalSecondaryBtn" 
+                    onClick={switchToSignUp}
+                  >
+                    Create an Account
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="modalPrimaryBtn" 
+                    disabled={loading}
+                  >
+                    {loading ? 'Loading...' : 'Sign In'}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button 
+                    type="button"
+                    className="modalSecondaryBtn" 
+                    onClick={switchToSignIn}
+                  >
+                    Sign In
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="modalPrimaryBtn" 
+                    disabled={loading}
+                  >
+                    {loading ? 'Loading...' : 'Create an Account'}
+                  </button>
+                </>
+              )}
             </div>
           </form>
-
-          <div className="authToggle">
-            {authMode === 'signin' ? (
-              <p>
-                Don't have an account?{' '}
-                <span onClick={toggleMode} className="toggleLink">
-                  Sign Up
-                </span>
-              </p>
-            ) : (
-              <p>
-                Already have an account?{' '}
-                <span onClick={toggleMode} className="toggleLink">
-                  Sign In
-                </span>
-              </p>
-            )}
-          </div>
         </div>
       </div>
     </>
