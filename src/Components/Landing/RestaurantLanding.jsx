@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import './RestaurantLanding.css';
 import search from './../Assets/Search.png';
 import logo from './../Assets/finalLogo.png';
+import bg from './../Assets/background.png';
+import waitress from './../Assets/waitress.png';
+import pic from './../Assets/other.png';
 
 const RestaurantLanding = () => {
     const navigate = useNavigate();
@@ -85,44 +88,51 @@ const RestaurantLanding = () => {
     return (
         <div className='restoLanding'>
             <div className="bgmain">
-                <div className="main">
-                    <div className="left">
-                        {/* <span className='title'>Manager<br />Check</span> */}
-                        <img src={logo} alt="Logo" className="webLogo" />
-                    </div>
-                    <div className="right">
-                        <div className="searching">
-                            <span>Search <i>your</i> restaurant</span>
-                            <div className="searchRes">
-                                <img src={search} alt="Search" className='searchLogo'/>
-                                <input
-                                    type="text"
-                                    placeholder="Search for a restaurant"
-                                    className='searchBarMan'
-                                    value={searchInput}
-                                    onChange={handleSearch}
-                                />
-                            </div>
-                            
-                            {searchInput && filteredRestaurants.length > 0 && (
-                                <div className="searchResult">
-                                    {filteredRestaurants.map((restaurant) => (
-                                        <div
-                                            key={restaurant.id}
-                                            className="searchResultItem"
-                                            onClick={() => handleSelectRestaurant(restaurant)}>
-                                            {restaurant.name}
-                                        </div>
-                                    ))}
+                <div className="bgImage" style={{
+                    backgroundImage: `url(${bg})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                }}></div>
+                <div className="mainBackground">
+                    <div className="main">
+                        <div className="left">
+                            <img src={logo} alt="Logo" className="webLogo" />
+                        </div>
+                        <div className="right">
+                            <div className="searching">
+                                <span>Search <i>your</i> restaurant</span>
+                                <div className="searchRes">
+                                    <img src={search} alt="Search" className='searchLogo'/>
+                                    <input
+                                        type="text"
+                                        placeholder="Search for a restaurant"
+                                        className='searchBarMan'
+                                        value={searchInput}
+                                        onChange={handleSearch}
+                                    />
                                 </div>
-                            )}
+                                
+                                {searchInput && filteredRestaurants.length > 0 && (
+                                    <div className="searchResult">
+                                        {filteredRestaurants.map((restaurant) => (
+                                            <div
+                                                key={restaurant.id}
+                                                className="searchResultItem"
+                                                onClick={() => handleSelectRestaurant(restaurant)}>
+                                                {restaurant.name}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
 
-                            {searchInput && filteredRestaurants.length === 0 && (
-                                <div className="searchResult">
-                                    <span className='noManager'>Can't find the restaurant?
-                                    <span className='enterName' onClick={handleEnterRestaurant}> Enter name</span></span>
-                                </div>
-                            )}
+                                {searchInput && filteredRestaurants.length === 0 && (
+                                    <div className="searchResult">
+                                        <span className='noManager'>Can't find the restaurant?
+                                        <span className='enterName' onClick={handleEnterRestaurant}> Enter name</span></span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -130,12 +140,28 @@ const RestaurantLanding = () => {
             
             <div className="bottom">
                 <div className="anonBox">
+                    <img src={pic} alt="Restaurant workplace" className="boxImage" />
                     <span className='header'>Anonymous reviews</span>
-                    <button className="viewRatings">View your ratings</button>
+                    <div className="viewRatings">
+                        <img src={search} alt="Search" className='searchIcon'/>
+                        <input
+                            type="text"
+                            placeholder="View your ratings"
+                            readOnly
+                        />
+                    </div>
                 </div>
                 <div className="topRestos">
+                    <img src={waitress} alt="Restaurant staff" className="boxImage" />
                     <span>Find the <span className="underline">best</span> workplace</span>
-                    <button className="findRestos">View the top rated restaurants near you</button>
+                    <div className="findRestos">
+                        <img src={search} alt="Search" className='searchIcon'/>
+                        <input
+                            type="text"
+                            placeholder="View the top rated restaurants near you"
+                            readOnly
+                        />
+                    </div>
                 </div>
             </div>
 
