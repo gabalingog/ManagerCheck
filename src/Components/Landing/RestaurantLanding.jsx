@@ -139,7 +139,7 @@ const RestaurantLanding = () => {
             <div className="bottom">
                 <div className="anonBox">
                     <img src={pic} alt="Restaurant workplace" className="boxImage" />
-                    <span className='header'>All reviews are anonymous</span>
+                    <span className='header'>hi reviews are anonymous</span>
                     {/* <div className="viewRatings">
                         <img src={search} alt="Search" className='searchIcon'/>
                         <input
