@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
+import { supabase } from './../../supabaseClient'
 import './RateManager.css'
 
 const RateManager = () => {
@@ -24,50 +25,135 @@ const RateManager = () => {
   const [tagFilter, setTagFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 10;
-  const [userVotes, setUserVotes] = useState(() => {
-    const saved = localStorage.getItem('userVotes_manager_' + managerID);
-    return saved ? JSON.parse(saved) : {};
-  });
+  
+  const [managers, setManagers] = useState([]);
+  const [restaurants, setRestaurants] = useState([]);
+  const [currentManager, setCurrentManager] = useState(null);
+  const [allRatings, setAllRatings] = useState([]);
+  const [userVotes, setUserVotes] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
-  const [managers, setManagers] = useState(() => {
-    const savedManagers = localStorage.getItem('managers');
-    if (savedManagers) {
-      return JSON.parse(savedManagers);
-    } else {
-      const defaultManagers = [
-        { id: 1, name: "Gab", restaurantId: 1, restaurantName: "Barcelona Wine Bar" },
-        { id: 2, name: "Janelle", restaurantId: 2, restaurantName: "Atlantic Fish Company" }
-      ];
-      localStorage.setItem('managers', JSON.stringify(defaultManagers));
-      return defaultManagers;
+  // Generate or retrieve a simple user ID (stored in localStorage for consistency)
+  useEffect(() => {
+    let userId = localStorage.getItem('tempUserId');
+    if (!userId) {
+      userId = 'user_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('tempUserId', userId);
     }
-  });
+    setCurrentUserId(userId);
+  }, []);
 
-  const defaultRestaurants = [
-    { id: 1, name: "Barcelona Wine Bar", location: "Boston, MA" },
-    { id: 2, name: "Atlantic Fish Company", location: "Boston, MA" },
-    { id: 3, name: "Borelli's Italian Restaurant", location: "Boston, MA" },
-    { id: 4, name: "Chart House", location: "Boston, MA" },
-    { id: 5, name: "Davio's Northern Italian Steakhouse", location: "Boston, MA" },
-    { id: 6, name: "Empire Restaurant & Lounge", location: "Boston, MA" },
-    { id: 7, name: "French Quarter", location: "Boston, MA" },
-    { id: 8, name: "Grill 23 & Bar", location: "Boston, MA" },
-    { id: 9, name: "Legal Sea Foods", location: "Boston, MA" },
-    { id: 10, name: "Mama Maria", location: "Boston, MA" },
-    { id: 11, name: "Mistral", location: "Boston, MA" },
-    { id: 12, name: "Neptune Oyster", location: "Boston, MA" },
-    { id: 13, name: "No. 9 Park", location: "Boston, MA" },
-    { id: 14, name: "Oleana", location: "Boston, MA" },
-    { id: 15, name: "The Capital Grille", location: "Boston, MA" },
-    { id: 16, name: "The Salty Pig", location: "Boston, MA" },
-    { id: 17, name: "Top of the Hub", location: "Boston, MA" },
-    { id: 18, name: "Union Oyster House", location: "Boston, MA" }
-  ];
+  // Fetch restaurants
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      const { data, error } = await supabase
+        .from('restaurants')
+        .select('*')
+        .order('name');
+      
+      if (error) {
+        console.error('Error fetching restaurants:', error);
+      } else {
+        setRestaurants(data || []);
+      }
+    };
+    fetchRestaurants();
+  }, []);
 
-  const [restaurants] = useState(() => {
-    localStorage.setItem('restaurants', JSON.stringify(defaultRestaurants));
-    return defaultRestaurants;
-  });
+  // Fetch managers
+  useEffect(() => {
+    const fetchManagers = async () => {
+      const { data, error } = await supabase
+        .from('managers')
+        .select('*, restaurants(name)')
+        .order('name');
+      
+      if (error) {
+        console.error('Error fetching managers:', error);
+      } else {
+        const managersWithRestaurantName = data.map(m => ({
+          ...m,
+          restaurantName: m.restaurants?.name || 'Unknown'
+        }));
+        setManagers(managersWithRestaurantName || []);
+      }
+    };
+    fetchManagers();
+  }, []);
+
+  // Fetch current manager details
+  useEffect(() => {
+    const fetchCurrentManager = async () => {
+      if (!managerID) return;
+      
+      const { data, error } = await supabase
+        .from('managers')
+        .select('*, restaurants(name)')
+        .eq('id', managerID)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching manager:', error);
+      } else {
+        const manager = {
+          ...data,
+          restaurantName: data.restaurants?.name || 'Unknown'
+        };
+        setCurrentManager(manager);
+        setRestaurantPlaceholder(manager.restaurantName);
+        setManagerPlaceholder(manager.name);
+      }
+    };
+    fetchCurrentManager();
+  }, [managerID]);
+
+  // Fetch ratings for this manager
+  useEffect(() => {
+    const fetchRatings = async () => {
+      if (!managerID) return;
+      
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('manager_ratings')
+        .select('*')
+        .eq('manager_id', managerID)
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching ratings:', error);
+        setAllRatings([]);
+      } else {
+        setAllRatings(data || []);
+      }
+      setLoading(false);
+    };
+    fetchRatings();
+  }, [managerID]);
+
+  // Fetch user votes
+  useEffect(() => {
+    const fetchUserVotes = async () => {
+      if (!currentUserId || !managerID) return;
+      
+      const { data, error } = await supabase
+        .from('user_votes')
+        .select('*')
+        .eq('user_id', currentUserId)
+        .eq('review_type', 'manager');
+      
+      if (error) {
+        console.error('Error fetching user votes:', error);
+      } else {
+        const votesMap = {};
+        data?.forEach(vote => {
+          votesMap[vote.review_id] = vote.vote_type;
+        });
+        setUserVotes(votesMap);
+      }
+    };
+    fetchUserVotes();
+  }, [currentUserId, managerID]);
 
   const goHome = () => {
     navigate('/');
@@ -81,7 +167,7 @@ const RateManager = () => {
     setShowAddManagerForm(true);
   };
 
-  const handleAddManager = () => {
+  const handleAddManager = async () => {
     if (newManagerName.trim() === '') {
       alert('Please enter the manager\'s first name');
       return;
@@ -91,26 +177,24 @@ const RateManager = () => {
       return;
     }
 
-    const currentManager = managers.find(m => m.id === parseInt(managerID));
-    const restaurantId = currentManager?.restaurantId || 1;
-    const restaurantName = currentManager?.restaurantName || 'Barcelona Wine Bar';
+    const restaurantId = currentManager?.restaurant_id || 1;
 
-    const savedManagers = localStorage.getItem('managers');
-    const currentManagers = savedManagers ? JSON.parse(savedManagers) : [];
-    
-    const newManager = {
-      id: currentManagers.length > 0 ? Math.max(...currentManagers.map(m => m.id)) + 1 : 1,
-      name: newManagerName.trim(),
-      position: newManagerPosition.trim(),
-      restaurantId: restaurantId,
-      restaurantName: restaurantName
-    };
+    const { data, error } = await supabase
+      .from('managers')
+      .insert([{
+        name: newManagerName.trim(),
+        position: newManagerPosition.trim(),
+        restaurant_id: restaurantId
+      }])
+      .select()
+      .single();
 
-    const updatedManagers = [...currentManagers, newManager];
-    localStorage.setItem('managers', JSON.stringify(updatedManagers));
-    setManagers(updatedManagers);
-    
-    navigate(`/rate/${newManager.id}`, { state: { managerName: newManager.name } });
+    if (error) {
+      console.error('Error adding manager:', error);
+      alert('Failed to add manager');
+    } else {
+      navigate(`/rate/${data.id}`, { state: { managerName: data.name } });
+    }
   };
 
   const handleCancelAdd = () => {
@@ -119,7 +203,9 @@ const RateManager = () => {
     setNewManagerPosition('');
   };
 
-  const handleVote = (reviewId, voteType) => {
+  const handleVote = async (reviewId, voteType) => {
+    if (!currentUserId) return;
+
     const currentVote = userVotes[reviewId];
     let newVote = null;
 
@@ -129,55 +215,79 @@ const RateManager = () => {
       newVote = voteType;
     }
 
+    // Update local state immediately for responsiveness
     const newUserVotes = {
       ...userVotes,
       [reviewId]: newVote
     };
     setUserVotes(newUserVotes);
-    localStorage.setItem('userVotes_manager_' + managerID, JSON.stringify(newUserVotes));
 
-    const savedRatings = localStorage.getItem('managerRatings');
-    if (savedRatings) {
-      const allRatings = JSON.parse(savedRatings);
-      const managerRatings = allRatings[managerID] || [];
-      
-      const updatedRatings = managerRatings.map(rating => {
-        if (rating.id === reviewId) {
-          const updatedRating = { ...rating };
-          
-          if (currentVote === 'like' && newVote === null) {
-            updatedRating.likes = Math.max(0, (updatedRating.likes || 0) - 1);
-          } else if (currentVote === 'like' && newVote === 'dislike') {
-            updatedRating.likes = Math.max(0, (updatedRating.likes || 0) - 1);
-            updatedRating.dislikes = (updatedRating.dislikes || 0) + 1;
-          } else if (currentVote === 'dislike' && newVote === null) {
-            updatedRating.dislikes = Math.max(0, (updatedRating.dislikes || 0) - 1);
-          } else if (currentVote === 'dislike' && newVote === 'like') {
-            updatedRating.dislikes = Math.max(0, (updatedRating.dislikes || 0) - 1);
-            updatedRating.likes = (updatedRating.likes || 0) + 1;
-          } else if (currentVote === null && newVote === 'like') {
-            updatedRating.likes = (updatedRating.likes || 0) + 1;
-          } else if (currentVote === null && newVote === 'dislike') {
-            updatedRating.dislikes = (updatedRating.dislikes || 0) + 1;
-          }
-          
-          return updatedRating;
-        }
-        return rating;
-      });
-      
-      allRatings[managerID] = updatedRatings;
-      localStorage.setItem('managerRatings', JSON.stringify(allRatings));
-      setAllRatings(allRatings);
+    // Update in database
+    if (newVote === null) {
+      // Delete vote
+      await supabase
+        .from('user_votes')
+        .delete()
+        .eq('user_id', currentUserId)
+        .eq('review_type', 'manager')
+        .eq('review_id', reviewId);
+    } else {
+      // Upsert vote
+      await supabase
+        .from('user_votes')
+        .upsert({
+          user_id: currentUserId,
+          review_type: 'manager',
+          review_id: reviewId,
+          vote_type: newVote,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,review_type,review_id'
+        });
+    }
+
+    // Calculate new like/dislike counts
+    const rating = allRatings.find(r => r.id === reviewId);
+    if (!rating) return;
+
+    let newLikes = rating.likes || 0;
+    let newDislikes = rating.dislikes || 0;
+
+    if (currentVote === 'like' && newVote === null) {
+      newLikes = Math.max(0, newLikes - 1);
+    } else if (currentVote === 'like' && newVote === 'dislike') {
+      newLikes = Math.max(0, newLikes - 1);
+      newDislikes = newDislikes + 1;
+    } else if (currentVote === 'dislike' && newVote === null) {
+      newDislikes = Math.max(0, newDislikes - 1);
+    } else if (currentVote === 'dislike' && newVote === 'like') {
+      newDislikes = Math.max(0, newDislikes - 1);
+      newLikes = newLikes + 1;
+    } else if (currentVote === null && newVote === 'like') {
+      newLikes = newLikes + 1;
+    } else if (currentVote === null && newVote === 'dislike') {
+      newDislikes = newDislikes + 1;
+    }
+
+    // Update rating counts in database
+    const { error } = await supabase
+      .from('manager_ratings')
+      .update({ likes: newLikes, dislikes: newDislikes })
+      .eq('id', reviewId);
+
+    if (error) {
+      console.error('Error updating vote counts:', error);
+    } else {
+      // Update local state
+      setAllRatings(prevRatings =>
+        prevRatings.map(r =>
+          r.id === reviewId
+            ? { ...r, likes: newLikes, dislikes: newDislikes }
+            : r
+        )
+      );
     }
   };
-
-  useEffect(() => {
-    const currentManager = managers.find(m => m.id === parseInt(managerID));
-    if (currentManager && currentManager.restaurantName) {
-      setRestaurantPlaceholder(currentManager.restaurantName);
-    }
-  }, [managerID, managers]);
 
   const handleRestaurantSearch = (e) => {
     const searched = e.target.value;
@@ -186,7 +296,6 @@ const RateManager = () => {
 
     if (searched.trim() === '') {
       setFilteredRestaurants([]);
-      const currentManager = managers.find(m => m.id === parseInt(managerID));
       if (currentManager && currentManager.restaurantName) {
         setRestaurantPlaceholder(currentManager.restaurantName);
       }
@@ -199,7 +308,6 @@ const RateManager = () => {
   };
 
   const handleClearRestaurantSearch = () => {
-    const currentManager = managers.find(m => m.id === parseInt(managerID));
     const currentRestaurantName = currentManager?.restaurantName || 'Barcelona Wine Bar';
     
     if (showRestaurantDropdown) {
@@ -226,11 +334,10 @@ const RateManager = () => {
       setFilteredManagers([]);
       setManagerPlaceholder(managerName || 'Manager Name');
     } else {
-      const currentManager = managers.find(m => m.id === parseInt(managerID));
-      const currentRestaurantId = currentManager?.restaurantId;
+      const currentRestaurantId = currentManager?.restaurant_id;
       
       const filtered = managers.filter(manager =>
-        manager.restaurantId === currentRestaurantId &&
+        manager.restaurant_id === currentRestaurantId &&
         manager.name.toLowerCase().includes(searched.toLowerCase())
       );
       setFilteredManagers(filtered);
@@ -248,10 +355,9 @@ const RateManager = () => {
       setManagerPlaceholder('Search for a manager');
       setShowManagerDropdown(true);
       
-      const currentManager = managers.find(m => m.id === parseInt(managerID));
-      const currentRestaurantId = currentManager?.restaurantId;
+      const currentRestaurantId = currentManager?.restaurant_id;
       
-      const restaurantManagers = managers.filter(m => m.restaurantId === currentRestaurantId)
+      const restaurantManagers = managers.filter(m => m.restaurant_id === currentRestaurantId)
         .sort((a, b) => a.name.localeCompare(b.name));
       setFilteredManagers(restaurantManagers);
     }
@@ -261,7 +367,6 @@ const RateManager = () => {
     setRestaurantSearchInput('');
     setFilteredRestaurants([]);
     setShowRestaurantDropdown(false);
-    const currentManager = managers.find(m => m.id === parseInt(managerID));
     if (currentManager && currentManager.restaurantName) {
       setRestaurantPlaceholder(currentManager.restaurantName);
     }
@@ -276,117 +381,7 @@ const RateManager = () => {
     navigate(`/rate/${manager.id}`, { state: { managerName: manager.name } });
   };
 
-  const [allRatings, setAllRatings] = useState(() => {
-    const savedRatings = localStorage.getItem('managerRatings');
-    if (savedRatings) {
-      return JSON.parse(savedRatings);
-    } else {
-      const defaultRatings = {
-        '1': [
-          {
-            id: 1,
-            communication: 5,
-            fairness: 5,
-            approachability: 5,
-            organization: 5,
-            wouldRecommend: true,
-            comment: "Great manager! Very supportive and always available when you need help. Makes the work environment enjoyable.",
-            date: "January 7, 2025",
-            position: "Host",
-            duration: "5 months",
-            tags: ["Good Scheduling"],
-            likes: 8,
-            dislikes: 1
-          },
-          {
-            id: 2,
-            communication: 4,
-            fairness: 4,
-            approachability: 4,
-            organization: 4,
-            wouldRecommend: true,
-            comment: "Excellent leadership and communication skills. Fair with scheduling and always listens to concerns. Would definitely recommend working under this manager.",
-            date: "January 6, 2025",
-            position: "Server",
-            duration: "2 years",
-            tags: ["Good Scheduling"],
-            likes: 7,
-            dislikes: 2
-          },
-          {
-            id: 3,
-            communication: 3,
-            fairness: 2,
-            approachability: 3,
-            organization: 3,
-            wouldRecommend: false,
-            comment: "Could improve on fairness and organization. Sometimes plays favorites with scheduling.",
-            date: "January 5, 2025",
-            position: "Bartender",
-            duration: "1 year",
-            tags: ["Low Workload", "Good Pay"],
-            likes: 4,
-            dislikes: 5
-          },
-          {
-            id: 4,
-            communication: 5,
-            fairness: 4,
-            approachability: 5,
-            organization: 4,
-            wouldRecommend: true,
-            comment: "Very approachable and understanding. Easy to talk to about any issues or concerns.",
-            date: "January 3, 2025",
-            position: "Server",
-            duration: "8 months",
-            tags: ["Bad Scheduling"],
-            likes: 6,
-            dislikes: 1
-          },
-          {
-            id: 5,
-            communication: 2,
-            fairness: 3,
-            approachability: 2,
-            organization: 3,
-            wouldRecommend: false,
-            comment: "Lacks communication skills. Often doesn't relay important information to the team in a timely manner.",
-            date: "December 28, 2024",
-            position: "Host",
-            duration: "4 months",
-            tags: ["Low Workload"],
-            likes: 3,
-            dislikes: 6
-          }
-        ],
-        '2': [
-          {
-            id: 1,
-            communication: 5,
-            fairness: 5,
-            approachability: 3,
-            organization: 4,
-            wouldRecommend: true,
-            comment: "Excellent manager overall! Very organized and fair with everyone.",
-            date: "January 5, 2025",
-            position: "Host",
-            duration: "3 months",
-            tags: ["Good Pay"],
-            likes: 6,
-            dislikes: 0
-          }
-        ]
-      };
-      localStorage.setItem('managerRatings', JSON.stringify(defaultRatings));
-      return defaultRatings;
-    }
-  });
-
-  useEffect(() => {
-    localStorage.setItem('managerRatings', JSON.stringify(allRatings));
-  }, [allRatings]);
-
-  const existingRatings = allRatings[managerID] || [];
+  const existingRatings = allRatings;
 
   const calAverage = (quality) => {
     if (existingRatings.length === 0) return 0;
@@ -486,6 +481,10 @@ const RateManager = () => {
     }
   };
 
+  if (loading) {
+    return <div className="loading">Loading...</div>;
+  }
+
   return (
     <div className='rateManagerPage'> 
       <div className="topBar">
@@ -571,8 +570,8 @@ const RateManager = () => {
 
       <div className="header">
         <div className="managerInfo">
-          <span className="managerName">{managerName}</span>
-          <p className="resName">{managers.find(m => m.id === parseInt(managerID))?.restaurantName || 'Barcelona Wine Bar'}</p>
+          <span className="managerName">{currentManager?.name || managerName}</span>
+          <p className="resName">{currentManager?.restaurantName || 'Barcelona Wine Bar'}</p>
           <div className="stars">
             {[1, 2, 3].map((star) => (
               <span key={star} className="star filled">★</span>
@@ -680,7 +679,7 @@ const RateManager = () => {
           <div className="reviewsList">
             {existingRatings.length === 0 ? (
               <div className="noReviews">
-                <p>No reviews yet. Be the first to review {managerName}!</p>
+                <p>No reviews yet. Be the first to review {currentManager?.name || managerName}!</p>
               </div>
             ) : (
               <>
@@ -781,7 +780,7 @@ const RateManager = () => {
           <div className="addManagerModal">
             <button className="modalCloseBtn" onClick={handleCancelAdd}>✕</button>
             <div className="modalContent">
-              <h2>Manager at {managers.find(m => m.id === parseInt(managerID))?.restaurantName || 'Barcelona Wine Bar'}</h2>
+              <h2>Manager at {currentManager?.restaurantName || 'Barcelona Wine Bar'}</h2>
               
               <div className="modalInputGroup">
                 <label>First Name <span className="required">*</span></label>

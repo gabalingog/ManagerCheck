@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { supabase } from './../../supabaseClient'
 import './RestaurantForm.css';
 
 const RestaurantForm = () => {
@@ -7,6 +8,7 @@ const RestaurantForm = () => {
   const location = useLocation();
   const restaurantName = location.state?.restaurantName;
   const navigate = useNavigate();
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   const [ratings, setRatings] = useState({
     teamEnvironment: 0,
@@ -30,17 +32,25 @@ const RestaurantForm = () => {
     "Low Pay"
   ];
 
+  // Generate or retrieve user ID
+  useEffect(() => {
+    let userId = localStorage.getItem('tempUserId');
+    if (!userId) {
+      userId = 'user_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('tempUserId', userId);
+    }
+    setCurrentUserId(userId);
+  }, []);
+
   const handleStarClick = (category, starValue, event) => {
     const starElement = event.currentTarget;
     const rect = starElement.getBoundingClientRect();
     const clickX = event.clientX - rect.left;
     const starWidth = rect.width;
     
-    // Click left half for 0.5, right half for 1.0
     const isLeftHalf = clickX < starWidth / 2;
     const newValue = isLeftHalf ? starValue - 0.5 : starValue;
     
-    // If clicking the same rating, clear it
     setRatings(prev => ({
       ...prev,
       [category]: prev[category] === newValue ? 0 : newValue
@@ -57,8 +67,13 @@ const RestaurantForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!currentUserId) {
+      alert('Error: Could not generate user ID');
+      return;
+    }
 
     // Validation
     if (Object.values(ratings).some(rating => rating === 0)) {
@@ -78,30 +93,34 @@ const RestaurantForm = () => {
       return;
     }
 
-    // Get existing ratings from localStorage
-    const savedRatings = localStorage.getItem('restaurantRatings');
-    const allRatings = savedRatings ? JSON.parse(savedRatings) : {};
-    const existingRatings = allRatings[restaurantID] || [];
-
     const newRating = {
-      id: existingRatings.length > 0 ? Math.max(...existingRatings.map(r => r.id)) + 1 : 1,
-      teamEnvironment: ratings.teamEnvironment,
-      shiftAvailability: ratings.shiftAvailability,
+      restaurant_id: parseInt(restaurantID),
+      user_id: currentUserId,
+      team_environment: ratings.teamEnvironment,
+      shift_availability: ratings.shiftAvailability,
       pay: ratings.pay,
-      staffWorkloadRatio: ratings.staffWorkloadRatio,
-      wouldRecommend,
+      staff_workload_ratio: ratings.staffWorkloadRatio,
+      would_recommend: wouldRecommend,
       comment: comment.trim(),
       date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
       position: position.trim(),
       duration: duration.trim(),
-      tags: selectedTags
+      tags: selectedTags,
+      likes: 0,
+      dislikes: 0
     };
 
-    allRatings[restaurantID] = [...existingRatings, newRating];
-    localStorage.setItem('restaurantRatings', JSON.stringify(allRatings));
+    const { error } = await supabase
+      .from('restaurant_ratings')
+      .insert([newRating]);
 
-    alert('Rating submitted successfully!');
-    navigate(`/restaurant/${restaurantID}`, { state: { restaurantName } });
+    if (error) {
+      console.error('Error submitting rating:', error);
+      alert('Failed to submit rating. Please try again.');
+    } else {
+      alert('Rating submitted successfully!');
+      navigate(`/restaurant/${restaurantID}`, { state: { restaurantName } });
+    }
   };
 
   const handleCancel = () => {

@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { supabase } from '../../supabaseClient';
+import { supabase } from './../../supabaseClient'
 import './ManagerForm.css';
-import { useAuth } from '../../authContext';
-import AuthModal from '../AuthModal/AuthModal';
 
 const ManagerForm = () => {
   const { managerID } = useParams();
   const location = useLocation();
   const managerName = location.state?.managerName;
   const navigate = useNavigate();
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   const [ratings, setRatings] = useState({
     communication: 0,
@@ -23,15 +22,25 @@ const ManagerForm = () => {
   const [wouldRecommend, setWouldRecommend] = useState(null);
   const [position, setPosition] = useState('');
   const [duration, setDuration] = useState('');
-  const [submitting, setSubmitting] = useState(false);
 
   const availableTags = [
     "Good Scheduling",
     "Bad Scheduling",
-    "Low Workload",
     "Good Pay",
-    "Poor Communication"
+    "Low Pay",
+    "Low Workload",
+    "High Workload"
   ];
+
+  // Generate or retrieve user ID
+  useEffect(() => {
+    let userId = localStorage.getItem('tempUserId');
+    if (!userId) {
+      userId = 'user_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('tempUserId', userId);
+    }
+    setCurrentUserId(userId);
+  }, []);
 
   const handleStarClick = (category, starValue, event) => {
     const starElement = event.currentTarget;
@@ -61,6 +70,11 @@ const ManagerForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!currentUserId) {
+      alert('Error: Could not generate user ID');
+      return;
+    }
+
     // Validation
     if (Object.values(ratings).some(rating => rating === 0)) {
       alert('Please rate all categories');
@@ -79,39 +93,34 @@ const ManagerForm = () => {
       return;
     }
 
-    setSubmitting(true);
+    const newRating = {
+      manager_id: parseInt(managerID),
+      user_id: currentUserId,
+      communication: ratings.communication,
+      fairness: ratings.fairness,
+      approachability: ratings.approachability,
+      organization: ratings.organization,
+      would_recommend: wouldRecommend,
+      comment: comment.trim(),
+      date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+      position: position.trim(),
+      duration: duration.trim(),
+      tags: selectedTags,
+      likes: 0,
+      dislikes: 0
+    };
 
-    // Insert into Supabase
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('manager_ratings')
-      .insert([
-        {
-          manager_id: parseInt(managerID),
-          communication: ratings.communication,
-          fairness: ratings.fairness,
-          approachability: ratings.approachability,
-          organization: ratings.organization,
-          would_recommend: wouldRecommend,
-          comment: comment.trim(),
-          position: position.trim(),
-          duration: duration.trim(),
-          tags: selectedTags,
-          likes: 0,
-          dislikes: 0
-        }
-      ])
-      .select();
-
-    setSubmitting(false);
+      .insert([newRating]);
 
     if (error) {
-      console.error('Error inserting rating:', error);
-      alert('Error submitting rating: ' + error.message);
-      return;
+      console.error('Error submitting rating:', error);
+      alert('Failed to submit rating. Please try again.');
+    } else {
+      alert('Rating submitted successfully!');
+      navigate(`/rate/${managerID}`, { state: { managerName } });
     }
-
-    alert('Rating submitted successfully!');
-    navigate(`/rate/${managerID}`, { state: { managerName } });
   };
 
   const handleCancel = () => {
@@ -146,7 +155,6 @@ const ManagerForm = () => {
       <div className="formContainer">
         <div className="formHeader">
           <h1>Rate {managerName}</h1>
-          <p className="restaurantName">Barcelona Wine Bar</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -176,7 +184,7 @@ const ManagerForm = () => {
 
           {/* Rating Categories */}
           <div className="formSection">
-            <h2>Rate Your Manager</h2>
+            <h2>Rate This Manager</h2>
             
             <div className="ratingCategory">
               <label>Communication</label>
@@ -263,9 +271,7 @@ const ManagerForm = () => {
 
           {/* Submit Buttons */}
           <div className="formActions">
-            <button type="submit" className="submitBtn" disabled={submitting}>
-              {submitting ? 'Submitting...' : 'Submit Rating'}
-            </button>
+            <button type="submit" className="submitBtn">Submit Rating</button>
             <button type="button" className="cancelBtn" onClick={handleCancel}>Cancel</button>
           </div>
         </form>
