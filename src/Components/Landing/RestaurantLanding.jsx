@@ -141,27 +141,27 @@ const RestaurantLanding = () => {
             <div className="bottom">
                 <div className="anonBox">
                     <img src={pic} alt="Restaurant workplace" className="boxImage" />
-                    <span className='header'>Anonymous reviews</span>
-                    <div className="viewRatings">
+                    <span className='header'>All reviews are anonymous</span>
+                    {/* <div className="viewRatings">
                         <img src={search} alt="Search" className='searchIcon'/>
                         <input
                             type="text"
-                            placeholder="View your ratings"
+                            // placeholder="View your ratings"
                             readOnly
                         />
-                    </div>
+                    </div> */}
                 </div>
                 <div className="topRestos">
                     <img src={waitress} alt="Restaurant staff" className="boxImage" />
                     <span>Find the <span className="underline">best</span> workplace</span>
-                    <div className="findRestos">
+                    {/* <div className="findRestos">
                         <img src={search} alt="Search" className='searchIcon'/>
                         <input
                             type="text"
-                            placeholder="View the top rated restaurants near you"
+                            // placeholder="View the top rated restaurants near you"
                             readOnly
                         />
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
