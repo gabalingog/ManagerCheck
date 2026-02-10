@@ -7,6 +7,8 @@ import bg from './../Assets/background.png';
 import waitress from './../Assets/waitress.png';
 import pic from './../Assets/other.png';
 import logo2 from './../Assets/trialLogo.png';
+import pic1 from './../Assets/pic1.png';
+import pic2 from './../Assets/pic2-2.png';
 
 const RestaurantLanding = () => {
     const navigate = useNavigate();
@@ -87,8 +89,14 @@ const RestaurantLanding = () => {
     return (
         <div className='restoLanding'>
             <div className="bgmain">
-                <div className="bgImage" style={{
+                {/* <div className="bgImage" style={{
                     backgroundImage: `url(${bg})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                }}></div> */}
+                <div className="bgImage" style={{
+                    backgroundImage: `url(${pic2})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat'
@@ -101,7 +109,7 @@ const RestaurantLanding = () => {
                         </div>
                         <div className="right">
                             <div className="searching">
-                                <span>Search <i>your</i> restaurant</span>
+                                {/* <span>Search <i>your</i> restaurant</span> */}
                                 <div className="searchRes">
                                     <img src={search} alt="Search" className='searchLogo'/>
                                     <input
@@ -140,7 +148,8 @@ const RestaurantLanding = () => {
             
             <div className="bottom">
                 <div className="anonBox">
-                    <img src={pic} alt="Restaurant workplace" className="boxImage" />
+                    {/* <img src={pic} alt="Restaurant workplace" className="boxImage" /> */}
+                    <img src={pic1} alt="Restaurant workplace" className="boxImage" />
                     <span className='headerBox'>All reviews are anonymous</span>
                     {/* <div className="viewRatings">
                         <img src={search} alt="Search" className='searchIcon'/>
