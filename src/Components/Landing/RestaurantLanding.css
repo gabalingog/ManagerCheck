@@ -447,6 +447,7 @@ body {
 
 .webLogo {
     width: 700px;   
+    padding: 0 0 0 0;
     height: auto;   
     object-fit: contain;
     display: block;
