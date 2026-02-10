@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import './RestaurantLanding.css';
 import search from './../Assets/Search.png';
 import logo from './../Assets/finalLogo.png';
-import bg from './../Assets/background.png';
+// import bg from './../Assets/background.png';
 import waitress from './../Assets/waitress.png';
-import pic from './../Assets/other.png';
-import logo2 from './../Assets/trialLogo.png';
+// import pic from './../Assets/other.png';
+// import logo2 from './../Assets/trialLogo.png';
 import pic1 from './../Assets/pic1.png';
-import pic2 from './../Assets/pic2-2.png';
+// import pic2 from './../Assets/pic2-2.png';
 import pic3 from './../Assets/pic2-4.png';
 
 const RestaurantLanding = () => {
