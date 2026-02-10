@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from './../../supabaseClient'
 import './ManagersList.css'
@@ -18,11 +18,7 @@ const ManagersList = () => {
   const [newManagerName, setNewManagerName] = useState('');
   const [newManagerPosition, setNewManagerPosition] = useState('');
 
-  useEffect(() => {
-    fetchData();
-  }, [restaurantID]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -116,7 +112,11 @@ const ManagersList = () => {
       setError(err.message);
       setLoading(false);
     }
-  };
+  }, [restaurantID]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   useEffect(() => {
     if (searchInput.trim() === '') {
@@ -187,7 +187,7 @@ const ManagersList = () => {
       return;
     }
 
-    const { data, error } = await supabase
+    const { error: insertError } = await supabase
       .from('managers')
       .insert([{
         name: newManagerName.trim(),
@@ -197,8 +197,8 @@ const ManagersList = () => {
       .select()
       .single();
 
-    if (error) {
-      console.error('Error adding manager:', error);
+    if (insertError) {
+      console.error('Error adding manager:', insertError);
       alert('Failed to add manager');
     } else {
       setShowAddManagerForm(false);
