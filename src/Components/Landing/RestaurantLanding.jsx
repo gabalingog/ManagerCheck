@@ -148,7 +148,10 @@ const RestaurantLanding = () => {
             </div>
 
             <div className="mission">
-                <span>hi</span>
+                <span>Our mission is to bring <span style={{fontWeight: 600}}>transparency</span> to restaurant workplaces by<br/>
+                    empowering employees to <span style={{fontWeight: 600}}>share honest experiences</span> about management.<br/>
+                    ManagerCheck gives restaurant workers the clarity they deserve before clocking in,<br/>
+                    while also encouraging restaurants to <span style={{fontWeight: 600}}>build healthier cultures.</span></span>
             </div>
             
             <div className="bottom">
