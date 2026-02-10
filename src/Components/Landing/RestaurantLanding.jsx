@@ -9,6 +9,7 @@ import pic from './../Assets/other.png';
 import logo2 from './../Assets/trialLogo.png';
 import pic1 from './../Assets/pic1.png';
 import pic2 from './../Assets/pic2-2.png';
+import pic3 from './../Assets/pic2-4.png';
 
 const RestaurantLanding = () => {
     const navigate = useNavigate();
@@ -96,7 +97,7 @@ const RestaurantLanding = () => {
                     backgroundRepeat: 'no-repeat'
                 }}></div> */}
                 <div className="bgImage" style={{
-                    backgroundImage: `url(${pic2})`,
+                    backgroundImage: `url(${pic3})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat'
@@ -145,6 +146,10 @@ const RestaurantLanding = () => {
                     </div>
                 </div>
             </div>
+
+            <div className="mission">
+                <span>hi</span>
+            </div>
             
             <div className="bottom">
                 <div className="anonBox">
@@ -162,7 +167,7 @@ const RestaurantLanding = () => {
                 </div>
                 <div className="topRestos">
                     <img src={waitress} alt="Restaurant staff" className="boxImage" />
-                    <span>Find the <span className="underline">best</span> workplace</span>
+                    <span>Find the best workplace</span>
                     {/* <div className="findRestos">
                         <img src={search} alt="Search" className='searchIcon'/>
                         <input
