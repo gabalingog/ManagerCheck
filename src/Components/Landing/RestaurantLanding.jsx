@@ -31,11 +31,53 @@ const RestaurantLanding = () => {
     const [newRestaurantAddress, setNewRestaurantAddress] = useState('');
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
 
+    const missionPhrases = [
+        /**
+         * bring transparency to restaurants
+         * share honest employee experiences
+         * build healthier cultures at work
+         * support employees' perspectives
+         */
+        { highlight: "bring transparency", suffix: "to restaurants" },
+        { highlight: "find honest", suffix: "employee experiences" },
+        { highlight: "build healthier", suffix: "cultures at work" },
+        { highlight: "support employees'", suffix: "perspectives" },
+      ];
+      
+      const MissionSection = () => {
+        const [index, setIndex] = useState(0);
+        const [visible, setVisible] = useState(true);
+      
+        useEffect(() => {
+          const interval = setInterval(() => {
+            setVisible(false);
+            setTimeout(() => {
+              setIndex(prev => (prev + 1) % missionPhrases.length);
+              setVisible(true);
+            }, 500);
+          }, 3500);
+          return () => clearInterval(interval);
+        }, []);
+      
+        const phrase = missionPhrases[index];
+      
+        return (
+            <div className="mission">
+                <div className="missionContent">
+                    <span className="missionStatic">Our mission is to&nbsp;</span>
+                    <div className={`missionPhrase ${visible ? 'fadeIn' : 'fadeOut'}`}>
+                        <span className="missionHighlight">{phrase.highlight} </span>
+                        <span className="missionSuffix">{phrase.suffix}</span>
+                    </div>
+                </div>
+            </div>
+        );
+      };
+
     const handleSearch = (e) => {
         const searched = e.target.value;
         setSearchInput(searched);
-
-        if (searched.trim() === ''){
+        if (searched.trim() === '') {
             setFilteredRestaurants([]);
         } else {
             const filtered = restaurants.filter(restaurant =>
@@ -58,21 +100,13 @@ const RestaurantLanding = () => {
     };
 
     const handleAddRestaurant = () => {
-        if (newRestaurantName.trim() === '') {
-            alert('Please enter the restaurant name');
-            return;
-        }
-        if (newRestaurantAddress.trim() === '') {
-            alert('Please enter the restaurant address');
-            return;
-        }
-
+        if (newRestaurantName.trim() === '') { alert('Please enter the restaurant name'); return; }
+        if (newRestaurantAddress.trim() === '') { alert('Please enter the restaurant address'); return; }
         const newRestaurant = {
             id: restaurants.length + 1,
             name: newRestaurantName.trim(),
             address: newRestaurantAddress.trim()
         };
-
         const updatedRestaurants = [...restaurants, newRestaurant];
         setRestaurants(updatedRestaurants);
         navigate(`/restaurant/${newRestaurant.id}`, { state: { restaurantName: newRestaurant.name } });
@@ -90,12 +124,6 @@ const RestaurantLanding = () => {
     return (
         <div className='restoLanding'>
             <div className="bgmain">
-                {/* <div className="bgImage" style={{
-                    backgroundImage: `url(${bg})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
-                }}></div> */}
                 <div className="bgImage" style={{
                     backgroundImage: `url(${pic3})`,
                     backgroundSize: 'cover',
@@ -105,12 +133,11 @@ const RestaurantLanding = () => {
                 <div className="mainBackground">
                     <div className="main">
                         <div className="left">
-                            {/* <img src={logo} alt="Logo" className="webLogo" /> */}
-                            <img src={logo2} alt="Logo" className='webLogo' />
+                            {/* Logo image stays — only font/styling changes in CSS */}
+                            <img src={logo} alt="ManagerCheck" className='webLogo' />
                         </div>
                         <div className="right">
                             <div className="searching">
-                                {/* <span>Search <i>your</i> restaurant</span> */}
                                 <div className="searchRes">
                                     <img src={search} alt="Search" className='searchLogo'/>
                                     <input
@@ -137,8 +164,9 @@ const RestaurantLanding = () => {
 
                                 {searchInput && filteredRestaurants.length === 0 && (
                                     <div className="searchResult">
-                                        <span className='noManager'>Can't find the restaurant?
-                                        <span className='enterName' onClick={handleEnterRestaurant}> Enter name</span></span>
+                                        <span className='noManager'>Can't find the restaurant?&nbsp;
+                                            <span className='enterName' onClick={handleEnterRestaurant}>Add it</span>
+                                        </span>
                                     </div>
                                 )}
                             </div>
@@ -148,41 +176,26 @@ const RestaurantLanding = () => {
             </div>
 
             <div className="mission">
-                <span>Our mission is to bring <span style={{fontWeight: 600}}>transparency</span> to restaurant workplaces by<br/>
+                {/* <span>
+                    Our mission is to bring <span style={{fontWeight: 600}}>transparency</span> to restaurant workplaces by<br/>
                     empowering employees to <span style={{fontWeight: 600}}>share honest experiences</span> about management.<br/>
                     ManagerCheck gives restaurant workers the clarity they deserve before clocking in,<br/>
-                    while also encouraging restaurants to <span style={{fontWeight: 600}}>build healthier cultures.</span></span>
+                    while also encouraging restaurants to <span style={{fontWeight: 600}}>build healthier cultures.</span>
+                </span> */}
+                <MissionSection />
             </div>
             
             <div className="bottom">
                 <div className="anonBox">
-                    {/* <img src={pic} alt="Restaurant workplace" className="boxImage" /> */}
                     <img src={pic1} alt="Restaurant workplace" className="boxImage" />
                     <span className='headerBox'>All reviews are anonymous</span>
-                    {/* <div className="viewRatings">
-                        <img src={search} alt="Search" className='searchIcon'/>
-                        <input
-                            type="text"
-                            // placeholder="View your ratings"
-                            readOnly
-                        />
-                    </div> */}
                 </div>
                 <div className="topRestos">
                     <img src={waitress} alt="Restaurant staff" className="boxImage" />
                     <span>Find the best workplace</span>
-                    {/* <div className="findRestos">
-                        <img src={search} alt="Search" className='searchIcon'/>
-                        <input
-                            type="text"
-                            // placeholder="View the top rated restaurants near you"
-                            readOnly
-                        />
-                    </div> */}
                 </div>
             </div>
 
-            {/* Add Restaurant Modal */}
             {showAddForm && (
                 <>
                     <div className="modalOverlay" onClick={handleCancelAdd}></div>
@@ -195,7 +208,6 @@ const RestaurantLanding = () => {
                                 <label>Restaurant Name <span className="required">*</span></label>
                                 <input
                                     type="text"
-                                    placeholder=""
                                     value={newRestaurantName}
                                     onChange={(e) => setNewRestaurantName(e.target.value)}
                                     className="modalInput"
@@ -206,7 +218,6 @@ const RestaurantLanding = () => {
                                 <label>Address <span className="required">*</span></label>
                                 <input
                                     type="text"
-                                    placeholder=""
                                     value={newRestaurantAddress}
                                     onChange={(e) => setNewRestaurantAddress(e.target.value)}
                                     className="modalInput"
