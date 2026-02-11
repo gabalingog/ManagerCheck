@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import './RestaurantLanding.css';
 import search from './../Assets/Search.png';
@@ -31,48 +31,92 @@ const RestaurantLanding = () => {
     const [newRestaurantAddress, setNewRestaurantAddress] = useState('');
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
 
+    // ── Scroll-triggered visibility for bottom cards ──────────────
+    const bottomRef = useRef(null);
+    const [cardsVisible, setCardsVisible] = useState([false, false]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Stagger the two cards
+                    setCardsVisible([true, false]);
+                    setTimeout(() => setCardsVisible([true, true]), 120);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        if (bottomRef.current) observer.observe(bottomRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    // ── Scroll-triggered visibility for mission section ───────────
+    const missionRef = useRef(null);
+    const [missionVisible, setMissionVisible] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setMissionVisible(true);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        if (missionRef.current) observer.observe(missionRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    // ── Rotating mission phrases ───────────────────────────────────
     const missionPhrases = [
-        /**
-         * bring transparency to restaurants
-         * share honest employee experiences
-         * build healthier cultures at work
-         * support employees' perspectives
-         */
         { highlight: "bring transparency", suffix: "to restaurants" },
         { highlight: "find honest", suffix: "employee experiences" },
         { highlight: "build healthier", suffix: "cultures at work" },
         { highlight: "support employees'", suffix: "perspectives" },
-      ];
+    ];
       
-      const MissionSection = () => {
+    const MissionSection = () => {
         const [index, setIndex] = useState(0);
         const [visible, setVisible] = useState(true);
       
         useEffect(() => {
-          const interval = setInterval(() => {
-            setVisible(false);
-            setTimeout(() => {
-              setIndex(prev => (prev + 1) % missionPhrases.length);
-              setVisible(true);
-            }, 500);
-          }, 3500);
-          return () => clearInterval(interval);
+            const interval = setInterval(() => {
+                setVisible(false);
+                setTimeout(() => {
+                    setIndex(prev => (prev + 1) % missionPhrases.length);
+                    setVisible(true);
+                }, 500);
+            }, 3500);
+            return () => clearInterval(interval);
         }, []);
       
         const phrase = missionPhrases[index];
       
         return (
-            <div className="mission">
-                <div className="missionContent">
+            <div className="missionContent" ref={missionRef}>
+                {/* Eyebrow label */}
+                <div className={`missionEyebrow ${missionVisible ? 'visible' : ''}`}>
+                    Our Purpose
+                </div>
+
+                {/* Rotating headline */}
+                <div className={`missionHeadlineWrap ${missionVisible ? 'visible' : ''}`}>
                     <span className="missionStatic">Our mission is to&nbsp;</span>
                     <div className={`missionPhrase ${visible ? 'fadeIn' : 'fadeOut'}`}>
                         <span className="missionHighlight">{phrase.highlight} </span>
                         <span className="missionSuffix">{phrase.suffix}</span>
                     </div>
                 </div>
+
+                {/* Supporting body text */}
+                <p className={`missionBody ${missionVisible ? 'visible' : ''}`}>
+                    The industry moves fast and word doesn't always travel far enough. Manager Check gives hospitality workers a trusted, anonymous space to share their experiences — so the next person can make a more informed choice.
+                </p>
             </div>
         );
-      };
+    };
 
     const handleSearch = (e) => {
         const searched = e.target.value;
@@ -132,11 +176,18 @@ const RestaurantLanding = () => {
                 }}></div>
                 <div className="mainBackground">
                     <div className="main">
-                        <div className="left">
-                            {/* Logo image stays — only font/styling changes in CSS */}
+                        {/* Logo — fade up on load */}
+                        <div className="left heroFadeUp" style={{ animationDelay: '0.2s' }}>
                             <img src={logo} alt="ManagerCheck" className='webLogo' />
                         </div>
-                        <div className="right">
+
+                        {/* Tagline — fade up after logo */}
+                        <p className="heroTagline heroFadeUp" style={{ animationDelay: '0.5s' }}>
+                            Know who you're working for, before you start.
+                        </p>
+
+                        {/* Search bar — fade up last */}
+                        <div className="right heroFadeUp" style={{ animationDelay: '0.75s' }}>
                             <div className="searching">
                                 <div className="searchRes">
                                     <img src={search} alt="Search" className='searchLogo'/>
@@ -172,27 +223,35 @@ const RestaurantLanding = () => {
                             </div>
                         </div>
                     </div>
+
+                    {/* Scroll cue */}
+                    <div className="heroScroll heroFadeUp" style={{ animationDelay: '1.3s' }}>
+                        <span>Scroll</span>
+                        <div className="heroScrollLine"></div>
+                    </div>
                 </div>
             </div>
 
+            {/* Mission section */}
             <div className="mission">
-                {/* <span>
-                    Our mission is to bring <span style={{fontWeight: 600}}>transparency</span> to restaurant workplaces by<br/>
-                    empowering employees to <span style={{fontWeight: 600}}>share honest experiences</span> about management.<br/>
-                    ManagerCheck gives restaurant workers the clarity they deserve before clocking in,<br/>
-                    while also encouraging restaurants to <span style={{fontWeight: 600}}>build healthier cultures.</span>
-                </span> */}
                 <MissionSection />
             </div>
             
-            <div className="bottom">
-                <div className="anonBox">
+            {/* Bottom feature cards */}
+            <div className="bottom" ref={bottomRef}>
+                <div className={`anonBox featureCard ${cardsVisible[0] ? 'cardVisible' : ''}`}>
                     <img src={pic1} alt="Restaurant workplace" className="boxImage" />
-                    <span className='headerBox'>All reviews are anonymous</span>
+                    <div className="cardContent">
+                        <span className='headerBox'>All reviews are anonymous</span>
+                        <p className='cardDesc'>Your name never appears. Your identity is never stored with your review. Speak freely — we've built the system specifically so you never have to worry about blowback.</p>
+                    </div>
                 </div>
-                <div className="topRestos">
+                <div className={`topRestos featureCard ${cardsVisible[1] ? 'cardVisible' : ''}`}>
                     <img src={waitress} alt="Restaurant staff" className="boxImage" />
-                    <span>Find the best workplace</span>
+                    <div className="cardContent">
+                        <span className='headerBox'>Find the best workplace</span>
+                        <p className='cardDesc'>Browse any restaurant, see all its managers, and read what your future coworkers already know. Walk into your next job with your eyes open, not crossed fingers.</p>
+                    </div>
                 </div>
             </div>
 
