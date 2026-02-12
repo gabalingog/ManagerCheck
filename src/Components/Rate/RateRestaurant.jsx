@@ -355,6 +355,13 @@ const RateRestaurant = () => {
     parseFloat(calAverage('staff_workload_ratio'))) / 4
   ).toFixed(1) : 0;
 
+  const recommendationPercentage = existingRatings.length > 0
+    ? Math.round((existingRatings.filter(r => {
+        const avg = (r.team_environment + r.shift_availability + r.pay + r.staff_workload_ratio) / 4;
+        return avg >= 3.5;
+      }).length / existingRatings.length) * 100)
+    : 0;
+
   const getRatingDistribution = () => {
     const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
     existingRatings.forEach(rating => {
@@ -441,27 +448,50 @@ const RateRestaurant = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="loadingState">
+        <div className="loadingSpinner"></div>
+        <p>Loading restaurant details...</p>
+      </div>
+    );
   }
 
   return (
     <div className='rateRestaurantPage'> 
-      <div className="topBar">
-        <div className="dualSearchBar">
-          <div className="searchSection">
+      {/* Navigation Bar */}
+      <nav className="topNav">
+        <div className="navLogo">
+          Manager<span>Check</span>
+        </div>
+        <button className="homeBtn" onClick={goHome}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          Home
+        </button>
+      </nav>
+
+      {/* Search Bar Section */}
+      <div className="searchBarSection">
+        <div className="searchBarContainer">
+          <div className="searchInputWrapper">
+            <svg className="searchIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
             <input 
               type="text" 
               placeholder={restaurantPlaceholder}
               value={restaurantSearchInput}
               onChange={handleRestaurantSearch}
-              className="restaurantSearchInput"
+              className="searchInput"
             />
             {!restaurantSearchInput && (
-              <button 
-                className="clearButton"
-                onClick={handleClearRestaurantSearch}
-              >
-                ✕
+              <button className="searchToggle" onClick={handleClearRestaurantSearch}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
               </button>
             )}
             {(showRestaurantDropdown || (restaurantSearchInput && filteredRestaurants.length > 0)) && (
@@ -484,12 +514,17 @@ const RateRestaurant = () => {
             )}
           </div>
 
-          <div className="searchSection">
+          <div className="searchInputWrapper">
+            <svg className="searchIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
             <input 
               type="text" 
               placeholder="Search for a manager" 
               value={managerSearchInput}
               onChange={handleManagerSearch}
+              className="searchInput"
             />
             {managerSearchInput && filteredManagers.length > 0 && (
               <div className="searchDropdown">
@@ -507,192 +542,223 @@ const RateRestaurant = () => {
             {managerSearchInput && filteredManagers.length === 0 && (
               <div className="searchDropdown">
                 <div className="noResults">
-                  <span className='noManager'>Can't find the manager?
-                  <span className='enterName' onClick={handleEnterManager}> Enter first name</span></span>
+                  <span className='noManager'>Can't find the manager?&nbsp;
+                  <span className='enterName' onClick={handleEnterManager}>Add manager</span></span>
                 </div>
               </div>
             )}
           </div>
         </div>
-        
-        <button className="homeBtn" onClick={goHome}>Home</button>
       </div>
 
-      <div className="header">
-        <div className="restaurantInfo">
-          <span className="restaurantName">{currentRestaurant?.name || restaurantName}</span>
-          <p className="location">{currentRestaurant?.location || 'Boston, MA'}</p>
-          <div className="stars">
-            {[1, 2, 3].map((star) => (
-              <span key={star} className="star filled">★</span>
-            ))}
+      {/* Hero Header */}
+      <header className="restaurantHeader">
+        <div className="headerContent">
+          <div className="headerLeft">
+            <h1 className="restaurantName">{currentRestaurant?.name || restaurantName}</h1>
+            <p className="restaurantLocation">{currentRestaurant?.location || 'Boston, MA'}</p>
+          </div>
+          
+          <div className="headerRight">
+            <div className="headerStats">
+              <div className="ratingCard">
+                <div className="ratingNumber">{overallRating}</div>
+                <div className="ratingStars">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <span key={star} className={`ratingStar ${star <= Math.round(overallRating) ? 'filled' : ''}`}>★</span>
+                  ))}
+                </div>
+                <div className="ratingLabel">{existingRatings.length} {existingRatings.length === 1 ? 'Review' : 'Reviews'}</div>
+              </div>
+              
+              {existingRatings.length > 0 && (
+                <div className="recommendCard">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                  </svg>
+                  <div className="recommendNumber">{recommendationPercentage}%</div>
+                  <div className="recommendLabel">Recommend</div>
+                </div>
+              )}
+            </div>
+            
+            <div className="headerActions">
+              <button className="btnPrimary" onClick={goToRatingForm}>
+                Rate Restaurant
+              </button>
+              <button className="btnSecondary" onClick={goToAllManagers}>
+                View Managers
+              </button>
+            </div>
           </div>
         </div>
+      </header>
 
-        <div className="ratingSummary">
-          <div className="overallRating">
-            <div className="rateNum">{overallRating}/5</div>
-            <div className="rateLabel">Average Rating</div>
-          </div>
-          <div className="recoStats">
-            <div className="recoNum">{existingRatings.length}</div>
-            <div className="rateLabel">Total Reviews</div>
-          </div>
-          <button className="rateButton" onClick={goToRatingForm}>Rate this restaurant</button>
-          <button className="seeAllButton" onClick={goToAllManagers}>See All Managers</button>
-        </div>
-      </div>
-
-      <div className="contentContainer">
-        <div className="leftSection">
-          <div className="reviewFilters">
-            <label htmlFor="filterSelect" className="filterLabel">Sort by:</label>
+      {/* Main Content */}
+      <div className="mainContent">
+        {/* Sidebar */}
+        <aside className="sidebar">
+          {/* Filters */}
+          <div className="filterCard">
+            <h3 className="cardTitle">Sort Reviews</h3>
             <select 
-              id="filterSelect"
-              className="filterDropdown"
+              className="filterSelect"
               value={reviewFilter}
               onChange={(e) => setReviewFilter(e.target.value)}
             >
               <option value="recent">Most Recent</option>
-              <option value="top">Top Reviews</option>
+              <option value="top">Top Rated</option>
             </select>
-            {ratingFilter !== null && (
-              <div className="activeFilterBadge">
-                Showing {ratingFilter}-star reviews
-                <button 
-                  className="clearFilterBtn"
-                  onClick={() => setRatingFilter(null)}
-                  aria-label="Clear filter"
-                >
-                  ✕
-                </button>
-              </div>
-            )}
-            {tagFilter !== null && (
-              <div className="activeFilterBadge">
-                Showing "{tagFilter}" reviews
-                <button 
-                  className="clearFilterBtn"
-                  onClick={() => setTagFilter(null)}
-                  aria-label="Clear filter"
-                >
-                  ✕
-                </button>
+            
+            {(ratingFilter !== null || tagFilter !== null) && (
+              <div className="activeFilters">
+                {ratingFilter !== null && (
+                  <div className="filterBadge">
+                    {ratingFilter} stars
+                    <button onClick={() => setRatingFilter(null)} className="removeBadge">✕</button>
+                  </div>
+                )}
+                {tagFilter !== null && (
+                  <div className="filterBadge">
+                    {tagFilter}
+                    <button onClick={() => setTagFilter(null)} className="removeBadge">✕</button>
+                  </div>
+                )}
               </div>
             )}
           </div>
 
-          <div className="ratingDistribution">
-            {[5, 4, 3, 2, 1].map((num) => (
-              <div 
-                key={num} 
-                className={`distributionRow ${ratingFilter === num ? 'active' : ''}`}
-                onClick={() => handleRatingClick(num)}
-                title={`${ratingDistribution[num]} ${ratingDistribution[num] === 1 ? 'review' : 'reviews'} with ${num} ${num === 1 ? 'star' : 'stars'}`}
-              >
-                <span className="distNum">{num}</span>
-                <div className="distBar">
-                  <div 
-                    className="distFill" 
-                    style={{ width: maxCount > 0 ? `${(ratingDistribution[num] / maxCount) * 100}%` : '0%' }}
-                  ></div>
+          {/* Rating Distribution */}
+          <div className="filterCard">
+            <h3 className="cardTitle">Rating Breakdown</h3>
+            <div className="distributionBars">
+              {[5, 4, 3, 2, 1].map((num) => (
+                <div 
+                  key={num} 
+                  className={`distributionRow ${ratingFilter === num ? 'active' : ''}`}
+                  onClick={() => handleRatingClick(num)}
+                >
+                  <span className="distLabel">{num}</span>
+                  <div className="distBarTrack">
+                    <div 
+                      className="distBarFill" 
+                      style={{ width: maxCount > 0 ? `${(ratingDistribution[num] / maxCount) * 100}%` : '0%' }}
+                    />
+                  </div>
+                  <span className="distCount">{ratingDistribution[num]}</span>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          <div className="summaryTags">
-            <h3>Summary</h3>
-            <div className="tags">
-              <span 
-                className={`tag ${tagFilter === 'Good Management' ? 'active' : ''}`}
+          {/* Tags */}
+          <div className="filterCard">
+            <h3 className="cardTitle">Quick Filters</h3>
+            <div className="tagsList">
+              <button 
+                className={`tagButton ${tagFilter === 'Good Management' ? 'active' : ''}`}
                 onClick={() => handleTagClick('Good Management')}
               >
                 Good Management
-              </span>
-              <span 
-                className={`tag ${tagFilter === 'Good Pay' ? 'active' : ''}`}
+              </button>
+              <button 
+                className={`tagButton ${tagFilter === 'Good Pay' ? 'active' : ''}`}
                 onClick={() => handleTagClick('Good Pay')}
               >
                 Good Pay
-              </span>
-              <span 
-                className={`tag ${tagFilter === 'Bad Scheduling' ? 'active' : ''}`}
+              </button>
+              <button 
+                className={`tagButton ${tagFilter === 'Bad Scheduling' ? 'active' : ''}`}
                 onClick={() => handleTagClick('Bad Scheduling')}
               >
                 Bad Scheduling
-              </span>
+              </button>
             </div>
           </div>
-        </div>
+        </aside>
 
-        <div className="rightSection">
-          <div className="reviewsList">
-            {existingRatings.length === 0 ? (
-              <div className="noReviews">
-                <p>No reviews yet. Be the first to review {currentRestaurant?.name || restaurantName}!</p>
+        {/* Reviews Section */}
+        <section className="reviewsSection">
+          {existingRatings.length === 0 ? (
+            <div className="emptyState">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+              <h2>No reviews yet</h2>
+              <p>Be the first to share your experience at {currentRestaurant?.name || restaurantName}</p>
+              <button className="btnPrimary" onClick={goToRatingForm}>
+                Write First Review
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="reviewsList">
+                {currentReviews.map((rating) => {
+                  const avgRating = Math.round((rating.team_environment + rating.shift_availability + rating.pay + rating.staff_workload_ratio) / 4);
+                  return (
+                    <article key={rating.id} className="reviewCard">
+                      <div className="reviewCardHeader">
+                        <div className="reviewStars">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <span key={star} className={`reviewStar ${star <= avgRating ? 'filled' : ''}`}>★</span>
+                          ))}
+                        </div>
+                        <div className="reviewMeta">
+                          <span className="reviewPosition">{rating.position}</span>
+                          <span className="reviewDot">•</span>
+                          <span className="reviewDuration">{rating.duration}</span>
+                        </div>
+                      </div>
+                      
+                      <p className="reviewText">{rating.comment}</p>
+                      
+                      <div className="reviewCardFooter">
+                        {rating.tags && rating.tags.length > 0 && (
+                          <div className="reviewTags">
+                            {rating.tags.map((tag, index) => (
+                              <span key={index} className="reviewTag">{tag}</span>
+                            ))}
+                          </div>
+                        )}
+                        
+                        <div className="reviewVotes">
+                          <button 
+                            className={`voteBtn ${userVotes[rating.id] === 'like' ? 'active' : ''}`}
+                            onClick={() => handleVote(rating.id, 'like')}
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                            </svg>
+                            <span>{rating.likes || 0}</span>
+                          </button>
+                          <button 
+                            className={`voteBtn ${userVotes[rating.id] === 'dislike' ? 'active' : ''}`}
+                            onClick={() => handleVote(rating.id, 'dislike')}
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
+                            </svg>
+                            <span>{rating.dislikes || 0}</span>
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
-            ) : (
-              <>
-                {currentReviews.map((rating) => (
-                <div key={rating.id} className="reviewCard">
-                  <div className="reviewHeader">
-                    <div className="stars">
-                      {[1, 2, 3, 4, 5].map((star) => {
-                        const avgRating = Math.round((rating.team_environment + rating.shift_availability + rating.pay + rating.staff_workload_ratio) / 4);
-                        return (
-                          <span key={star} className={`star ${star <= avgRating ? 'filled' : ''}`}>★</span>
-                        );
-                      })}
-                    </div>
-                    <span className="reviewPosition">{rating.position}</span>
-                    <span className="reviewDuration">{rating.duration}</span>
-                  </div>
-                  
-                  <div className="reviewComment">
-                    {rating.comment}
-                  </div>
-                  
-                  <div className="reviewFooter">
-                    <div className="reviewTags">
-                      {rating.tags && rating.tags.map((tag, index) => (
-                        <span key={index} className="reviewTag">{tag}</span>
-                      ))}
-                    </div>
-                    <div className="reviewVotes">
-                      <button 
-                        className={`voteButton ${userVotes[rating.id] === 'like' ? 'active' : ''}`}
-                        onClick={() => handleVote(rating.id, 'like')}
-                        aria-label="Like"
-                      >
-                        <svg className="voteIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M8 3L12 7H9V13H7V7H4L8 3Z" fill="currentColor"/>
-                        </svg>
-                        <span className="voteCount">{rating.likes || 0}</span>
-                      </button>
-                      <button 
-                        className={`voteButton ${userVotes[rating.id] === 'dislike' ? 'active' : ''}`}
-                        onClick={() => handleVote(rating.id, 'dislike')}
-                        aria-label="Dislike"
-                      >
-                        <svg className="voteIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M8 13L4 9H7V3H9V9H12L8 13Z" fill="currentColor"/>
-                        </svg>
-                        <span className="voteCount">{rating.dislikes || 0}</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
 
               {totalPages > 1 && (
                 <div className="pagination">
                   <button 
-                    className="pageArrow"
+                    className="paginationBtn"
                     onClick={handlePrevPage}
                     disabled={currentPage === 1}
                   >
-                    ←
+                    ← Previous
                   </button>
                   
                   <div className="pageNumbers">
@@ -701,7 +767,7 @@ const RateRestaurant = () => {
                       return (
                         <button
                           key={pageNum}
-                          className={`pageNumber ${currentPage === pageNum ? 'active' : ''}`}
+                          className={`pageBtn ${currentPage === pageNum ? 'active' : ''}`}
                           onClick={() => handlePageChange(pageNum)}
                         >
                           {pageNum}
@@ -711,36 +777,37 @@ const RateRestaurant = () => {
                   </div>
 
                   <button 
-                    className="pageArrow"
+                    className="paginationBtn"
                     onClick={handleNextPage}
                     disabled={currentPage === totalPages}
                   >
-                    →
+                    Next →
                   </button>
                 </div>
               )}
-              </>
-            )}
-          </div>
-        </div>
+            </>
+          )}
+        </section>
       </div>
 
+      {/* Add Manager Modal */}
       {showAddManagerForm && (
         <>
           <div className="modalOverlay" onClick={handleCancelAdd}></div>
-          <div className="addManagerModal">
-            <button className="modalCloseBtn" onClick={handleCancelAdd}>✕</button>
+          <div className="modal">
+            <button className="modalClose" onClick={handleCancelAdd}>✕</button>
             <div className="modalContent">
-              <h2>Manager at {currentRestaurant?.name || restaurantName}</h2>
+              <h2 className="modalTitle">Add Manager</h2>
+              <p className="modalSubtitle">at {currentRestaurant?.name || restaurantName}</p>
               
               <div className="modalInputGroup">
                 <label>First Name <span className="required">*</span></label>
                 <input
                   type="text"
-                  placeholder=""
                   value={newManagerName}
                   onChange={(e) => setNewManagerName(e.target.value)}
                   className="modalInput"
+                  placeholder="Enter first name"
                 />
               </div>
 
@@ -748,16 +815,16 @@ const RateRestaurant = () => {
                 <label>Position <span className="required">*</span></label>
                 <input
                   type="text"
-                  placeholder=""
                   value={newManagerPosition}
                   onChange={(e) => setNewManagerPosition(e.target.value)}
                   className="modalInput"
+                  placeholder="e.g., General Manager, Chef"
                 />
               </div>
 
-              <div className="modalButtons">
-                <button onClick={handleAddManager} className="modalAddBtn">Add Manager</button>
-                <button onClick={handleCancelAdd} className="modalCancelBtn">Cancel</button>
+              <div className="modalActions">
+                <button onClick={handleAddManager} className="modalBtnPrimary">Add Manager</button>
+                <button onClick={handleCancelAdd} className="modalBtnSecondary">Cancel</button>
               </div>
             </div>
           </div>

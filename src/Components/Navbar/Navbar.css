@@ -1,56 +1,169 @@
-.navbar {
-    display: flex;
-    justify-content: flex-end;
-    padding: 5px 10px;
-    box-shadow: 0 1px 3px -2px black;
-  }
-  
-  .buttons {
-    align-items: center;
-    display: flex;
-    gap: 20px;
-    padding: 2px;
-    padding-right: 15px;
-    font-size: 15px;
-  }
-  
-  .buttons button {
-    font-family: inherit;
-    font-size: inherit;
-    width: 90px;
-    height: 40px;
-    outline: none;
-    color: white;
-    background: black;
-    cursor: pointer;
-    border-radius: 75px;
-    border: 1px solid black;
-    transition: all 0.2s;
-  }
-  
-  .buttons button:hover {
-    background: #333;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  }
-  
-  .loginLink {
-    cursor: pointer;
-    color: #1a1a1a;
-    font-weight: 500;
-    transition: color 0.2s;
-  }
-  
-  .loginLink:hover {
-    color: #666;
-    text-decoration: underline;
-  }
-  
-  .userEmail {
-    color: #666;
-    font-size: 14px;
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap');
+
+:root {
+--green: #2a7a4b;
+--green-light: #3dab68;
+--cream: #f5f0e8;
+--border: rgba(60, 45, 20, 0.10);
+--text: #1e1a14;
+--muted: #7a6e5f;
+--muted2: #a89d8e;
+}
+
+.mainNavbar {
+position: sticky;
+top: 0;
+z-index: 100;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 52px;
+height: 64px;
+background: rgba(245, 240, 232, 0.88);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+border-bottom: 1px solid var(--border);
+}
+
+.navLeft {
+display: flex;
+align-items: center;
+gap: 20px;
+}
+
+.navLogo {
+font-family: 'Bebas Neue', sans-serif;
+font-size: 22px;
+letter-spacing: 0.12em;
+color: var(--text);
+}
+
+.navLogo span {
+color: var(--green);
+}
+
+.navRight {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.navHomeBtn {
+display: flex;
+align-items: center;
+gap: 8px;
+background: var(--green);
+border: none;
+color: #fff;
+font-family: 'DM Sans', sans-serif;
+font-size: 14px;
+font-weight: 500;
+padding: 9px 22px;
+border-radius: 4px;
+cursor: pointer;
+transition: background 0.2s, transform 0.15s;
+}
+
+.navHomeBtn:hover {
+background: var(--green-light);
+transform: translateY(-1px);
+}
+
+.navHomeBtn svg {
+width: 16px;
+height: 16px;
+}
+
+.navUserEmail {
+font-size: 14px;
+color: var(--muted);
+font-family: 'DM Sans', sans-serif;
+font-weight: 300;
+max-width: 200px;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
+
+.navBtnLogin {
+background: none;
+border: none;
+color: var(--muted);
+font-family: 'DM Sans', sans-serif;
+font-size: 14px;
+font-weight: 400;
+padding: 8px 20px;
+cursor: pointer;
+transition: color 0.2s;
+}
+
+.navBtnLogin:hover {
+color: var(--text);
+}
+
+.navBtnSignup {
+background: var(--green);
+border: none;
+color: #fff;
+font-family: 'DM Sans', sans-serif;
+font-size: 14px;
+font-weight: 500;
+padding: 9px 22px;
+border-radius: 4px;
+cursor: pointer;
+transition: background 0.2s, transform 0.15s;
+}
+
+.navBtnSignup:hover {
+background: var(--green-light);
+transform: translateY(-1px);
+}
+
+.navBtnSecondary {
+background: none;
+color: var(--text);
+border: 1px solid var(--border);
+font-family: 'DM Sans', sans-serif;
+font-size: 14px;
+font-weight: 400;
+padding: 8px 20px;
+border-radius: 4px;
+cursor: pointer;
+transition: border-color 0.2s, background 0.2s;
+}
+
+.navBtnSecondary:hover {
+border-color: var(--text);
+background: rgba(60, 45, 20, 0.05);
+}
+
+@media (max-width: 768px) {
+.mainNavbar {
+padding: 0 24px;
+height: 56px;
+}
+
+.navLogo {
+font-size: 18px;
+}
+
+.navHomeBtn,
+.navBtnSignup {
+font-size: 13px;
+padding: 8px 16px;
+}
+
+.navHomeBtn svg {
+width: 14px;
+height: 14px;
+}
+
+.navBtnLogin {
+padding: 6px 12px;
+font-size: 13px;
+}
+
+.navUserEmail {
+display: none;
+}
+}

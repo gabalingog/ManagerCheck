@@ -1,1000 +1,1132 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap');
+
+:root {
+--green: #2a7a4b;
+--green-light: #3dab68;
+--green-pale: #eaf5ee;
+--cream: #f5f0e8;
+--sand: #ede6d8;
+--sand2: #e4dccf;
+--warm-white: #faf8f4;
+--surface: #f0ebe1;
+--border: rgba(60, 45, 20, 0.10);
+--border2: rgba(60, 45, 20, 0.16);
+--text: #1e1a14;
+--muted: #7a6e5f;
+--muted2: #a89d8e;
+}
+
+*, *::before, *::after {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+
 body {
-    margin: 0;
-    padding: 0;
+background-color: var(--cream);
+margin: 0;
+padding: 0;
+font-family: 'DM Sans', sans-serif;
+font-weight: 300;
+color: var(--text);
+overflow-x: hidden;
 }
 
 .rateRestaurantPage {
-    padding: 0;
-    margin: 0;
+background-color: var(--cream);
+min-height: 100vh;
 }
 
-.topBar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 40px;
-    background-color: white;
-    border-bottom: 1px solid #e0e0e0;
-    gap: 20px;
+.searchBarSection {
+background: var(--sand);
+border-bottom: 1px solid var(--border2);
+padding: 28px 52px;
 }
 
-.dualSearchBar {
-    display: flex;
-    gap: 20px;
-    flex: 1;
-    max-width: 900px;
+.searchBarContainer {
+max-width: 1100px;
+margin: 0 auto;
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 20px;
 }
 
-.searchSection {
-    flex: 1;
-    position: relative;
+.searchInputWrapper {
+position: relative;
+display: flex;
+align-items: center;
 }
 
-.searchSection input {
-    width: 100%;
-    padding: 15px 20px;
-    font-size: 18px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-sizing: border-box;
-    transition: border-color 0.2s;
+.searchIcon {
+position: absolute;
+left: 18px;
+top: 50%;
+transform: translateY(-50%);
+color: var(--muted2);
+pointer-events: none;
+z-index: 1;
 }
 
-.searchSection input:focus {
-    outline: none;
-    border-color: #1a1a1a;
+.searchInput {
+flex: 1;
+padding: 15px 50px 15px 50px;
+font-size: 15px;
+font-family: 'DM Sans', sans-serif;
+font-weight: 300;
+border: 1px solid var(--border2);
+border-radius: 6px;
+background: var(--warm-white);
+color: var(--text);
+transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.restaurantSearchInput::placeholder {
-    color: #000;
-    opacity: 1;
+.searchInput:focus {
+outline: none;
+border-color: var(--green);
+box-shadow: 0 0 0 3px rgba(42, 122, 75, 0.1);
 }
 
-.clearButton {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: #666;
-    cursor: pointer;
-    padding: 5px 10px;
-    line-height: 1;
-    transition: color 0.2s;
+.searchInput::placeholder {
+color: var(--muted2);
+font-weight: 300;
 }
 
-.clearButton:hover {
-    color: #000;
+.searchToggle {
+position: absolute;
+right: 15px;
+background: none;
+border: none;
+color: var(--muted);
+cursor: pointer;
+padding: 8px;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: color 0.2s;
+}
+
+.searchToggle:hover {
+color: var(--text);
 }
 
 .searchDropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    margin-top: 10px;
-    max-height: 156px;
-    overflow-y: auto;
-    z-index: 1000;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+position: absolute;
+top: calc(100% + 8px);
+left: 0;
+right: 0;
+background: var(--warm-white);
+border: 1px solid var(--border2);
+border-radius: 6px;
+max-height: 240px;
+overflow-y: auto;
+z-index: 1000;
+box-shadow: 0 12px 40px rgba(30, 26, 20, 0.14);
 }
 
 .searchDropdownItem {
-    padding: 12px 20px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    font-size: 16px;
-    border-bottom: 1px solid #f5f5f5;
-    display: flex;
-    align-items: center;
-    min-height: 52px;
-    box-sizing: border-box;
+padding: 14px 20px;
+cursor: pointer;
+transition: background 0.15s;
+font-size: 15px;
+font-family: 'DM Sans', sans-serif;
+font-weight: 300;
+color: var(--text);
+border-bottom: 1px solid var(--border);
+text-align: left;
 }
 
 .searchDropdownItem:last-child {
-    border-bottom: none;
+border-bottom: none;
 }
 
 .searchDropdownItem:hover {
-    background-color: #fafafa;
+background: var(--sand);
 }
 
 .noResults {
-    padding: 12px 20px;
-    color: #666;
-    font-size: 16px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+padding: 14px 20px;
+color: var(--muted);
+font-size: 14px;
+text-align: left;
 }
 
 .noManager {
-    color: #666;
-    font-size: 16px;
+color: var(--muted);
 }
 
 .enterName {
-    color: #1a1a1a;
-    cursor: pointer;
-    text-decoration: underline;
-    font-weight: 500;
+color: var(--green);
+cursor: pointer;
+font-weight: 500;
+transition: opacity 0.2s;
 }
 
 .enterName:hover {
-    color: #000;
+opacity: 0.7;
 }
 
-/* Add Manager Modal */
-.modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+.restaurantHeader {
+background: linear-gradient(135deg, var(--green-pale) 0%, var(--sand) 100%);
+border-bottom: 1px solid var(--border2);
+padding: 60px 52px;
 }
 
-.addManagerModal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    border-radius: 8px;
-    padding: 40px;
-    max-width: 500px;
-    width: 90%;
-    z-index: 1001;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+.headerContent {
+max-width: 1200px;
+margin: 0 auto;
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+gap: 80px;
 }
 
-.modalCloseBtn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: #666;
-    cursor: pointer;
-    padding: 5px;
-    line-height: 1;
-    transition: color 0.2s;
-}
-
-.modalCloseBtn:hover {
-    color: #000;
-}
-
-.modalContent h2 {
-    font-size: 24px;
-    color: #1a1a1a;
-    margin-bottom: 25px;
-    font-weight: 400;
-}
-
-.modalSubtext {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 30px;
-}
-
-.modalSubtext strong {
-    color: #1a1a1a;
-    font-weight: 500;
-}
-
-.required {
-    color: #ff4444;
-}
-
-.modalInputGroup {
-    margin-bottom: 24px;
-}
-
-.modalInputGroup label {
-    display: block;
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 8px;
-    font-weight: 400;
-}
-
-.modalInput {
-    width: 100%;
-    padding: 12px 0;
-    border: none;
-    border-bottom: 1px solid #e0e0e0;
-    font-size: 15px;
-    transition: border-color 0.2s;
-    background: transparent;
-    box-sizing: border-box;
-}
-
-.modalInput:focus {
-    outline: none;
-    border-bottom: 1px solid #1a1a1a;
-}
-
-.modalInput::placeholder {
-    color: #bbb;
-}
-
-.modalButtons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 32px;
-}
-
-.modalAddBtn,
-.modalCancelBtn {
-    padding: 14px;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 500;
-}
-
-.modalAddBtn {
-    background: #1a1a1a;
-    color: white;
-    border: 1px solid #1a1a1a;
-}
-
-.modalAddBtn:hover {
-    background: #000;
-    border-color: #000;
-}
-
-.modalCancelBtn {
-    background: white;
-    color: #666;
-    border: 1px solid #e0e0e0;
-}
-
-.modalCancelBtn:hover {
-    border-color: #1a1a1a;
-    color: #1a1a1a;
-}
-
-.homeBtn {
-    padding: 12px 30px;
-    font-size: 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: white;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 400;
-}
-
-.homeBtn:hover {
-    background-color: #1a1a1a;
-    color: white;
-    border-color: #1a1a1a;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 60px 150px;
-    background-color: #D2DCB6;
-    margin-bottom: 0;
-    border: none;
-    border-radius: 0;
-}
-
-.restaurantInfo {
-    flex: 1;
+.headerLeft {
+flex: 1;
 }
 
 .restaurantName {
-    font-size: 80px;
-    font-weight: 300;
-    display: block;
-    margin-bottom: 15px;
-    line-height: 1.1;
-    color: #1a1a1a;
+font-family: 'DM Serif Display', serif;
+font-size: clamp(36px, 5vw, 64px);
+font-weight: 400;
+color: var(--text);
+line-height: 1.1;
+margin-bottom: 12px;
 }
 
-.location {
-    font-size: 18px;
-    color: #555;
-    margin: 10px 0;
-    font-weight: 300;
+.restaurantDetails {
+margin-top: 12px;
+display: flex;
+flex-direction: column;
+gap: 4px;
 }
 
-.stars {
-    display: flex;
-    gap: 5px;
-    margin-top: 15px;
+.restaurantAddress {
+font-size: 15px;
+color: var(--muted);
+font-weight: 400;
+margin: 0;
 }
 
-.star {
-    font-size: 32px;
-    color: #e0e0e0;
+.restaurantLocation {
+font-size: 14px;
+color: var(--muted2);
+font-weight: 300;
+margin: 0;
 }
 
-.star.filled {
-    color: #ffd700;
+.headerRight {
+display: flex;
+flex-direction: column;
+align-items: flex-end;
+gap: 24px;
 }
 
-.ratingSummary {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    text-align: center;
-    gap: 60px;
-    margin-right: auto;
-    margin-left: auto;
+.headerStats {
+display: flex;
+gap: 16px;
 }
 
-.overallRating, .recoStats {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.ratingCard {
+background: var(--warm-white);
+border: 1px solid var(--border2);
+border-radius: 8px;
+padding: 28px 36px;
+text-align: center;
+min-width: 180px;
 }
 
-.rateNum, .recoNum {
-    font-size: 56px;
-    font-weight: 300;
-    margin-bottom: 8px;
-    color: #1a1a1a;
+.recommendCard {
+background: var(--warm-white);
+border: 1px solid var(--border2);
+border-radius: 8px;
+padding: 28px 36px;
+text-align: center;
+min-width: 180px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 8px;
 }
 
-.rateLabel {
-    font-size: 14px;
-    color: #555;
-    margin-top: 5px;
-    font-weight: 400;
+.recommendCard svg {
+color: var(--green);
+margin-bottom: 4px;
 }
 
-.rateButton {
-    padding: 14px 32px;
-    font-size: 16px;
-    border: 1px solid #1a1a1a;
-    border-radius: 8px;
-    background-color: white;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.2s;
-    font-weight: 400;
+.recommendNumber {
+font-family: 'Bebas Neue', sans-serif;
+font-size: 48px;
+color: var(--green);
+letter-spacing: 0.02em;
+line-height: 1;
 }
 
-.rateButton:hover {
-    background-color: #1a1a1a;
-    color: white;
+.recommendLabel {
+font-size: 12px;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(--muted);
+font-weight: 400;
 }
 
-.contentContainer {
-    display: flex;
-    gap: 30px;
-    padding: 40px;
-    max-width: 1500px;
-    margin: 0 auto;
-    width: 100%;
-    box-sizing: border-box;
+.ratingNumber {
+font-family: 'Bebas Neue', sans-serif;
+font-size: 56px;
+color: var(--green);
+letter-spacing: 0.02em;
+line-height: 1;
+margin-bottom: 8px;
 }
 
-.leftSection {
-    flex: 0 0 300px;
-    position: sticky;
-    top: 40px;
-    align-self: flex-start;
-    max-height: calc(100vh - 80px);
-    overflow-y: auto;
+.ratingStars {
+display: flex;
+gap: 4px;
+justify-content: center;
+margin-bottom: 8px;
 }
 
-.rightSection {
-    flex: 1;
-    min-width: 0;
+.ratingStar {
+font-size: 20px;
+color: #e0e0e0;
 }
 
-.reviewFilters {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 20px;
-    padding: 20px;
-    background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+.ratingStar.filled {
+color: #ffd700;
 }
 
-.filterLabel {
-    font-size: 14px;
-    color: #1a1a1a;
-    font-weight: 500;
+.ratingLabel {
+font-size: 12px;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(--muted);
+font-weight: 400;
 }
 
-.filterDropdown {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #e0e0e0;
-    background: white;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: #1a1a1a;
-    font-weight: 400;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%231a1a1a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 16px center;
-    padding-right: 40px;
+.headerActions {
+display: flex;
+gap: 12px;
+flex-wrap: wrap;
 }
 
-.filterDropdown:hover {
-    border-color: #1a1a1a;
+.btnPrimary {
+background: var(--green);
+border: none;
+color: #fff;
+font-family: 'DM Sans', sans-serif;
+font-size: 14px;
+font-weight: 500;
+padding: 14px 28px;
+border-radius: 4px;
+cursor: pointer;
+transition: background 0.2s, transform 0.15s;
+white-space: nowrap;
 }
 
-.filterDropdown:focus {
-    outline: none;
-    border-color: #1a1a1a;
+.btnPrimary:hover {
+background: var(--green-light);
+transform: translateY(-2px);
 }
 
-.activeFilterBadge {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 12px;
-    background: #f5f5f5;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 13px;
-    color: #555;
-    margin-top: 8px;
+.btnSecondary {
+background: none;
+color: var(--text);
+border: 1px solid var(--border2);
+font-family: 'DM Sans', sans-serif;
+font-size: 14px;
+font-weight: 400;
+padding: 14px 28px;
+border-radius: 4px;
+cursor: pointer;
+transition: border-color 0.2s, background 0.2s;
+white-space: nowrap;
 }
 
-.clearFilterBtn {
-    background: none;
-    border: none;
-    font-size: 16px;
-    color: #666;
-    cursor: pointer;
-    padding: 0 4px;
-    line-height: 1;
-    transition: color 0.2s;
+.btnSecondary:hover {
+border-color: var(--text);
+background: var(--sand);
 }
 
-.clearFilterBtn:hover {
-    color: #000;
+.mainContent {
+max-width: 1200px;
+margin: 0 auto;
+padding: 48px 52px;
+display: grid;
+grid-template-columns: 300px 1fr;
+gap: 40px;
 }
 
-.ratingDistribution {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 24px;
-    margin-bottom: 20px;
-    background-color: white;
+.sidebar {
+display: flex;
+flex-direction: column;
+gap: 20px;
+position: sticky;
+top: 84px;
+align-self: flex-start;
+max-height: calc(100vh - 104px);
+overflow-y: auto;
+}
+
+.filterCard {
+background: var(--warm-white);
+border: 1px solid var(--border2);
+border-radius: 8px;
+padding: 24px;
+}
+
+.cardTitle {
+font-size: 11px;
+font-weight: 500;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: var(--muted2);
+margin-bottom: 18px;
+}
+
+.filterSelect {
+width: 100%;
+padding: 12px 16px;
+border: 1px solid var(--border2);
+background: white;
+border-radius: 6px;
+font-size: 14px;
+font-family: 'DM Sans', sans-serif;
+font-weight: 300;
+color: var(--text);
+cursor: pointer;
+transition: border-color 0.2s;
+appearance: none;
+background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%237a6e5f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+background-repeat: no-repeat;
+background-position: right 16px center;
+padding-right: 40px;
+}
+
+.filterSelect:hover {
+border-color: var(--green);
+}
+
+.filterSelect:focus {
+outline: none;
+border-color: var(--green);
+box-shadow: 0 0 0 3px rgba(42, 122, 75, 0.1);
+}
+
+.activeFilters {
+display: flex;
+flex-direction: column;
+gap: 8px;
+margin-top: 12px;
+}
+
+.filterBadge {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 10px 12px;
+background: var(--green-pale);
+border: 1px solid rgba(42, 122, 75, 0.2);
+border-radius: 6px;
+font-size: 13px;
+color: var(--green);
+font-weight: 400;
+}
+
+.removeBadge {
+background: none;
+border: none;
+font-size: 16px;
+color: var(--green);
+cursor: pointer;
+padding: 0 4px;
+line-height: 1;
+transition: opacity 0.2s;
+}
+
+.removeBadge:hover {
+opacity: 0.6;
+}
+
+.distributionBars {
+display: flex;
+flex-direction: column;
+gap: 10px;
 }
 
 .distributionRow {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-    padding: 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 8px;
+border-radius: 6px;
+cursor: pointer;
+transition: background 0.2s;
 }
 
 .distributionRow:hover {
-    background-color: #fafafa;
+background: var(--sand);
 }
 
 .distributionRow.active {
-    background-color: #f0f0f0;
-    border: 1px solid #e0e0e0;
-    margin: -1px;
-    margin-bottom: 11px;
+background: var(--green-pale);
+border: 1px solid rgba(42, 122, 75, 0.2);
+margin: -1px;
 }
 
-.distributionRow:last-child {
-    margin-bottom: 0;
+.distLabel {
+width: 20px;
+font-weight: 400;
+color: var(--text);
+flex-shrink: 0;
+font-size: 14px;
 }
 
-.distributionRow.active:last-child {
-    margin-bottom: -1px;
+.distBarTrack {
+flex: 1;
+height: 20px;
+border: 1px solid var(--border2);
+border-radius: 4px;
+overflow: hidden;
+background: var(--sand);
 }
 
-.distNum {
-    width: 20px;
-    font-weight: 400;
-    color: #1a1a1a;
-    flex-shrink: 0;
+.distBarFill {
+height: 100%;
+background: var(--green);
+transition: width 0.3s ease;
 }
 
-.distBar {
-    flex: 1;
-    height: 24px;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    overflow: hidden;
-    background-color: #fafafa;
+.distCount {
+width: 30px;
+text-align: right;
+font-size: 14px;
+color: var(--muted);
+font-weight: 400;
+flex-shrink: 0;
 }
 
-.distFill {
-    height: 100%;
-    background-color: #ffd700;
-    transition: width 0.3s ease;
+.tagsList {
+display: flex;
+flex-direction: column;
+gap: 10px;
 }
 
-.summaryTags {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 24px;
-    background-color: white;
+.tagButton {
+padding: 12px 16px;
+border: 1px solid var(--border2);
+border-radius: 6px;
+background: var(--sand);
+text-align: center;
+font-size: 14px;
+font-family: 'DM Sans', sans-serif;
+font-weight: 400;
+color: var(--text);
+cursor: pointer;
+transition: all 0.2s;
 }
 
-.summaryTags h3 {
-    margin: 0 0 16px 0;
-    font-size: 16px;
-    font-weight: 500;
-    color: #1a1a1a;
+.tagButton:hover {
+background: var(--sand2);
+border-color: var(--green);
 }
 
-.tags {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.tagButton.active {
+background: var(--green);
+border-color: var(--green);
+color: white;
 }
 
-.tag {
-    padding: 12px 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    background-color: #fafafa;
-    text-align: center;
-    font-size: 14px;
-    color: #555;
-    font-weight: 400;
-    cursor: pointer;
-    transition: all 0.2s;
+.reviewsSection {
+display: flex;
+flex-direction: column;
+gap: 20px;
 }
 
-.tag:hover {
-    background-color: #f0f0f0;
-    border-color: #1a1a1a;
+.emptyState {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+text-align: center;
+padding: 80px 40px;
+background: var(--warm-white);
+border: 1px solid var(--border2);
+border-radius: 8px;
+gap: 20px;
 }
 
-.tag.active {
-    background-color: #1a1a1a;
-    border-color: #1a1a1a;
-    color: white;
+.emptyState svg {
+color: var(--muted2);
+opacity: 0.5;
+}
+
+.emptyState h2 {
+font-family: 'DM Serif Display', serif;
+font-size: 28px;
+font-weight: 400;
+color: var(--text);
+margin: 0;
+}
+
+.emptyState p {
+font-size: 16px;
+color: var(--muted);
+margin: 0 0 12px 0;
+max-width: 400px;
 }
 
 .reviewsList {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.noReviews {
-    text-align: center;
-    padding: 60px 40px;
-    color: #999;
-    font-size: 16px;
-    font-weight: 300;
+display: flex;
+flex-direction: column;
+gap: 16px;
 }
 
 .reviewCard {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 24px;
-    background-color: white;
-    transition: box-shadow 0.2s;
+background: var(--warm-white);
+border: 1px solid var(--border2);
+border-radius: 8px;
+padding: 28px 32px;
+transition: box-shadow 0.2s, transform 0.2s;
 }
 
 .reviewCard:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+box-shadow: 0 4px 20px rgba(60, 45, 20, 0.08);
+transform: translateY(-2px);
 }
 
-.reviewHeader {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
+.reviewCardHeader {
+display: flex;
+flex-direction: column;
+gap: 10px;
+margin-bottom: 16px;
 }
 
-.reviewHeader .stars {
-    display: flex;
-    gap: 5px;
-    margin-top: 0;
+.reviewStars {
+display: flex;
+gap: 4px;
 }
 
-.reviewHeader .star {
-    font-size: 20px;
-    color: #e0e0e0;
+.reviewStar {
+font-size: 18px;
+color: #e0e0e0;
 }
 
-.reviewHeader .star.filled {
-    color: #ffd700;
+.reviewStar.filled {
+color: #ffd700;
+}
+
+.reviewMeta {
+display: flex;
+align-items: center;
+gap: 10px;
+font-size: 14px;
+color: var(--muted);
 }
 
 .reviewPosition {
-    font-size: 15px;
-    font-weight: 500;
-    color: #1a1a1a;
+font-weight: 500;
+color: var(--text);
+}
+
+.reviewDot {
+color: var(--muted2);
 }
 
 .reviewDuration {
-    margin-left: auto;
-    color: #999;
-    font-size: 14px;
-    font-weight: 300;
+font-weight: 300;
 }
 
-.reviewComment {
-    font-size: 15px;
-    line-height: 1.7;
-    margin-bottom: 16px;
-    color: #555;
-    word-wrap: break-word;
+.reviewText {
+font-size: 15px;
+line-height: 1.8;
+color: var(--text);
+margin-bottom: 18px;
+font-weight: 300;
+max-width: 100%;
 }
 
-.reviewFooter {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
+.reviewCardFooter {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 20px;
+}
+
+.reviewFooterLeft {
+flex: 1;
 }
 
 .reviewTags {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    flex: 1;
+display: flex;
+gap: 8px;
+flex-wrap: wrap;
 }
 
 .reviewTag {
-    padding: 6px 14px;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    background-color: #fafafa;
-    font-size: 13px;
-    color: #666;
-    font-weight: 400;
+padding: 6px 14px;
+border: 1px solid var(--border2);
+border-radius: 6px;
+background: var(--sand);
+font-size: 12px;
+color: var(--muted);
+font-weight: 400;
+letter-spacing: 0.02em;
 }
 
 .reviewVotes {
-    display: flex;
-    gap: 12px;
-    align-items: center;
+display: flex;
+gap: 10px;
+align-items: center;
+flex-shrink: 0;
 }
 
-.voteButton {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 14px;
-    color: #666;
+.voteBtn {
+display: flex;
+align-items: center;
+gap: 6px;
+padding: 8px 14px;
+background: white;
+border: 1px solid var(--border2);
+border-radius: 6px;
+cursor: pointer;
+transition: all 0.2s;
+font-size: 13px;
+font-family: 'DM Sans', sans-serif;
+font-weight: 400;
+color: var(--muted);
 }
 
-.voteButton:hover {
-    border-color: #1a1a1a;
-    background: #fafafa;
+.voteBtn:hover {
+border-color: var(--green);
+background: var(--green-pale);
+color: var(--green);
 }
 
-.voteButton.active {
-    border-color: #1a1a1a;
-    background: #1a1a1a;
-    color: white;
+.voteBtn.active {
+border-color: var(--green);
+background: var(--green);
+color: white;
 }
 
-.voteIcon {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
+.voteBtn svg {
+width: 16px;
+height: 16px;
+flex-shrink: 0;
 }
 
-.voteCount {
-    font-weight: 500;
-    min-width: 16px;
-    text-align: center;
+.voteBtn span {
+font-weight: 500;
+min-width: 16px;
+text-align: center;
 }
 
 .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin-top: 40px;
-    padding: 20px 0;
-    flex-wrap: wrap;
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 12px;
+margin-top: 40px;
+padding: 20px 0;
 }
 
-.pageArrow {
-    padding: 10px 16px;
-    border: 1px solid #e0e0e0;
-    background: white;
-    border-radius: 6px;
-    font-size: 18px;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: #1a1a1a;
+.paginationBtn {
+padding: 10px 20px;
+border: 1px solid var(--border2);
+background: var(--warm-white);
+border-radius: 6px;
+font-size: 14px;
+font-family: 'DM Sans', sans-serif;
+font-weight: 400;
+cursor: pointer;
+transition: all 0.2s;
+color: var(--text);
 }
 
-.pageArrow:hover:not(:disabled) {
-    border-color: #1a1a1a;
-    background: #fafafa;
+.paginationBtn:hover:not(:disabled) {
+border-color: var(--green);
+background: var(--green-pale);
+color: var(--green);
 }
 
-.pageArrow:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
+.paginationBtn:disabled {
+cursor: not-allowed;
+}
+
+.paginationArrow {
+transition: opacity 0.3s ease, border-color 0.2s, background 0.2s;
 }
 
 .pageNumbers {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: center;
+display: flex;
+gap: 8px;
 }
 
-.pageNumber {
-    padding: 10px 16px;
-    border: 1px solid #e0e0e0;
-    background: white;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: #666;
-    min-width: 44px;
+.pageBtn {
+padding: 10px 16px;
+border: 1px solid var(--border2);
+background: var(--warm-white);
+border-radius: 6px;
+font-size: 14px;
+font-family: 'DM Sans', sans-serif;
+font-weight: 400;
+cursor: pointer;
+transition: all 0.2s;
+color: var(--muted);
+min-width: 44px;
 }
 
-.pageNumber:hover {
-    border-color: #1a1a1a;
-    background: #fafafa;
-    color: #1a1a1a;
+.pageBtn:hover {
+border-color: var(--green);
+background: var(--green-pale);
+color: var(--green);
 }
 
-.pageNumber.active {
-    background: #1a1a1a;
-    border-color: #1a1a1a;
-    color: white;
+.pageBtn.active {
+background: var(--green);
+border-color: var(--green);
+color: white;
 }
 
-/* Responsive Design - Tablet and smaller screens */
-@media (max-width: 1200px) {
-    .header {
-        padding: 40px 60px;
-    }
+.modalOverlay {
+position: fixed;
+inset: 0;
+background: rgba(30, 26, 20, 0.55);
+z-index: 1000;
+backdrop-filter: blur(4px);
+-webkit-backdrop-filter: blur(4px);
+}
 
-    .restaurantName {
-        font-size: 64px;
-    }
+.modal {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: var(--warm-white);
+border: 1px solid var(--border2);
+border-radius: 10px;
+padding: 44px 48px;
+max-width: 480px;
+width: 90%;
+z-index: 1001;
+box-shadow: 0 24px 60px rgba(30, 26, 20, 0.2);
+}
 
-    .contentContainer {
-        padding: 30px;
-    }
+.modalClose {
+position: absolute;
+top: 20px;
+right: 22px;
+background: none;
+border: none;
+font-size: 20px;
+color: var(--muted2);
+cursor: pointer;
+padding: 4px;
+line-height: 1;
+transition: color 0.2s;
+}
 
-    .leftSection {
-        flex: 0 0 280px;
-    }
+.modalClose:hover {
+color: var(--text);
+}
+
+.modalContent {
+display: flex;
+flex-direction: column;
+}
+
+.modalTitle {
+font-family: 'DM Serif Display', serif;
+font-size: 26px;
+font-weight: 400;
+color: var(--text);
+margin-bottom: 6px;
+}
+
+.modalSubtitle {
+font-size: 14px;
+color: var(--muted);
+margin-bottom: 28px;
+font-style: italic;
+}
+
+.required {
+color: #c0392b;
+}
+
+.modalInputGroup {
+margin-bottom: 24px;
+}
+
+.modalInputGroup label {
+display: block;
+font-size: 11px;
+font-weight: 500;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+color: var(--muted2);
+margin-bottom: 10px;
+}
+
+.modalInput {
+width: 100%;
+padding: 11px 0;
+border: none;
+border-bottom: 1.5px solid var(--border2);
+font-size: 15px;
+font-family: 'DM Sans', sans-serif;
+font-weight: 300;
+color: var(--text);
+background: transparent;
+box-sizing: border-box;
+transition: border-color 0.2s;
+}
+
+.modalInput:focus {
+outline: none;
+border-bottom-color: var(--green);
+}
+
+.modalInput::placeholder {
+color: var(--muted2);
+}
+
+.modalActions {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+margin-top: 36px;
+}
+
+.modalBtnPrimary,
+.modalBtnSecondary {
+padding: 14px;
+border-radius: 5px;
+font-size: 14px;
+font-family: 'DM Sans', sans-serif;
+font-weight: 500;
+cursor: pointer;
+transition: all 0.2s;
+border: none;
+}
+
+.modalBtnPrimary {
+background: var(--green);
+color: #fff;
+}
+
+.modalBtnPrimary:hover {
+background: var(--green-light);
+}
+
+.modalBtnSecondary {
+background: none;
+color: var(--muted);
+border: 1px solid var(--border2);
+}
+
+.modalBtnSecondary:hover {
+border-color: var(--text);
+color: var(--text);
+}
+
+.loadingState {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+min-height: 60vh;
+gap: 20px;
+}
+
+.loadingSpinner {
+width: 48px;
+height: 48px;
+border: 3px solid var(--sand);
+border-top-color: var(--green);
+border-radius: 50%;
+animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+to { transform: rotate(360deg); }
+}
+
+.loadingState p {
+font-size: 15px;
+color: var(--muted);
+font-weight: 300;
 }
 
 @media (max-width: 1024px) {
-    .topBar {
-        padding: 20px 30px;
-    }
+.searchBarSection {
+padding: 24px 32px;
+}
 
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 30px;
-        padding: 40px;
-    }
+.searchBarContainer {
+grid-template-columns: 1fr;
+gap: 16px;
+}
 
-    .restaurantName {
-        font-size: 56px;
-    }
+.restaurantHeader {
+padding: 48px 32px;
+}
 
-    .ratingSummary {
-        width: 100%;
-        gap: 40px;
-        justify-content: flex-start;
-    }
+.headerContent {
+flex-direction: column;
+gap: 32px;
+}
 
-    .rateNum, .recoNum {
-        font-size: 48px;
-    }
+.headerRight {
+width: 100%;
+align-items: stretch;
+}
 
-    .contentContainer {
-        flex-direction: column;
-        padding: 20px;
-    }
+.headerStats {
+width: 100%;
+justify-content: center;
+}
 
-    .leftSection {
-        flex: 1;
-        position: static;
-        max-height: none;
-        width: 100%;
-    }
+.ratingCard,
+.recommendCard {
+flex: 1;
+min-width: 0;
+}
 
-    .rightSection {
-        width: 100%;
-    }
+.headerActions {
+width: 100%;
+}
+
+.headerActions button {
+flex: 1;
+}
+
+.mainContent {
+padding: 40px 32px;
+grid-template-columns: 1fr;
+gap: 32px;
+}
+
+.sidebar {
+position: static;
+max-height: none;
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
 }
 
 @media (max-width: 768px) {
-    .topBar {
-        flex-direction: column;
-        gap: 15px;
-        padding: 20px;
-    }
+.searchBarSection {
+padding: 20px;
+}
 
-    .dualSearchBar {
-        flex-direction: column;
-        width: 100%;
-        max-width: 100%;
-    }
+.searchInput {
+padding: 12px 40px 12px 44px;
+font-size: 14px;
+}
 
-    .searchSection {
-        width: 100%;
-    }
+.restaurantHeader {
+padding: 36px 20px;
+}
 
-    .searchSection input {
-        font-size: 16px;
-        padding: 12px 16px;
-    }
+.restaurantName {
+font-size: 32px;
+}
 
-    .homeBtn {
-        width: 100%;
-    }
+.restaurantAddress {
+font-size: 14px;
+}
 
-    .header {
-        padding: 30px 20px;
-    }
+.restaurantLocation {
+font-size: 13px;
+}
 
-    .restaurantName {
-        font-size: 40px;
-    }
+.ratingNumber {
+font-size: 48px;
+}
 
-    .location {
-        font-size: 16px;
-    }
+.recommendNumber {
+font-size: 40px;
+}
 
-    .star {
-        font-size: 28px;
-    }
+.headerStats {
+flex-direction: column;
+width: 100%;
+}
 
-    .ratingSummary {
-        flex-direction: column;
-        gap: 20px;
-        align-items: flex-start;
-    }
+.ratingCard,
+.recommendCard {
+width: 100%;
+}
 
-    .rateNum, .recoNum {
-        font-size: 42px;
-    }
+.headerActions {
+flex-direction: column;
+}
 
-    .rateButton {
-        width: 100%;
-        padding: 12px 24px;
-    }
+.headerActions button {
+width: 100%;
+}
 
-    .contentContainer {
-        padding: 15px;
-    }
+.mainContent {
+padding: 32px 20px;
+gap: 24px;
+}
 
-    .reviewCard {
-        padding: 20px;
-    }
+.sidebar {
+grid-template-columns: 1fr;
+}
 
-    .reviewHeader {
-        gap: 10px;
-    }
+.reviewCard {
+padding: 20px;
+}
 
-    .reviewPosition {
-        font-size: 14px;
-    }
+.reviewCardFooter {
+flex-direction: column;
+align-items: flex-start;
+}
 
-    .reviewDuration {
-        width: 100%;
-        margin-left: 0;
-        margin-top: 5px;
-    }
+.modal {
+padding: 36px 28px;
+width: 92%;
+}
 
-    .reviewComment {
-        font-size: 14px;
-    }
+.modalActions {
+grid-template-columns: 1fr;
+}
 
-    .addManagerModal {
-        padding: 30px;
-        width: 95%;
-    }
+.pagination {
+flex-wrap: wrap;
+gap: 8px;
+}
 
-    .modalContent h2 {
-        font-size: 20px;
-    }
+.paginationBtn {
+padding: 8px 16px;
+font-size: 13px;
+}
+
+.pageBtn {
+padding: 8px 12px;
+min-width: 38px;
+}
 }
 
 @media (max-width: 480px) {
-    .restaurantName {
-        font-size: 32px;
-    }
-
-    .rateNum, .recoNum {
-        font-size: 36px;
-    }
-
-    .rateLabel {
-        font-size: 12px;
-    }
-
-    .star {
-        font-size: 24px;
-    }
-
-    .reviewCard {
-        padding: 16px;
-    }
-
-    .pagination {
-        gap: 8px;
-    }
-
-    .pageArrow,
-    .pageNumber {
-        padding: 8px 12px;
-        font-size: 14px;
-        min-width: 36px;
-    }
+.restaurantName {
+font-size: 28px;
 }
 
-/* Add to existing RateRestaurant.css after .rateButton styles */
-
-.seeAllButton {
-    padding: 14px 32px;
-    font-size: 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: white;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.2s;
-    font-weight: 400;
-    color: #1a1a1a;
+.ratingNumber {
+font-size: 42px;
 }
 
-.seeAllButton:hover {
-    background-color: #f5f5f5;
-    border-color: #1a1a1a;
+.recommendNumber {
+font-size: 36px;
 }
 
-/* Responsive adjustments for the new button */
-@media (max-width: 1024px) {
-    .seeAllButton {
-        width: 100%;
-        margin-top: 10px;
-    }
+.reviewCard {
+padding: 16px;
 }
 
-@media (max-width: 768px) {
-    .seeAllButton {
-        padding: 12px 24px;
-    }
+.reviewText {
+font-size: 14px;
+}
 }
