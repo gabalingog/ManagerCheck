@@ -11,6 +11,7 @@ import waitress from './../Assets/waitress.png';
 import pic1 from './../Assets/pic1.png';
 // import pic2 from './../Assets/pic2-2.png';
 import pic3 from './../Assets/pic2-4.png';
+import footerBg from './../Assets/pic2-13.png';
 
 const RestaurantLanding = () => {
     const navigate = useNavigate();
@@ -255,6 +256,38 @@ const RestaurantLanding = () => {
                     </div>
                 </div>
             </div>
+
+            <footer className="footer">
+                <div className="footerInner">
+                    <div className="footerContact">
+                        <span className="footerEyebrow">Contact Us</span>
+                        <p className="footerSub">Have a question or want to share feedback? We read every message.</p>
+                        <span className="footerEyebrow">hello@managercheck.org</span>
+                    </div>
+
+                    <div className="footerForm">
+                        <div className="footerInputRow">
+                            <div className="footerInputGroup">
+                                <label>Name</label>
+                                <input type="text" placeholder="Your name" className="footerInput" />
+                            </div>
+                            <div className="footerInputGroup">
+                                <label>Email</label>
+                                <input type="email" placeholder="your@email.com" className="footerInput" />
+                            </div>
+                        </div>
+                        <div className="footerInputGroup">
+                            <label>Message</label>
+                            <textarea placeholder="What's on your mind?" className="footerInput footerTextarea" rows={4} />
+                        </div>
+                        <button className="footerSubmitBtn">Send Message</button>
+                    </div>
+                </div>
+
+                <div className="footerBottom">
+                    <span>© {new Date().getFullYear()} ManagerCheck. All rights reserved.</span>
+                </div>
+            </footer>
 
             {showAddForm && (
                 <>
