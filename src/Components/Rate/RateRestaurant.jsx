@@ -463,13 +463,6 @@ const RateRestaurant = () => {
         <div className="navLogo">
           Manager<span>Check</span>
         </div>
-        <button className="homeBtn" onClick={goHome}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-          Home
-        </button>
       </nav>
 
       {/* Search Bar Section */}
@@ -555,6 +548,13 @@ const RateRestaurant = () => {
       <header className="restaurantHeader">
         <div className="headerContent">
           <div className="headerLeft">
+                  {/* <button className="homeBtn" onClick={goHome}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                      <polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                Home
+            </button> */}
             <h1 className="restaurantName">{currentRestaurant?.name || restaurantName}</h1>
             <p className="restaurantLocation">{currentRestaurant?.location || 'Boston, MA'}</p>
           </div>
