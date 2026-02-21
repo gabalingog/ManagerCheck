@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import emailjs from '@emailjs/browser';
 import './RestaurantLanding.css';
 import search from './../Assets/Search.png';
 // import logo from './../Assets/finalLogo.png';
@@ -11,6 +12,8 @@ import waitress from './../Assets/waitress.png';
 import pic1 from './../Assets/pic1.png';
 // import pic2 from './../Assets/pic2-2.png';
 import pic3 from './../Assets/pic2-4.png';
+import insta from './../Assets/pic2-15.png';
+import linkedin from './../Assets/pic2-16.png'
 
 const RestaurantLanding = () => {
     const navigate = useNavigate();
@@ -22,6 +25,33 @@ const RestaurantLanding = () => {
             { id: 2, name: "Olive Garden", address: "234 Main St, Boston, MA 02118" }
         ];
     });
+
+    const [footerForm, setFooterForm] = useState({ name: '', email: '', message: '' });
+    const [footerStatus, setFooterStatus] = useState('');
+
+    const handleFooterSubmit = () => {
+        if (!footerForm.name || !footerForm.email || !footerForm.message) {
+            setFooterStatus('error');
+            return;
+        }
+        setFooterStatus('sending');
+        emailjs.send(
+            'service_07btxgs',
+            'template_efu5fg6',
+            {
+                name: footerForm.name,
+                email: footerForm.email,
+                message: footerForm.message,
+            },
+            '_E3xngYZfQHiORiDl'
+        ).then(() => {
+            setFooterStatus('sent');
+            setFooterForm({ name: '', email: '', message: '' });
+        }).catch((err) => {
+            console.error('EmailJS error:', err);
+            setFooterStatus('error');
+        });
+    };
 
     useEffect(() => {
         localStorage.setItem('restaurants', JSON.stringify(restaurants));
@@ -262,30 +292,55 @@ const RestaurantLanding = () => {
                         <span className="footerEyebrow">Contact Us</span>
                         <p className="footerSub">Have a question or want to share feedback? We read every message.</p>
                         <span className="footerEyebrow">hello@managercheck.org</span>
+                        <img src={linkedin} alt="LinkedIn" className='social1'/>
+                        <img src={insta} alt="Instagram" className='social2'/>
+                        
                         <span></span>
-                        <button className="footerSubmitBtn">Send Message</button>
+                        <button
+                            className="footerSubmitBtn"
+                            onClick={handleFooterSubmit}
+                            disabled={footerStatus === 'sending'}
+                        >
+                            {footerStatus === 'sending' ? 'Sending...' : 'Send Message'}
+                        </button>
+                        {footerStatus === 'sent' && <p className="footerStatusMsg footerStatusSuccess">Message sent!</p>}
+                        {footerStatus === 'error' && <p className="footerStatusMsg footerStatusError">Please fill in all fields and try again.</p>}
                     </div>
 
                     <div className="footerForm">
                         <div className="footerInputRow">
                             <div className="footerInputGroup">
                                 <label>Name</label>
-                                <input type="text" placeholder="Your name" className="footerInput" />
+                                <input
+                                    type="text"
+                                    placeholder="Your name"
+                                    className="footerInput"
+                                    value={footerForm.name}
+                                    onChange={(e) => setFooterForm({ ...footerForm, name: e.target.value })}
+                                />
                             </div>
                             <div className="footerInputGroup">
                                 <label>Email</label>
-                                <input type="email" placeholder="your@email.com" className="footerInput" />
+                                <input
+                                    type="email"
+                                    placeholder="your@email.com"
+                                    className="footerInput"
+                                    value={footerForm.email}
+                                    onChange={(e) => setFooterForm({ ...footerForm, email: e.target.value })}
+                                />
                             </div>
                         </div>
                         <div className="footerInputGroup">
                             <label>Message</label>
-                            <textarea placeholder="What's on your mind?" className="footerInput footerTextarea" rows={4} />
+                            <textarea
+                                placeholder="What's on your mind?"
+                                className="footerInput footerTextarea"
+                                rows={4}
+                                value={footerForm.message}
+                                onChange={(e) => setFooterForm({ ...footerForm, message: e.target.value })}
+                            />
                         </div>
                     </div>
-                </div>
-
-                <div className="footerBottom">
-                    <span>© {new Date().getFullYear()} ManagerCheck. All rights reserved.</span>
                 </div>
             </footer>
 

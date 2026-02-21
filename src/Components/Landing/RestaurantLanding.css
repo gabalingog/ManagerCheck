@@ -1002,6 +1002,27 @@
     color: var(--muted2);
     letter-spacing: 0.04em;
   }
+
+  .footerFormBottom {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .footerStatusMsg {
+    font-size: 13px;
+    font-weight: 300;
+  }
+  
+  .footerStatusSuccess { color: var(--green); }
+  .footerStatusError   { color: #c0392b; }
+  
+  .footerSubmitBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
   
   /* ── Responsive ──────────────────────────────────────────── */
   @media (max-width: 768px) {
