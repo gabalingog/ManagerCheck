@@ -61,6 +61,9 @@ const RestaurantLanding = () => {
     const [newRestaurantName, setNewRestaurantName] = useState('');
     const [newRestaurantAddress, setNewRestaurantAddress] = useState('');
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
+    const [newRestaurantCity, setNewRestaurantCity] = useState('');
+    const [newRestaurantState, setNewRestaurantState] = useState('');
+    const [newRestaurantZip, setNewRestaurantZip] = useState('');
 
     // ── Scroll-triggered visibility for bottom cards ──────────────
     const bottomRef = useRef(null);
@@ -175,18 +178,26 @@ const RestaurantLanding = () => {
     };
 
     const handleAddRestaurant = () => {
-        if (newRestaurantName.trim() === '') { alert('Please enter the restaurant name'); return; }
-        if (newRestaurantAddress.trim() === '') { alert('Please enter the restaurant address'); return; }
+        if (!newRestaurantName.trim()) return;
+        if (!newRestaurantAddress.trim()) return;
+        if (!newRestaurantCity.trim()) return;
+        if (!newRestaurantState) return;
+        if (!newRestaurantZip.trim()) return;
+    
+        const fullAddress = `${newRestaurantAddress}, ${newRestaurantCity}, ${newRestaurantState} ${newRestaurantZip}`;
         const newRestaurant = {
             id: restaurants.length + 1,
             name: newRestaurantName.trim(),
-            address: newRestaurantAddress.trim()
+            address: fullAddress
         };
         const updatedRestaurants = [...restaurants, newRestaurant];
         setRestaurants(updatedRestaurants);
         navigate(`/restaurant/${newRestaurant.id}`, { state: { restaurantName: newRestaurant.name } });
         setNewRestaurantName('');
         setNewRestaurantAddress('');
+        setNewRestaurantCity('');
+        setNewRestaurantState('');
+        setNewRestaurantZip('');
         setShowAddForm(false);
     };
 
@@ -194,6 +205,9 @@ const RestaurantLanding = () => {
         setShowAddForm(false);
         setNewRestaurantName('');
         setNewRestaurantAddress('');
+        setNewRestaurantCity('');
+        setNewRestaurantState('');
+        setNewRestaurantZip('');
     };
 
     return (
@@ -238,7 +252,8 @@ const RestaurantLanding = () => {
                                                 key={restaurant.id}
                                                 className="searchResultItem"
                                                 onClick={() => handleSelectRestaurant(restaurant)}>
-                                                {restaurant.name}
+                                                <span className="searchResultName">{restaurant.name}</span>
+                                                <span className="searchResultAddress">{restaurant.address}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -364,11 +379,13 @@ const RestaurantLanding = () => {
                         <button className="modalCloseBtn" onClick={handleCancelAdd}>✕</button>
                         <div className="modalContent">
                             <h2>Add Restaurant</h2>
-                            
+
                             <div className="modalInputGroup">
                                 <label>Restaurant Name <span className="required">*</span></label>
                                 <input
                                     type="text"
+                                    placeholder=""
+                                    style={{ borderBottom: '1.5px solid #2a7a4b' }}
                                     value={newRestaurantName}
                                     onChange={(e) => setNewRestaurantName(e.target.value)}
                                     className="modalInput"
@@ -376,13 +393,55 @@ const RestaurantLanding = () => {
                             </div>
 
                             <div className="modalInputGroup">
-                                <label>Address <span className="required">*</span></label>
+                                <label>Street Address <span className="required">*</span></label>
                                 <input
                                     type="text"
+                                    placeholder=""
+                                    style={{ borderBottom: '1.5px solid #2a7a4b' }}
                                     value={newRestaurantAddress}
                                     onChange={(e) => setNewRestaurantAddress(e.target.value)}
                                     className="modalInput"
                                 />
+                            </div>
+
+                            <div className="modalInputRow">
+                                <div className="modalInputGroup">
+                                    <label>City <span className="required">*</span></label>
+                                    <input
+                                        type="text"
+                                        placeholder=""
+                                        style={{ borderBottom: '1.5px solid #2a7a4b' }}
+                                        value={newRestaurantCity}
+                                        onChange={(e) => setNewRestaurantCity(e.target.value)}
+                                        className="modalInput"
+                                    />
+                                </div>
+                                <div className="modalInputGroup modalInputGroupSm">
+                                    <label>State <span className="required">*</span></label>
+                                    <select
+                                        value={newRestaurantState}
+                                        style={{ borderBottom: '1.5px solid #2a7a4b' }}
+                                        onChange={(e) => setNewRestaurantState(e.target.value)}
+                                        className="modalInput modalSelect"
+                                    >
+                                        <option value="">—</option>
+                                        {["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"].map(s => (
+                                            <option key={s} value={s}>{s}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="modalInputGroup modalInputGroupSm">
+                                    <label>ZIP <span className="required">*</span></label>
+                                    <input
+                                        type="text"
+                                        style={{ borderBottom: '1.5px solid #2a7a4b' }}
+                                        placeholder=""
+                                        maxLength={5}
+                                        value={newRestaurantZip}
+                                        onChange={(e) => setNewRestaurantZip(e.target.value)}
+                                        className="modalInput"
+                                    />
+                                </div>
                             </div>
 
                             <div className="modalButtons">

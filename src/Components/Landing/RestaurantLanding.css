@@ -1,7 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
    MANAGERCHECK — RestaurantLanding.css
-   Light concept: warm cream base, forest green accents,
-   DM Sans + DM Serif Display typography
    ═══════════════════════════════════════════════════════════ */
 
    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap');
@@ -48,7 +46,7 @@
    }
    
    /* ═══════════════════════════════════════════════════════════
-      HERO — full-bleed photo with fade-to-cream at bottom
+      HERO
       ═══════════════════════════════════════════════════════════ */
    .bgmain {
      position: relative;
@@ -59,7 +57,6 @@
      overflow: hidden;
    }
    
-   /* The photo layer */
    .bgImage {
      position: absolute;
      inset: 0;
@@ -76,7 +73,6 @@
      to   { transform: scale(1.00); }
    }
    
-   /* Layered gradient: dark top for readability, fades to cream at bottom */
    .bgImage::after {
      content: '';
      position: absolute;
@@ -102,20 +98,17 @@
      justify-content: center;
      align-items: center;
    }
-
-   /* ── HERO STAGGERED FADE-UP ANIMATION ─────────────────── */
-   /* Each hero element uses this class + an inline animationDelay */
+   
    @keyframes fadeUp {
      from { opacity: 0; transform: translateY(24px); }
      to   { opacity: 1; transform: translateY(0); }
    }
-
+   
    .heroFadeUp {
      opacity: 0;
      animation: fadeUp 0.9s ease forwards;
    }
    
-   /* ── HERO INNER LAYOUT ─────────────────────────────────── */
    .main {
      display: flex;
      flex-direction: column;
@@ -126,7 +119,6 @@
      padding: 0 24px;
    }
    
-   /* Left / right become irrelevant — centred layout */
    .left {
      display: flex;
      justify-content: center;
@@ -140,7 +132,6 @@
      width: 100%;
    }
    
-   /* ── LOGO / WORDMARK ───────────────────────────────────── */
    .webLogo {
      width: auto;
      max-width: 480px;
@@ -150,7 +141,6 @@
      filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.35));
    }
    
-   /* ── HERO TAGLINE ──────────────────────────────────────── */
    .heroTagline {
      font-family: 'DM Serif Display', serif;
      font-style: italic;
@@ -216,7 +206,6 @@
      color: var(--muted2);
    }
    
-   /* Search button */
    .searchSubmitBtn {
      background: var(--green);
      border: none;
@@ -235,7 +224,6 @@
    }
    .searchSubmitBtn:hover { background: var(--green-light); }
    
-   /* ── SEARCH DROPDOWN ───────────────────────────────────── */
    .searchResult {
      position: absolute;
      top: calc(100% + 4px);
@@ -251,19 +239,36 @@
    }
    
    .searchResultItem {
-     padding: 14px 20px;
-     cursor: pointer;
-     transition: background 0.15s;
-     font-size: 15px;
-     font-family: 'DM Sans', sans-serif;
-     font-weight: 300;
-     color: var(--text);
-     border-bottom: 1px solid var(--border);
-     letter-spacing: 0.01em;
-     text-align: left;
-   }
-   .searchResultItem:last-child { border-bottom: none; }
-   .searchResultItem:hover { background: var(--sand); }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid var(--border);
+    gap: 24px;
+  }
+  .searchResultItem:last-child { border-bottom: none; }
+  .searchResultItem:hover { background: var(--sand); }
+  
+  .searchResultName {
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    color: var(--text);
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  
+  .searchResultAddress {
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    color: var(--muted2);
+    letter-spacing: 0.01em;
+    text-align: right;
+    white-space: nowrap;
+  }
    
    .noManager {
      display: block;
@@ -287,7 +292,6 @@
    .heroScroll {
      position: absolute;
      bottom: 32px;
-     text-align: center;
      left: 0;
      right: 0;
      display: flex;
@@ -306,64 +310,12 @@
    .heroScrollLine {
      width: 1px;
      height: 100px;
-     background: linear-gradient(
-      to bottom,
-      rgba(255,255,255,.9),
-      rgba(255,255,255,0)
-    );
+     background: linear-gradient(to bottom, rgba(255,255,255,.9), rgba(255,255,255,0));
      animation: scrollPulse 2s 1.6s ease-in-out infinite;
    }
    @keyframes scrollPulse {
      0%, 100% { opacity: 0.5; }
      50%       { opacity: 1; }
-   }
-   
-   /* ═══════════════════════════════════════════════════════════
-      STATS BAND
-      ═══════════════════════════════════════════════════════════ */
-   .statsBand {
-     background: var(--sand);
-     border-top: 1px solid var(--border2);
-     border-bottom: 1px solid var(--border2);
-   }
-   
-   .statsInner {
-     max-width: 1100px;
-     margin: 0 auto;
-     display: grid;
-     grid-template-columns: repeat(3, 1fr);
-   }
-   
-   .statItem {
-     padding: 44px 40px;
-     text-align: center;
-     position: relative;
-   }
-   
-   .statItem + .statItem::before {
-     content: '';
-     position: absolute;
-     left: 0;
-     top: 25%;
-     bottom: 25%;
-     width: 1px;
-     background: var(--border2);
-   }
-   
-   .statNumber {
-     font-family: 'Bebas Neue', sans-serif;
-     font-size: clamp(42px, 5vw, 64px);
-     color: var(--green);
-     letter-spacing: 0.02em;
-     line-height: 1;
-   }
-   
-   .statLabel {
-     font-size: 11px;
-     letter-spacing: 0.18em;
-     text-transform: uppercase;
-     color: var(--muted);
-     margin-top: 8px;
    }
    
    /* ═══════════════════════════════════════════════════════════
@@ -388,8 +340,7 @@
      align-items: center;
      gap: 0;
    }
-
-   /* ── Eyebrow: "Our Purpose" ────────────────────────────── */
+   
    .missionEyebrow {
      font-size: 15px;
      letter-spacing: 0.25em;
@@ -397,7 +348,6 @@
      color: var(--green);
      margin-bottom: 22px;
      font-weight: 400;
-     /* scroll-triggered animation */
      opacity: 0;
      transform: translateY(10px);
      transition: opacity 0.6s ease, transform 0.6s ease;
@@ -406,13 +356,11 @@
      opacity: 1;
      transform: translateY(0);
    }
-
-   /* ── Rotating headline wrapper ─────────────────────────── */
+   
    .missionHeadlineWrap {
      display: flex;
      flex-direction: column;
      align-items: center;
-     /* scroll-triggered animation */
      opacity: 0;
      transform: translateY(14px);
      transition: opacity 0.7s 0.1s ease, transform 0.7s 0.1s ease;
@@ -422,7 +370,6 @@
      transform: translateY(0);
    }
    
-   /* "Our mission is to" static prefix */
    .missionStatic {
      font-family: 'DM Serif Display', serif;
      font-size: clamp(28px, 4.5vw, 52px);
@@ -431,7 +378,6 @@
      white-space: nowrap;
    }
    
-   /* Rotating phrase container */
    .missionPhrase {
      font-family: 'DM Serif Display', serif;
      font-size: clamp(28px, 4.5vw, 52px);
@@ -456,7 +402,6 @@
      font-weight: 400;
    }
    
-   /* ── Body text ─────────────────────────────────────────── */
    .missionBody {
      margin-top: 26px;
      font-size: 17px;
@@ -465,7 +410,6 @@
      max-width: 600px;
      font-family: 'DM Sans', sans-serif;
      font-weight: 300;
-     /* scroll-triggered animation */
      opacity: 0;
      transform: translateY(10px);
      transition: opacity 0.7s 0.2s ease, transform 0.7s 0.2s ease;
@@ -486,51 +430,7 @@
    }
    
    /* ═══════════════════════════════════════════════════════════
-      PHOTO DIVIDER (optional cinematic strip)
-      ═══════════════════════════════════════════════════════════ */
-   .photoDivider {
-     position: relative;
-     height: 360px;
-     overflow: hidden;
-     margin: 0 48px;
-     border-radius: 10px;
-   }
-   
-   .photoDividerImg {
-     position: absolute;
-     inset: 0;
-     background-size: cover;
-     background-position: center 38%;
-     filter: brightness(0.6) saturate(0.75);
-   }
-   
-   .photoDividerOverlay {
-     position: absolute;
-     inset: 0;
-     background: linear-gradient(
-       135deg,
-       rgba(42, 122, 75, 0.55) 0%,
-       rgba(30, 20, 10, 0.40) 100%
-     );
-     display: flex;
-     align-items: center;
-     justify-content: center;
-   }
-   
-   .photoDividerText {
-     font-family: 'DM Serif Display', serif;
-     font-style: italic;
-     font-size: clamp(22px, 3.5vw, 44px);
-     color: rgba(255, 255, 255, 0.92);
-     text-align: center;
-     max-width: 680px;
-     padding: 0 32px;
-     line-height: 1.35;
-     text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-   }
-   
-   /* ═══════════════════════════════════════════════════════════
-      BOTTOM FEATURE CARDS — with scroll-triggered animations
+      BOTTOM FEATURE CARDS
       ═══════════════════════════════════════════════════════════ */
    .bottom {
      display: grid;
@@ -542,7 +442,6 @@
      box-sizing: border-box;
    }
    
-   /* Base card styles */
    .anonBox,
    .topRestos {
      display: flex;
@@ -553,46 +452,35 @@
      background: var(--warm-white);
      overflow: hidden;
      cursor: pointer;
-     transition:
-       box-shadow 0.3s,
-       transform 0.3s,
-       background 0.2s;
+     transition: box-shadow 0.3s, transform 0.3s, background 0.2s;
      position: relative;
    }
-
-   /* Content wrapper for text elements */
+   
    .cardContent {
      display: flex;
      flex-direction: column;
      flex: 1;
    }
-
-   /* ── Scroll-triggered entrance animation ─────────────── */
+   
    .featureCard {
      opacity: 0;
      transform: translateY(20px);
-     transition:
-       opacity 0.6s ease,
-       transform 0.6s ease,
-       box-shadow 0.3s,
-       background 0.2s;
+     transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s, background 0.2s;
    }
-
+   
    .featureCard:nth-child(2) {
      transition-delay: 0.12s;
    }
-
+   
    .featureCard.cardVisible {
      opacity: 1;
      transform: translateY(0);
    }
-
-   /* Override: once visible, allow hover transform to work naturally */
+   
    .featureCard.cardVisible:hover {
      transform: translateY(-3px);
    }
    
-   /* Green underline accent on hover */
    .anonBox::after,
    .topRestos::after {
      content: '';
@@ -618,7 +506,6 @@
      transform: scaleX(1);
    }
    
-   /* Photo inside each card */
    .boxImage {
      width: 100%;
      height: 220px;
@@ -632,7 +519,6 @@
      transform: scale(1.03);
    }
    
-   /* Card text labels */
    .headerBox,
    .topRestos > .cardContent > span {
      font-family: 'DM Sans', sans-serif;
@@ -645,7 +531,6 @@
      display: block;
    }
    
-   /* Card headline */
    .cardHeadline {
      font-family: 'DM Serif Display', serif;
      font-size: clamp(20px, 2.2vw, 28px);
@@ -654,7 +539,6 @@
      padding: 0 28px 24px;
    }
    
-   /* Card description */
    .cardDesc {
      font-size: 15px;
      line-height: 1.75;
@@ -663,486 +547,312 @@
      font-weight: 300;
    }
    
-   /* ═══════════════════════════════════════════════════════════
-      CTA BAND
-      ═══════════════════════════════════════════════════════════ */
-   .ctaBand {
-     background: var(--green);
-     border-radius: 10px;
-     padding: 72px 64px;
-     margin: 0 48px 100px;
-     display: flex;
-     align-items: center;
-     justify-content: space-between;
-     gap: 48px;
-     position: relative;
-     overflow: hidden;
-   }
-   
-   .ctaBand::before {
-     content: '';
-     position: absolute;
-     right: -60px;
-     top: -60px;
-     width: 320px;
-     height: 320px;
-     border-radius: 50%;
-     background: rgba(255, 255, 255, 0.07);
-     pointer-events: none;
-   }
-   
-   .ctaBand::after {
-     content: '';
-     position: absolute;
-     left: -40px;
-     bottom: -80px;
-     width: 260px;
-     height: 260px;
-     border-radius: 50%;
-     background: rgba(0, 0, 0, 0.06);
-     pointer-events: none;
-   }
-   
-   .ctaBandText h2 {
-     font-family: 'DM Serif Display', serif;
-     font-size: clamp(26px, 3.5vw, 42px);
-     color: #fff;
-     line-height: 1.2;
-     margin-bottom: 12px;
-   }
-   
-   .ctaBandText p {
-     font-size: 16px;
-     color: rgba(255, 255, 255, 0.75);
-     line-height: 1.65;
-     max-width: 420px;
-     font-weight: 300;
-   }
-   
-   .ctaBandActions {
-     display: flex;
-     gap: 12px;
-     flex-shrink: 0;
-     position: relative;
-     z-index: 1;
-   }
-   
-   .btnPrimary {
-     background: #fff;
-     color: var(--green);
-     border: none;
-     font-family: 'DM Sans', sans-serif;
-     font-size: 14px;
-     font-weight: 500;
-     padding: 14px 28px;
-     border-radius: 4px;
-     cursor: pointer;
-     transition: transform 0.15s, box-shadow 0.2s;
-     white-space: nowrap;
-   }
-   .btnPrimary:hover {
-     transform: translateY(-2px);
-     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-   }
-   
-   .btnSecondary {
-     background: none;
-     color: rgba(255, 255, 255, 0.88);
-     border: 1px solid rgba(255, 255, 255, 0.4);
-     font-family: 'DM Sans', sans-serif;
-     font-size: 14px;
-     font-weight: 300;
-     padding: 14px 28px;
-     border-radius: 4px;
-     cursor: pointer;
-     transition: border-color 0.2s, background 0.2s;
-     white-space: nowrap;
-   }
-   .btnSecondary:hover {
-     border-color: rgba(255, 255, 255, 0.8);
-     background: rgba(255, 255, 255, 0.1);
-   }
-   
-   /* ═══════════════════════════════════════════════════════════
-      MODAL — Add Restaurant
-      ═══════════════════════════════════════════════════════════ */
    .modalOverlay {
-     position: fixed;
-     inset: 0;
-     background: rgba(30, 26, 20, 0.55);
-     z-index: 1000;
-     backdrop-filter: blur(4px);
-     -webkit-backdrop-filter: blur(4px);
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 26, 20, 0.55);
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  
+  .addRestaurantModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--sand);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 44px 48px;
+    max-width: 520px;
+    width: 90%;
+    z-index: 1001;
+    box-shadow: 0 24px 60px rgba(30, 26, 20, 0.2);
+  }
+  
+  .modalCloseBtn {
+    position: absolute;
+    top: 20px;
+    right: 22px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: var(--muted2);
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .modalCloseBtn:hover { color: var(--text); }
+  
+  .modalContent h2 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 28px;
+  }
+  
+  .required { color: #c0392b; }
+  
+  .modalInputGroup {
+    margin-bottom: 24px;
+  }
+  
+  .modalInputGroup label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 10px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  
+  .modalInput {
+    width: 100%;
+    padding: 10px 0 8px;
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    color: var(--text);
+    background: transparent;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  .modalInput::placeholder { color: var(--muted2); }
+  
+  .modalSelect {
+    width: 100%;
+    padding: 10px 0 8px;
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    color: var(--text);
+    background: transparent;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+  }
+  
+  .modalInputRow {
+    display: grid;
+    grid-template-columns: 1fr 80px 100px;
+    gap: 16px;
+    align-items: end;
+  }
+  
+  .modalButtons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 36px;
+  }
+  
+  .modalAddBtn,
+  .modalCancelBtn {
+    padding: 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+  }
+  
+  .modalAddBtn {
+    background: var(--green);
+    color: #fff;
+  }
+  .modalAddBtn:hover {
+    background: var(--green-light);
+    transform: translateY(-1px);
+  }
+  
+  .modalCancelBtn {
+    background: none;
+    color: var(--muted);
+    border: 1px solid var(--border2);
+  }
+  .modalCancelBtn:hover {
+    border-color: var(--text);
+    color: var(--text);
+  }
+   
+   /* ═══════════════════════════════════════════════════════════
+      FOOTER
+      ═══════════════════════════════════════════════════════════ */
+   .footer {
+     background: var(--sand);
+     border-top: 1px solid var(--border2);
    }
    
-   .addRestaurantModal {
-     position: fixed;
-     top: 50%;
-     left: 50%;
-     transform: translate(-50%, -50%);
-     background: var(--warm-white);
-     border: 1px solid var(--border2);
-     border-radius: 10px;
-     padding: 44px 48px;
-     max-width: 480px;
-     width: 90%;
-     z-index: 1001;
-     box-shadow: 0 24px 60px rgba(30, 26, 20, 0.2);
+   .footerInner {
+     max-width: 1100px;
+     margin: 0 auto;
+     padding: 72px 48px 52px;
+     display: flex;
+     gap: 80px;
+     align-items: flex-start;
    }
    
-   .modalCloseBtn {
-     position: absolute;
-     top: 20px;
-     right: 22px;
-     background: none;
-     border: none;
-     font-size: 20px;
-     color: var(--muted2);
-     cursor: pointer;
-     padding: 4px;
-     line-height: 1;
-     transition: color 0.2s;
-   }
-   .modalCloseBtn:hover { color: var(--text); }
-   
-   .modalContent h2 {
-     font-family: 'DM Serif Display', serif;
-     font-size: 26px;
-     font-weight: 400;
-     color: var(--text);
-     margin-bottom: 28px;
+   .footerContact {
+     display: flex;
+     flex-direction: column;
+     gap: 12px;
+     max-width: 240px;
+     flex-shrink: 0;
+     padding-top: 4px;
    }
    
-   .required { color: #c0392b; }
+   .footerEyebrow {
+     font-size: 11px;
+     font-weight: 500;
+     letter-spacing: 0.22em;
+     text-transform: uppercase;
+     color: var(--green);
+   }
    
-   .modalInputGroup { margin-bottom: 24px; }
+   .footerSub {
+     font-size: 14px;
+     color: var(--muted);
+     line-height: 1.75;
+     font-weight: 300;
+   }
    
-   .modalInputGroup label {
-     display: block;
+   .footerEmail {
+     font-size: 13px;
+     color: var(--muted);
+     font-weight: 300;
+     letter-spacing: 0.01em;
+   }
+   
+   .footerForm {
+     flex: 1;
+     display: flex;
+     flex-direction: column;
+     gap: 20px;
+   }
+   
+   .footerInputRow {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 20px;
+   }
+   
+   .footerInputGroup {
+     display: flex;
+     flex-direction: column;
+     gap: 8px;
+   }
+   
+   .footerInputGroup label {
      font-size: 11px;
      font-weight: 500;
      letter-spacing: 0.15em;
      text-transform: uppercase;
      color: var(--muted2);
-     margin-bottom: 10px;
    }
    
-   .modalInput {
+   .footerInput {
      width: 100%;
      padding: 11px 0;
      border: none;
      border-bottom: 1.5px solid var(--border2);
-     font-size: 15px;
+     font-size: 14px;
      font-family: 'DM Sans', sans-serif;
      font-weight: 300;
      color: var(--text);
      background: transparent;
      box-sizing: border-box;
      transition: border-color 0.2s;
+     resize: none;
    }
-   .modalInput:focus {
+   
+   .footerInput:focus {
      outline: none;
      border-bottom-color: var(--green);
    }
-   .modalInput::placeholder { color: var(--muted2); }
    
-   .modalButtons {
-     display: grid;
-     grid-template-columns: 1fr 1fr;
-     gap: 12px;
-     margin-top: 36px;
-   }
+   .footerInput::placeholder { color: var(--muted2); }
    
-   .modalAddBtn,
-   .modalCancelBtn {
-     padding: 14px;
-     border-radius: 5px;
-     font-size: 14px;
-     font-family: 'DM Sans', sans-serif;
-     font-weight: 500;
-     cursor: pointer;
-     transition: all 0.2s;
-     border: none;
-   }
+   .footerTextarea { line-height: 1.7; }
    
-   .modalAddBtn {
+   .footerSubmitBtn {
+     align-self: flex-start;
      background: var(--green);
      color: #fff;
+     border: none;
+     font-family: 'DM Sans', sans-serif;
+     font-size: 13px;
+     font-weight: 500;
+     letter-spacing: 0.08em;
+     text-transform: uppercase;
+     padding: 12px 28px;
+     border-radius: 4px;
+     cursor: pointer;
+     transition: background 0.2s, transform 0.15s;
    }
-   .modalAddBtn:hover { background: var(--green-light); }
-   
-   .modalCancelBtn {
-     background: none;
-     color: var(--muted);
-     border: 1px solid var(--border2);
+   .footerSubmitBtn:hover {
+     background: var(--green-light);
+     transform: translateY(-1px);
    }
-   .modalCancelBtn:hover {
-     border-color: var(--text);
-     color: var(--text);
-   }
-
-/* ═══════════════════════════════════════════════════════════
-   FOOTER
-   ═══════════════════════════════════════════════════════════ */
-   .footer {
-    background: var(--sand);
-    border-top: 1px solid var(--border2);
-  }
-  
-  .footerInner {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 72px 48px 52px;
-    display: flex;
-    gap: 80px;
-    align-items: flex-start;
-  }
-  
-  .footerContact {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-width: 240px;
-    flex-shrink: 0;
-    padding-top: 4px;
-  }
-  
-  .footerEyebrow {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--green);
-  }
-  
-  .footerSub {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.75;
-    font-weight: 300;
-  }
-  
-  .footerForm {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .footerInputRow {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-  
-  .footerInputGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .footerInputGroup label {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted2);
-  }
-  
-  .footerInput {
-    width: 100%;
-    padding: 11px 0;
-    border: none;
-    border-bottom: 1.5px solid var(--border2);
-    font-size: 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    color: var(--text);
-    background: transparent;
-    box-sizing: border-box;
-    transition: border-color 0.2s;
-    resize: none;
-  }
-  
-  .footerInput:focus {
-    outline: none;
-    border-bottom-color: var(--green);
-  }
-  
-  .footerInput::placeholder { color: var(--muted2); }
-  
-  .footerTextarea { line-height: 1.7; }
-  
-  .footerSubmitBtn {
-    align-self: flex-start;
-    background: var(--green);
-    color: #fff;
-    border: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 12px 28px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.15s;
-  }
-  .footerSubmitBtn:hover {
-    background: var(--green-light);
-    transform: translateY(-1px);
-  }
-  
-  .footerBottom {
-    border-top: 1px solid var(--border);
-    padding: 20px 48px;
-    max-width: 1100px;
-    margin: 0 auto;
-    font-size: 12px;
-    color: var(--muted2);
-    letter-spacing: 0.04em;
-  }
-
-  .footerFormBottom {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  
-  .footerStatusMsg {
-    font-size: 13px;
-    font-weight: 300;
-  }
-  
-  .footerStatusSuccess { color: var(--green); }
-  .footerStatusError   { color: #c0392b; }
-  
-  .footerSubmitBtn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .socials {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-  }
-  
-  .social1,
-  .social2 {
-    width: 30px;
-    height: 30px;
-    object-fit: contain;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-
-  .social2{
-    width: 32px;
-    height: 32px;
-  }
-  
-  /* ── Responsive ──────────────────────────────────────────── */
-  @media (max-width: 768px) {
-    .footerInner {
-      flex-direction: column;
-      padding: 52px 24px 40px;
-      gap: 36px;
-    }
-  
-    .footerContact { max-width: none; }
-    .footerInputRow { grid-template-columns: 1fr; }
-    .footerSubmitBtn { width: 100%; text-align: center; }
-    .footerBottom { padding: 20px 24px; }
-  }
-
-   /* ═══════════════════════════════════════════════════════════
-      RESPONSIVE
-      ═══════════════════════════════════════════════════════════ */
-   
-   /* ── Tablet ─────────────────────────────────────────────── */
-   @media (max-width: 1024px) {
-     .bgmain { height: 80vh; }
-   
-     .main { gap: 20px; }
-   
-     .webLogo { max-width: 360px; }
-   
-     .statsInner { grid-template-columns: repeat(3, 1fr); }
-   
-     .mission { padding: 80px 32px 60px; }
-   
-     .photoDivider { margin: 0 24px; height: 280px; }
-   
-     .bottom {
-       grid-template-columns: 1fr;
-       padding: 60px 32px 80px;
-       max-width: 620px;
-     }
-   
-     .ctaBand {
-       flex-direction: column;
-       padding: 52px 36px;
-       margin: 0 32px 80px;
-       text-align: center;
-     }
-     .ctaBandText p { max-width: none; }
-     .ctaBandActions { width: 100%; justify-content: center; }
+   .footerSubmitBtn:disabled {
+     opacity: 0.6;
+     cursor: not-allowed;
+     transform: none;
    }
    
-   /* ── Mobile ─────────────────────────────────────────────── */
-   @media (max-width: 768px) {
-     .bgmain {
-       height: 100svh;
-       min-height: 580px;
-     }
+   .footerBottom {
+     border-top: 1px solid var(--border);
+     padding: 20px 48px;
+     max-width: 1100px;
+     margin: 0 auto;
+     font-size: 12px;
+     color: var(--muted2);
+     letter-spacing: 0.04em;
+   }
    
-     .main { gap: 18px; }
+   .footerStatusMsg {
+     font-size: 13px;
+     font-weight: 300;
+   }
    
-     .webLogo { max-width: 260px; }
+   .footerStatusSuccess { color: var(--green); }
+   .footerStatusError   { color: #c0392b; }
    
-     .heroTagline { font-size: 14px; }
-
-     .searching { width: min(480px, 88vw); }
+   .socials {
+     display: flex;
+     align-items: center;
+     gap: 30px;
+   }
    
-     .statsInner { grid-template-columns: 1fr; }
+   .social1,
+   .social2 {
+     width: 30px;
+     height: 30px;
+     object-fit: contain;
+     cursor: pointer;
+     transition: opacity 0.2s;
+   }
    
-     .statItem + .statItem::before {
-       top: 0;
-       bottom: auto;
-       left: 25%;
-       right: 25%;
-       width: auto;
-       height: 1px;
-     }
-   
-     .mission { padding: 64px 24px 48px; }
-   
-     .missionPhrase { flex-direction: column; gap: 0; }
-   
-     .photoDivider { margin: 0 16px; height: 220px; border-radius: 8px; }
-   
-     .bottom {
-       padding: 48px 16px 60px;
-       gap: 12px;
-     }
-   
-     .boxImage { height: 180px; }
-   
-     .ctaBand {
-       padding: 44px 24px;
-       margin: 0 16px 60px;
-     }
-     .ctaBandActions { flex-direction: column; }
-     .btnPrimary,
-     .btnSecondary { width: 100%; text-align: center; }
-   
-     .addRestaurantModal {
-       padding: 36px 28px;
-       width: 92%;
-     }
-   
-     .modalButtons { grid-template-columns: 1fr; }
+   .social2 {
+     width: 32px;
+     height: 32px;
    }
