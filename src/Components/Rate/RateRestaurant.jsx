@@ -148,9 +148,9 @@ const RateRestaurant = () => {
     fetchUserVotes();
   }, [currentUserId, restaurantID]);
 
-  const goHome = () => {
-    navigate('/');
-  }
+  // const goHome = () => {
+  //   navigate('/');
+  // }
 
   const goToRatingForm = () => {
     navigate(`/restaurant/${restaurantID}/form`, { state: { restaurantName } });
