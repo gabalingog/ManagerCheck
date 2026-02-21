@@ -11,7 +11,6 @@ import waitress from './../Assets/waitress.png';
 import pic1 from './../Assets/pic1.png';
 // import pic2 from './../Assets/pic2-2.png';
 import pic3 from './../Assets/pic2-4.png';
-import footerBg from './../Assets/pic2-13.png';
 
 const RestaurantLanding = () => {
     const navigate = useNavigate();
