@@ -12,8 +12,8 @@ import waitress from './../Assets/waitress.png';
 import pic1 from './../Assets/pic1.png';
 // import pic2 from './../Assets/pic2-2.png';
 import pic3 from './../Assets/pic2-4.png';
-import insta from './../Assets/pic2-15.png';
-import linkedin from './../Assets/pic2-16.png'
+import insta from './../Assets/favicon-3.png';
+import linkedin from './../Assets/favicon-2.png'
 
 const RestaurantLanding = () => {
     const navigate = useNavigate();
@@ -291,10 +291,23 @@ const RestaurantLanding = () => {
                     <div className="footerContact">
                         <span className="footerEyebrow">Contact Us</span>
                         <p className="footerSub">Have a question or want to share feedback? We read every message.</p>
+                        <div className="socials">
+                            <a
+                            href="https://www.linkedin.com/company/managercheck/" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            >
+                                <img src={linkedin} alt="LinkedIn" className='social1'/>
+                            </a>
+                            <a
+                            href="https://www.instagram.com/managercheckwebsite/" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            >
+                                <img src={insta} alt="Instagram" className='social2'/>
+                            </a>
+                        </div>
                         <span className="footerEyebrow">hello@managercheck.org</span>
-                        <img src={linkedin} alt="LinkedIn" className='social1'/>
-                        <img src={insta} alt="Instagram" className='social2'/>
-                        
                         <span></span>
                         <button
                             className="footerSubmitBtn"

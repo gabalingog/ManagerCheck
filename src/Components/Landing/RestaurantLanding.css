@@ -1023,6 +1023,26 @@
     cursor: not-allowed;
     transform: none;
   }
+
+  .socials {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+  
+  .social1,
+  .social2 {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .social2{
+    width: 32px;
+    height: 32px;
+  }
   
   /* ── Responsive ──────────────────────────────────────────── */
   @media (max-width: 768px) {
