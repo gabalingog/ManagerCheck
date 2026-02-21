@@ -263,6 +263,8 @@ const RestaurantLanding = () => {
                         <span className="footerEyebrow">Contact Us</span>
                         <p className="footerSub">Have a question or want to share feedback? We read every message.</p>
                         <span className="footerEyebrow">hello@managercheck.org</span>
+                        <span></span>
+                        <button className="footerSubmitBtn">Send Message</button>
                     </div>
 
                     <div className="footerForm">
@@ -280,7 +282,6 @@ const RestaurantLanding = () => {
                             <label>Message</label>
                             <textarea placeholder="What's on your mind?" className="footerInput footerTextarea" rows={4} />
                         </div>
-                        <button className="footerSubmitBtn">Send Message</button>
                     </div>
                 </div>
 

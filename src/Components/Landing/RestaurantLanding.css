@@ -983,7 +983,7 @@
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    padding: 13px 28px;
+    padding: 12px 28px;
     border-radius: 4px;
     cursor: pointer;
     transition: background 0.2s, transform 0.15s;
@@ -1016,7 +1016,7 @@
     .footerSubmitBtn { width: 100%; text-align: center; }
     .footerBottom { padding: 20px 24px; }
   }
-  
+
    /* ═══════════════════════════════════════════════════════════
       RESPONSIVE
       ═══════════════════════════════════════════════════════════ */
