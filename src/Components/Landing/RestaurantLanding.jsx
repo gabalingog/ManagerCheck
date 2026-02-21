@@ -4,7 +4,7 @@ import emailjs from '@emailjs/browser';
 import './RestaurantLanding.css';
 import search from './../Assets/Search.png';
 // import logo from './../Assets/finalLogo.png';
-import logo from './../Assets/pic2-12.png';
+import logo from './../Assets/pic2-17.png';
 // import bg from './../Assets/background.png';
 import waitress from './../Assets/waitress.png';
 // import pic from './../Assets/other.png';
