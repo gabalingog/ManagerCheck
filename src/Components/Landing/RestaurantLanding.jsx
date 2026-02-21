@@ -1,33 +1,82 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
+import { supabase } from './../../supabaseClient';
 import './RestaurantLanding.css';
 import search from './../Assets/Search.png';
-// import logo from './../Assets/finalLogo.png';
 import logo from './../Assets/pic2-17.png';
-// import bg from './../Assets/background.png';
 import waitress from './../Assets/waitress.png';
-// import pic from './../Assets/other.png';
-// import logo2 from './../Assets/trialLogo.png';
 import pic1 from './../Assets/pic1.png';
-// import pic2 from './../Assets/pic2-2.png';
 import pic3 from './../Assets/pic2-4.png';
 import insta from './../Assets/favicon-3.png';
 import linkedin from './../Assets/favicon-2.png'
 
+const missionPhrases = [
+    { highlight: "bring transparency", suffix: "to restaurants" },
+    { highlight: "find honest", suffix: "employee experiences" },
+    { highlight: "build healthier", suffix: "cultures at work" },
+    { highlight: "support employees'", suffix: "perspectives" },
+];
+
+const MissionSection = ({ missionRef, missionVisible }) => {
+    const [index, setIndex] = useState(0);
+    const [visible, setVisible] = useState(true);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setVisible(false);
+            setTimeout(() => {
+                setIndex(prev => (prev + 1) % missionPhrases.length);
+                setVisible(true);
+            }, 500);
+        }, 3500);
+        return () => clearInterval(interval);
+    }, []);
+
+    const phrase = missionPhrases[index];
+
+    return (
+        <div className="missionContent" ref={missionRef}>
+            <div className={`missionEyebrow ${missionVisible ? 'visible' : ''}`}>
+                Our Purpose
+            </div>
+            <div className={`missionHeadlineWrap ${missionVisible ? 'visible' : ''}`}>
+                <span className="missionStatic">Our mission is to&nbsp;</span>
+                <div className={`missionPhrase ${visible ? 'fadeIn' : 'fadeOut'}`}>
+                    <span className="missionHighlight">{phrase.highlight} </span>
+                    <span className="missionSuffix">{phrase.suffix}</span>
+                </div>
+            </div>
+            <p className={`missionBody ${missionVisible ? 'visible' : ''}`}>
+                The industry moves fast and word doesn't always travel far enough. Manager Check gives hospitality workers a trusted, anonymous space to share their experiences — so the next person can make a more informed choice.
+            </p>
+        </div>
+    );
+};
+
 const RestaurantLanding = () => {
     const navigate = useNavigate();
     const [searchInput, setSearchInput] = useState('');
-    const [restaurants, setRestaurants] = useState(() => {
-        const savedRestaurants = localStorage.getItem('restaurants');
-        return savedRestaurants ? JSON.parse(savedRestaurants) : [
-            { id: 1, name: "Barcelona Wine Bar", address: "525 Tremont St, Boston, MA 02116" },
-            { id: 2, name: "Olive Garden", address: "234 Main St, Boston, MA 02118" }
-        ];
-    });
-
+    const [restaurants, setRestaurants] = useState([]);
+    const [filteredRestaurants, setFilteredRestaurants] = useState([]);
     const [footerForm, setFooterForm] = useState({ name: '', email: '', message: '' });
     const [footerStatus, setFooterStatus] = useState('');
+
+    useEffect(() => {
+        const fetchRestaurants = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('restaurants')
+                    .select('id, name, address, city, state, zip_code')
+                    .order('name', { ascending: true });
+                if (!error) setRestaurants(data || []);
+                else console.error('Error fetching restaurants:', error);
+            } catch (e) {
+                console.error('Supabase error:', e);
+            }
+        };
+        fetchRestaurants();
+    }, []);
 
     const handleFooterSubmit = () => {
         if (!footerForm.name || !footerForm.email || !footerForm.message) {
@@ -53,19 +102,13 @@ const RestaurantLanding = () => {
         });
     };
 
-    useEffect(() => {
-        localStorage.setItem('restaurants', JSON.stringify(restaurants));
-    }, [restaurants]);
-    
     const [showAddForm, setShowAddForm] = useState(false);
     const [newRestaurantName, setNewRestaurantName] = useState('');
     const [newRestaurantAddress, setNewRestaurantAddress] = useState('');
-    const [filteredRestaurants, setFilteredRestaurants] = useState([]);
     const [newRestaurantCity, setNewRestaurantCity] = useState('');
     const [newRestaurantState, setNewRestaurantState] = useState('');
     const [newRestaurantZip, setNewRestaurantZip] = useState('');
 
-    // ── Scroll-triggered visibility for bottom cards ──────────────
     const bottomRef = useRef(null);
     const [cardsVisible, setCardsVisible] = useState([false, false]);
 
@@ -73,19 +116,16 @@ const RestaurantLanding = () => {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Stagger the two cards
                     setCardsVisible([true, false]);
                     setTimeout(() => setCardsVisible([true, true]), 120);
                     observer.unobserve(entry.target);
                 }
             });
         }, { threshold: 0.1 });
-
         if (bottomRef.current) observer.observe(bottomRef.current);
         return () => observer.disconnect();
     }, []);
 
-    // ── Scroll-triggered visibility for mission section ───────────
     const missionRef = useRef(null);
     const [missionVisible, setMissionVisible] = useState(false);
 
@@ -98,59 +138,9 @@ const RestaurantLanding = () => {
                 }
             });
         }, { threshold: 0.1 });
-
         if (missionRef.current) observer.observe(missionRef.current);
         return () => observer.disconnect();
     }, []);
-
-    // ── Rotating mission phrases ───────────────────────────────────
-    const missionPhrases = [
-        { highlight: "bring transparency", suffix: "to restaurants" },
-        { highlight: "find honest", suffix: "employee experiences" },
-        { highlight: "build healthier", suffix: "cultures at work" },
-        { highlight: "support employees'", suffix: "perspectives" },
-    ];
-      
-    const MissionSection = () => {
-        const [index, setIndex] = useState(0);
-        const [visible, setVisible] = useState(true);
-      
-        useEffect(() => {
-            const interval = setInterval(() => {
-                setVisible(false);
-                setTimeout(() => {
-                    setIndex(prev => (prev + 1) % missionPhrases.length);
-                    setVisible(true);
-                }, 500);
-            }, 3500);
-            return () => clearInterval(interval);
-        }, []);
-      
-        const phrase = missionPhrases[index];
-      
-        return (
-            <div className="missionContent" ref={missionRef}>
-                {/* Eyebrow label */}
-                <div className={`missionEyebrow ${missionVisible ? 'visible' : ''}`}>
-                    Our Purpose
-                </div>
-
-                {/* Rotating headline */}
-                <div className={`missionHeadlineWrap ${missionVisible ? 'visible' : ''}`}>
-                    <span className="missionStatic">Our mission is to&nbsp;</span>
-                    <div className={`missionPhrase ${visible ? 'fadeIn' : 'fadeOut'}`}>
-                        <span className="missionHighlight">{phrase.highlight} </span>
-                        <span className="missionSuffix">{phrase.suffix}</span>
-                    </div>
-                </div>
-
-                {/* Supporting body text */}
-                <p className={`missionBody ${missionVisible ? 'visible' : ''}`}>
-                    The industry moves fast and word doesn't always travel far enough. Manager Check gives hospitality workers a trusted, anonymous space to share their experiences — so the next person can make a more informed choice.
-                </p>
-            </div>
-        );
-    };
 
     const handleSearch = (e) => {
         const searched = e.target.value;
@@ -177,22 +167,32 @@ const RestaurantLanding = () => {
         setFilteredRestaurants([]);
     };
 
-    const handleAddRestaurant = () => {
+    const handleAddRestaurant = async () => {
         if (!newRestaurantName.trim()) return;
         if (!newRestaurantAddress.trim()) return;
         if (!newRestaurantCity.trim()) return;
         if (!newRestaurantState) return;
         if (!newRestaurantZip.trim()) return;
-    
-        const fullAddress = `${newRestaurantAddress}, ${newRestaurantCity}, ${newRestaurantState} ${newRestaurantZip}`;
-        const newRestaurant = {
-            id: restaurants.length + 1,
-            name: newRestaurantName.trim(),
-            address: fullAddress
-        };
-        const updatedRestaurants = [...restaurants, newRestaurant];
-        setRestaurants(updatedRestaurants);
-        navigate(`/restaurant/${newRestaurant.id}`, { state: { restaurantName: newRestaurant.name } });
+
+        const { data, error } = await supabase
+            .from('restaurants')
+            .insert([{
+                name: newRestaurantName.trim(),
+                address: newRestaurantAddress.trim(),
+                city: newRestaurantCity.trim(),
+                state: newRestaurantState,
+                zip_code: newRestaurantZip.trim(),
+            }])
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error adding restaurant:', error);
+            return;
+        }
+
+        setRestaurants(prev => [...prev, data]);
+        navigate(`/restaurant/${data.id}`, { state: { restaurantName: data.name } });
         setNewRestaurantName('');
         setNewRestaurantAddress('');
         setNewRestaurantCity('');
@@ -210,6 +210,13 @@ const RestaurantLanding = () => {
         setNewRestaurantZip('');
     };
 
+    const getDisplayAddress = (restaurant) => {
+        if (restaurant.city && restaurant.state && restaurant.zip_code) {
+            return restaurant.address;
+        }
+        return restaurant.address || '';
+    };
+
     return (
         <div className='restoLanding'>
             <div className="bgmain">
@@ -221,17 +228,12 @@ const RestaurantLanding = () => {
                 }}></div>
                 <div className="mainBackground">
                     <div className="main">
-                        {/* Logo — fade up on load */}
                         <div className="left heroFadeUp" style={{ animationDelay: '0.2s' }}>
                             <img src={logo} alt="ManagerCheck" className='webLogo' />
                         </div>
-
-                        {/* Tagline — fade up after logo */}
                         <p className="heroTagline heroFadeUp" style={{ animationDelay: '0.5s' }}>
                             Know who you're working for, before you start.
                         </p>
-
-                        {/* Search bar — fade up last */}
                         <div className="right heroFadeUp" style={{ animationDelay: '0.75s' }}>
                             <div className="searching">
                                 <div className="searchRes">
@@ -244,7 +246,6 @@ const RestaurantLanding = () => {
                                         onChange={handleSearch}
                                     />
                                 </div>
-                                
                                 {searchInput && filteredRestaurants.length > 0 && (
                                     <div className="searchResult">
                                         {filteredRestaurants.map((restaurant) => (
@@ -253,12 +254,11 @@ const RestaurantLanding = () => {
                                                 className="searchResultItem"
                                                 onClick={() => handleSelectRestaurant(restaurant)}>
                                                 <span className="searchResultName">{restaurant.name}</span>
-                                                <span className="searchResultAddress">{restaurant.address}</span>
+                                                <span className="searchResultAddress">{getDisplayAddress(restaurant)}</span>
                                             </div>
                                         ))}
                                     </div>
                                 )}
-
                                 {searchInput && filteredRestaurants.length === 0 && (
                                     <div className="searchResult">
                                         <span className='noManager'>Can't find the restaurant?&nbsp;
@@ -269,8 +269,6 @@ const RestaurantLanding = () => {
                             </div>
                         </div>
                     </div>
-
-                    {/* Scroll cue */}
                     <div className="heroScroll heroFadeUp" style={{ animationDelay: '1.3s' }}>
                         <span>Scroll</span>
                         <div className="heroScrollLine"></div>
@@ -278,12 +276,10 @@ const RestaurantLanding = () => {
                 </div>
             </div>
 
-            {/* Mission section */}
             <div className="mission">
-                <MissionSection />
+                <MissionSection missionRef={missionRef} missionVisible={missionVisible} />
             </div>
-            
-            {/* Bottom feature cards */}
+
             <div className="bottom" ref={bottomRef}>
                 <div className={`anonBox featureCard ${cardsVisible[0] ? 'cardVisible' : ''}`}>
                     <img src={pic1} alt="Restaurant workplace" className="boxImage" />
@@ -307,18 +303,10 @@ const RestaurantLanding = () => {
                         <span className="footerEyebrow">Contact Us</span>
                         <p className="footerSub">Have a question or want to share feedback? We read every message.</p>
                         <div className="socials">
-                            <a
-                            href="https://www.linkedin.com/company/managercheck/" 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            >
+                            <a href="https://www.linkedin.com/company/managercheck/" target="_blank" rel="noopener noreferrer">
                                 <img src={linkedin} alt="LinkedIn" className='social1'/>
                             </a>
-                            <a
-                            href="https://www.instagram.com/managercheckwebsite/" 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            >
+                            <a href="https://www.instagram.com/managercheckwebsite/" target="_blank" rel="noopener noreferrer">
                                 <img src={insta} alt="Instagram" className='social2'/>
                             </a>
                         </div>
@@ -334,7 +322,6 @@ const RestaurantLanding = () => {
                         {footerStatus === 'sent' && <p className="footerStatusMsg footerStatusSuccess">Message sent!</p>}
                         {footerStatus === 'error' && <p className="footerStatusMsg footerStatusError">Please fill in all fields and try again.</p>}
                     </div>
-
                     <div className="footerForm">
                         <div className="footerInputRow">
                             <div className="footerInputGroup">
@@ -379,37 +366,31 @@ const RestaurantLanding = () => {
                         <button className="modalCloseBtn" onClick={handleCancelAdd}>✕</button>
                         <div className="modalContent">
                             <h2>Add Restaurant</h2>
-
                             <div className="modalInputGroup">
                                 <label>Restaurant Name <span className="required">*</span></label>
                                 <input
                                     type="text"
-                                    placeholder=""
                                     style={{ borderBottom: '1.5px solid #2a7a4b' }}
                                     value={newRestaurantName}
                                     onChange={(e) => setNewRestaurantName(e.target.value)}
                                     className="modalInput"
                                 />
                             </div>
-
                             <div className="modalInputGroup">
                                 <label>Street Address <span className="required">*</span></label>
                                 <input
                                     type="text"
-                                    placeholder=""
                                     style={{ borderBottom: '1.5px solid #2a7a4b' }}
                                     value={newRestaurantAddress}
                                     onChange={(e) => setNewRestaurantAddress(e.target.value)}
                                     className="modalInput"
                                 />
                             </div>
-
                             <div className="modalInputRow">
                                 <div className="modalInputGroup">
                                     <label>City <span className="required">*</span></label>
                                     <input
                                         type="text"
-                                        placeholder=""
                                         style={{ borderBottom: '1.5px solid #2a7a4b' }}
                                         value={newRestaurantCity}
                                         onChange={(e) => setNewRestaurantCity(e.target.value)}
@@ -435,7 +416,6 @@ const RestaurantLanding = () => {
                                     <input
                                         type="text"
                                         style={{ borderBottom: '1.5px solid #2a7a4b' }}
-                                        placeholder=""
                                         maxLength={5}
                                         value={newRestaurantZip}
                                         onChange={(e) => setNewRestaurantZip(e.target.value)}
@@ -443,7 +423,6 @@ const RestaurantLanding = () => {
                                     />
                                 </div>
                             </div>
-
                             <div className="modalButtons">
                                 <button onClick={handleAddRestaurant} className="modalAddBtn">Add Restaurant</button>
                                 <button onClick={handleCancelAdd} className="modalCancelBtn">Cancel</button>
@@ -453,7 +432,7 @@ const RestaurantLanding = () => {
                 </>
             )}
         </div>
-    )
-}
+    );
+};
 
-export default RestaurantLanding
+export default RestaurantLanding;
