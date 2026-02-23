@@ -9,7 +9,6 @@ const ManagerForm = () => {
   const managerName = location.state?.managerName;
   const navigate = useNavigate();
   const [currentUserId, setCurrentUserId] = useState(null);
-  //hi
 
   const [ratings, setRatings] = useState({
     communication: 0,
@@ -33,7 +32,6 @@ const ManagerForm = () => {
     "High Workload"
   ];
 
-  // Generate or retrieve user ID
   useEffect(() => {
     let userId = localStorage.getItem('tempUserId');
     if (!userId) {
@@ -47,11 +45,9 @@ const ManagerForm = () => {
     const starElement = event.currentTarget;
     const rect = starElement.getBoundingClientRect();
     const clickX = event.clientX - rect.left;
-    const starWidth = rect.width;
-    
-    const isLeftHalf = clickX < starWidth / 2;
+    const isLeftHalf = clickX < rect.width / 2;
     const newValue = isLeftHalf ? starValue - 0.5 : starValue;
-    
+
     setRatings(prev => ({
       ...prev,
       [category]: prev[category] === newValue ? 0 : newValue
@@ -59,25 +55,16 @@ const ManagerForm = () => {
   };
 
   const handleTagClick = (tag) => {
-    setSelectedTags(prev => {
-      if (prev.includes(tag)) {
-        return prev.filter(t => t !== tag);
-      } else {
-        return [...prev, tag];
-      }
-    });
+    setSelectedTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!currentUserId) return;
 
-    if (!currentUserId) {
-      alert('Error: Could not generate user ID');
-      return;
-    }
-
-    // Validation
-    if (Object.values(ratings).some(rating => rating === 0)) {
+    if (Object.values(ratings).some(r => r === 0)) {
       alert('Please rate all categories');
       return;
     }
@@ -111,9 +98,7 @@ const ManagerForm = () => {
       dislikes: 0
     };
 
-    const { error } = await supabase
-      .from('manager_ratings')
-      .insert([newRating]);
+    const { error } = await supabase.from('manager_ratings').insert([newRating]);
 
     if (error) {
       console.error('Error submitting rating:', error);
@@ -130,43 +115,40 @@ const ManagerForm = () => {
 
   const renderStars = (category) => {
     const currentRating = ratings[category];
-    const stars = [];
-
-    for (let i = 1; i <= 5; i++) {
+    return [1, 2, 3, 4, 5].map(i => {
       const isHalfFilled = currentRating === i - 0.5;
       const isFilled = currentRating >= i;
-
-      stars.push(
+      return (
         <div key={i} className="star-container">
           <span
             className={`star-whole ${isFilled ? 'filled' : isHalfFilled ? 'half-filled' : ''}`}
             onClick={(e) => handleStarClick(category, i, e)}
-          >
-            ★
-          </span>
+          >★</span>
         </div>
       );
-    }
-
-    return stars;
+    });
   };
 
   return (
     <div className="managerFormPage">
       <div className="formContainer">
+
         <div className="formHeader">
-          <h1>Rate {managerName}</h1>
+          <span className="formEyebrow">Leave a Review</span>
+          <h1>{managerName}</h1>
         </div>
 
         <form onSubmit={handleSubmit}>
-          {/* Personal Information */}
+
+          {/* Personal Info */}
           <div className="formSection">
+            <h2>Your Role</h2>
             <div className="inputRow">
               <div className="inputGroup">
                 <label>Position</label>
                 <input
                   type="text"
-                  placeholder="Server"
+                  placeholder="e.g. Server"
                   value={position}
                   onChange={(e) => setPosition(e.target.value)}
                 />
@@ -175,7 +157,7 @@ const ManagerForm = () => {
                 <label>Duration</label>
                 <input
                   type="text"
-                  placeholder="2 years"
+                  placeholder="e.g. 2 years"
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
                 />
@@ -183,48 +165,28 @@ const ManagerForm = () => {
             </div>
           </div>
 
-          {/* Rating Categories */}
+          {/* Ratings */}
           <div className="formSection">
             <h2>Rate This Manager</h2>
-            
-            <div className="ratingCategory">
-              <label>Communication</label>
-              <div className="stars-row">
-                {renderStars('communication')}
+            {[
+              { key: 'communication', label: 'Communication' },
+              { key: 'fairness', label: 'Fairness' },
+              { key: 'approachability', label: 'Approachability' },
+              { key: 'organization', label: 'Organization' },
+            ].map(({ key, label }) => (
+              <div className="ratingCategory" key={key}>
+                <label>{label}</label>
+                <div className="stars-row">{renderStars(key)}</div>
+                <span className="rating-value">{ratings[key] || '—'}</span>
               </div>
-              <span className="rating-value">{ratings.communication}/5</span>
-            </div>
-
-            <div className="ratingCategory">
-              <label>Fairness</label>
-              <div className="stars-row">
-                {renderStars('fairness')}
-              </div>
-              <span className="rating-value">{ratings.fairness}/5</span>
-            </div>
-
-            <div className="ratingCategory">
-              <label>Approachability</label>
-              <div className="stars-row">
-                {renderStars('approachability')}
-              </div>
-              <span className="rating-value">{ratings.approachability}/5</span>
-            </div>
-
-            <div className="ratingCategory">
-              <label>Organization</label>
-              <div className="stars-row">
-                {renderStars('organization')}
-              </div>
-              <span className="rating-value">{ratings.organization}/5</span>
-            </div>
+            ))}
           </div>
 
           {/* Tags */}
           <div className="formSection">
-            <h2>Select Tags (Optional)</h2>
+            <h2>Tags (Optional)</h2>
             <div className="tagsContainer">
-              {availableTags.map((tag) => (
+              {availableTags.map(tag => (
                 <button
                   key={tag}
                   type="button"
@@ -237,7 +199,7 @@ const ManagerForm = () => {
             </div>
           </div>
 
-          {/* Recommendation */}
+          {/* Recommend */}
           <div className="formSection">
             <h2>Would you recommend this manager? <span className="required">*</span></h2>
             <div className="recommendButtons">
@@ -263,18 +225,19 @@ const ManagerForm = () => {
             <h2>Your Review</h2>
             <textarea
               className="commentBox"
-              placeholder="Share your experience working with this manager..."
+              placeholder="Share your experience working with this manager…"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               rows="6"
             />
           </div>
 
-          {/* Submit Buttons */}
+          {/* Actions */}
           <div className="formActions">
-            <button type="submit" className="submitBtn">Submit Rating</button>
+            <button type="submit" className="submitBtn">Submit Review</button>
             <button type="button" className="cancelBtn" onClick={handleCancel}>Cancel</button>
           </div>
+
         </form>
       </div>
     </div>
