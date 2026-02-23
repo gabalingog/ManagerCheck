@@ -317,7 +317,7 @@ font-weight: 400;
 }
 
 .ratingNumber {
-font-family: 'Bebas Neue', sans-serif;
+font-family: 'Bebas Neue', sans-serif !important;
 font-size: 56px;
 color: var(--green) !important;
 letter-spacing: 0.02em;

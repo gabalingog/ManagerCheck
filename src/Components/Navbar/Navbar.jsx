@@ -33,9 +33,6 @@ const Navbar = () => {
           <div className='navLogo'>
             Manager<span>Check</span>
           </div>
-        </div>
-        
-        <div className='navRight'>
           {!isLandingPage && (
             <button className='navHomeBtn' onClick={goHome}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -45,6 +42,9 @@ const Navbar = () => {
               Home
             </button>
           )}
+        </div>
+        
+        <div className='navRight'>
           {user ? (
             <>
               <span className='navUserEmail'>{user.email}</span>

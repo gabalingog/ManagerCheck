@@ -22,89 +22,73 @@ const ManagersList = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Fetch the current restaurant
+
+      // Fetch the current restaurant via Supabase
       const { data: restaurantData, error: restaurantError } = await supabase
         .from('restaurants')
         .select('*')
         .eq('id', restaurantID)
         .single();
-      
-      if (restaurantError) {
-        throw restaurantError;
-      }
-      
+
+      if (restaurantError) throw restaurantError;
       setRestaurant(restaurantData);
 
-      // Fetch managers for THIS restaurant only
+      // Fetch managers for this restaurant via Supabase
       const { data: managersData, error: managersError } = await supabase
         .from('managers')
         .select('*')
         .eq('restaurant_id', restaurantID)
         .order('name');
-      
-      if (managersError) {
-        throw managersError;
-      }
-      
-      const managersWithRestaurantName = managersData?.map(m => ({
+
+      if (managersError) throw managersError;
+
+      const managersWithRestaurantName = (managersData || []).map(m => ({
         ...m,
         restaurantName: restaurantData?.name || 'Unknown'
-      })) || [];
-      
+      }));
+
       setManagers(managersWithRestaurantName);
       setFilteredManagers(managersWithRestaurantName);
 
-      // Fetch ratings
+      // Fetch all ratings for these managers via Supabase
       const managerIds = managersWithRestaurantName.map(m => m.id);
-      
       let ratingsData = [];
+
       if (managerIds.length > 0) {
         const { data, error: ratingsError } = await supabase
           .from('manager_ratings')
           .select('*')
           .in('manager_id', managerIds);
-        
+
         if (ratingsError) {
           console.error('Error fetching ratings:', ratingsError);
         } else {
           ratingsData = data || [];
         }
       }
-      
-      // Calculate stats
+
+      // Calculate per-manager stats
       const ratingsMap = {};
       managersWithRestaurantName.forEach(manager => {
-        const managerReviews = ratingsData.filter(r => r.manager_id === manager.id);
-        
-        if (managerReviews.length > 0) {
-          const avgCommunication = managerReviews.reduce((acc, r) => acc + r.communication, 0) / managerReviews.length;
-          const avgFairness = managerReviews.reduce((acc, r) => acc + r.fairness, 0) / managerReviews.length;
-          const avgApproachability = managerReviews.reduce((acc, r) => acc + r.approachability, 0) / managerReviews.length;
-          const avgOrganization = managerReviews.reduce((acc, r) => acc + r.organization, 0) / managerReviews.length;
-          
-          const overallRating = (avgCommunication + avgFairness + avgApproachability + avgOrganization) / 4;
-          
+        const reviews = ratingsData.filter(r => r.manager_id === manager.id);
+
+        if (reviews.length > 0) {
+          const avg = (key) => reviews.reduce((acc, r) => acc + r[key], 0) / reviews.length;
+          const overall = (avg('communication') + avg('fairness') + avg('approachability') + avg('organization')) / 4;
+
           ratingsMap[manager.id] = {
-            count: managerReviews.length,
-            overallRating: overallRating.toFixed(1),
-            communication: avgCommunication.toFixed(1),
-            fairness: avgFairness.toFixed(1),
-            approachability: avgApproachability.toFixed(1),
-            organization: avgOrganization.toFixed(1)
+            count: reviews.length,
+            overallRating: overall.toFixed(1),
+            communication: avg('communication').toFixed(1),
+            fairness: avg('fairness').toFixed(1),
+            approachability: avg('approachability').toFixed(1),
+            organization: avg('organization').toFixed(1),
           };
         } else {
-          ratingsMap[manager.id] = {
-            count: 0,
-            overallRating: 0,
-            communication: 0,
-            fairness: 0,
-            approachability: 0,
-            organization: 0
-          };
+          ratingsMap[manager.id] = { count: 0, overallRating: 0, communication: 0, fairness: 0, approachability: 0, organization: 0 };
         }
       });
-      
+
       setManagerRatings(ratingsMap);
       setLoading(false);
     } catch (err) {
@@ -114,47 +98,33 @@ const ManagersList = () => {
     }
   }, [restaurantID]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   useEffect(() => {
     if (searchInput.trim() === '') {
       setFilteredManagers(managers);
     } else {
-      const filtered = managers.filter(manager =>
-        manager.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-        manager.position.toLowerCase().includes(searchInput.toLowerCase())
-      );
-      setFilteredManagers(filtered);
+      const q = searchInput.toLowerCase();
+      setFilteredManagers(managers.filter(m =>
+        m.name.toLowerCase().includes(q) || m.position.toLowerCase().includes(q)
+      ));
     }
   }, [searchInput, managers]);
 
   const getSortedManagers = () => {
-    let sorted = [...filteredManagers];
-    
+    const sorted = [...filteredManagers];
     switch (sortBy) {
       case 'rating':
-        sorted.sort((a, b) => {
-          const ratingA = parseFloat(managerRatings[a.id]?.overallRating || 0);
-          const ratingB = parseFloat(managerRatings[b.id]?.overallRating || 0);
-          return ratingB - ratingA;
-        });
-        break;
+        return sorted.sort((a, b) =>
+          parseFloat(managerRatings[b.id]?.overallRating || 0) - parseFloat(managerRatings[a.id]?.overallRating || 0)
+        );
       case 'reviews':
-        sorted.sort((a, b) => {
-          const countA = managerRatings[a.id]?.count || 0;
-          const countB = managerRatings[b.id]?.count || 0;
-          return countB - countA;
-        });
-        break;
-      case 'name':
+        return sorted.sort((a, b) =>
+          (managerRatings[b.id]?.count || 0) - (managerRatings[a.id]?.count || 0)
+        );
       default:
-        sorted.sort((a, b) => a.name.localeCompare(b.name));
-        break;
+        return sorted.sort((a, b) => a.name.localeCompare(b.name));
     }
-    
-    return sorted;
   };
 
   const sortedManagers = getSortedManagers();
@@ -163,48 +133,28 @@ const ManagersList = () => {
     navigate(`/rate/${manager.id}`, { state: { managerName: manager.name } });
   };
 
-  const goHome = () => {
-    navigate('/');
-  };
-
-  const goBack = () => {
-    navigate(`/restaurant/${restaurantID}`, { 
-      state: { restaurantName: restaurant?.name } 
-    });
-  };
-
-  const handleAddFirstManager = () => {
-    setShowAddManagerForm(true);
-  };
+  const goBack = () => navigate(`/restaurant/${restaurantID}`, { state: { restaurantName: restaurant?.name } });
 
   const handleAddManager = async () => {
-    if (newManagerName.trim() === '') {
-      alert('Please enter the manager\'s first name');
-      return;
-    }
-    if (newManagerPosition.trim() === '') {
-      alert('Please enter the manager\'s position');
-      return;
-    }
+    if (!newManagerName.trim() || !newManagerPosition.trim()) return;
 
     const { error: insertError } = await supabase
       .from('managers')
       .insert([{
         name: newManagerName.trim(),
         position: newManagerPosition.trim(),
-        restaurant_id: parseInt(restaurantID)
+        restaurant_id: parseInt(restaurantID),
       }])
       .select()
       .single();
 
     if (insertError) {
       console.error('Error adding manager:', insertError);
-      alert('Failed to add manager');
     } else {
       setShowAddManagerForm(false);
       setNewManagerName('');
       setNewManagerPosition('');
-      fetchData(); // Refresh the list
+      fetchData();
     }
   };
 
@@ -214,6 +164,7 @@ const ManagersList = () => {
     setNewManagerPosition('');
   };
 
+  /* ── LOADING ─────────────────────────────────────────── */
   if (loading) {
     return (
       <div className="managersListPage">
@@ -221,14 +172,14 @@ const ManagersList = () => {
           <h1 className="pageTitle">Managers</h1>
           <div className="topBarButtons">
             <button className="backBtn" onClick={goBack}>Back to Restaurant</button>
-            <button className="homeBtn" onClick={goHome}>Home</button>
           </div>
         </div>
-        <div className="loading">Loading managers...</div>
+        <div className="loading">Loading…</div>
       </div>
     );
   }
 
+  /* ── ERROR ───────────────────────────────────────────── */
   if (error) {
     return (
       <div className="managersListPage">
@@ -236,7 +187,6 @@ const ManagersList = () => {
           <h1 className="pageTitle">Managers</h1>
           <div className="topBarButtons">
             <button className="backBtn" onClick={goBack}>Back to Restaurant</button>
-            <button className="homeBtn" onClick={goHome}>Home</button>
           </div>
         </div>
         <div className="managersContainer">
@@ -249,13 +199,15 @@ const ManagersList = () => {
     );
   }
 
+  /* ── MAIN RENDER ─────────────────────────────────────── */
   return (
     <div className="managersListPage">
       <div className="topBar">
-        <h1 className="pageTitle">Managers at {restaurant?.name}</h1>
+        <h1 className="pageTitle">
+          {restaurant?.name}
+        </h1>
         <div className="topBarButtons">
           <button className="backBtn" onClick={goBack}>Back to Restaurant</button>
-          <button className="homeBtn" onClick={goHome}>Home</button>
         </div>
       </div>
 
@@ -264,8 +216,8 @@ const ManagersList = () => {
           <div className="noManagersAtAll">
             <div className="emptyState">
               <h2>No Managers Yet</h2>
-              <p>Be the first to add a manager at {restaurant?.name}!</p>
-              <button className="addFirstManagerBtn" onClick={handleAddFirstManager}>
+              <p>Be the first to add a manager at {restaurant?.name}.</p>
+              <button className="addFirstManagerBtn" onClick={() => setShowAddManagerForm(true)}>
                 Add First Manager
               </button>
             </div>
@@ -275,21 +227,20 @@ const ManagersList = () => {
             <div className="controlsBar">
               <input
                 type="text"
-                placeholder="Search managers or positions..."
+                placeholder="Search managers or positions…"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 className="searchInput"
               />
-              
               <div className="sortControls">
-                <label htmlFor="sortSelect">Sort by:</label>
+                <label htmlFor="sortSelect">Sort by</label>
                 <select
                   id="sortSelect"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="sortDropdown"
                 >
-                  <option value="name">Name (A-Z)</option>
+                  <option value="name">Name (A–Z)</option>
                   <option value="rating">Highest Rated</option>
                   <option value="reviews">Most Reviews</option>
                 </select>
@@ -297,102 +248,107 @@ const ManagersList = () => {
             </div>
 
             <div className="managersCount">
-              Showing {sortedManagers.length} {sortedManagers.length === 1 ? 'manager' : 'managers'}
+              {sortedManagers.length} {sortedManagers.length === 1 ? 'manager' : 'managers'}
             </div>
 
             <div className="managersList">
-              {sortedManagers.length === 0 ? (
-                <div className="noManagers">
-                  <p>No managers found matching your search.</p>
-                </div>
-              ) : (
-                sortedManagers.map((manager) => {
-                  const stats = managerRatings[manager.id];
-                  const hasReviews = stats && stats.count > 0;
-                  
-                  return (
-                    <div
-                      key={manager.id}
-                      className="managerRow"
-                      onClick={() => handleManagerClick(manager)}
-                    >
-                      <div className="managerBasicInfo">
-                        <h3 className="managerRowName">{manager.name}</h3>
-                        <p className="managerRowPosition">{manager.position}</p>
-                      </div>
+                {sortedManagers.length === 0 ? (
+                  <div className="noManagers">No managers match your search.</div>
+                ) : (
+                  sortedManagers.map((manager) => {
+                    const stats = managerRatings[manager.id];
+                    const hasReviews = stats && stats.count > 0;
 
-                      {hasReviews ? (
-                        <>
-                          <div className="managerRatingInfo">
-                            <div className="overallRatingBadge">
-                              <span className="ratingNumber">{stats.overallRating}</span>
-                              <div className="stars">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <span
-                                    key={star}
-                                    className={`star ${star <= Math.round(parseFloat(stats.overallRating)) ? 'filled' : ''}`}
-                                  >
-                                    ★
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                            <p className="reviewCount">{stats.count} {stats.count === 1 ? 'review' : 'reviews'}</p>
-                          </div>
-
-                          <div className="managerRatingBreakdown">
-                            <div className="ratingItem">
-                              <span className="ratingLabel">Communication</span>
-                              <span className="ratingValue">{stats.communication}</span>
-                            </div>
-                            <div className="ratingItem">
-                              <span className="ratingLabel">Fairness</span>
-                              <span className="ratingValue">{stats.fairness}</span>
-                            </div>
-                            <div className="ratingItem">
-                              <span className="ratingLabel">Approachability</span>
-                              <span className="ratingValue">{stats.approachability}</span>
-                            </div>
-                            <div className="ratingItem">
-                              <span className="ratingLabel">Organization</span>
-                              <span className="ratingValue">{stats.organization}</span>
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="noReviewsYet">
-                          <p>No reviews yet</p>
-                          <button className="beFirstBtn" onClick={(e) => {
-                            e.stopPropagation();
-                            handleManagerClick(manager);
-                          }}>Be the first to review</button>
+                    return (
+                      <div
+                        key={manager.id}
+                        className="managerRow"
+                        onClick={() => handleManagerClick(manager)}
+                      >
+                        <div className="managerBasicInfo">
+                          <h3 className="managerRowName">{manager.name}</h3>
+                          <p className="managerRowPosition">{manager.position}</p>
                         </div>
-                      )}
-                    </div>
-                  );
-                })
-              )}
+
+                        {hasReviews ? (
+                          <>
+                            <div className="managerRatingInfo">
+                              <div className="overallRatingBadge">
+                                <span className="ratingNumber">{stats.overallRating}</span>
+                                <div className="stars">
+                                  {[1, 2, 3, 4, 5].map((star) => {
+                                    const filled = star <= Math.floor(parseFloat(stats.overallRating));
+                                    const half = !filled && star === Math.ceil(parseFloat(stats.overallRating)) && parseFloat(stats.overallRating) % 1 >= 0.5;
+                                    return (
+                                      <span
+                                        key={star}
+                                        className={`star ${filled ? 'filled' : ''} ${half ? 'half' : ''}`}
+                                      >★</span>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                              <p className="reviewCount">
+                                {stats.count} {stats.count === 1 ? 'review' : 'reviews'}
+                              </p>
+                            </div>
+
+                            <div className="managerRatingBreakdown">
+                              {[
+                                ['Communication', stats.communication],
+                                ['Fairness', stats.fairness],
+                                ['Approachability', stats.approachability],
+                                ['Organization', stats.organization],
+                              ].map(([label, val]) => (
+                                <div className="ratingItem" key={label}>
+                                  <span className="ratingLabel">{label}</span>
+                                  <span className="ratingValue">{val}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </>
+                        ) : (
+                          <div className="noReviewsYet">
+                            <p>No reviews yet</p>
+                            <button
+                              className="beFirstBtn"
+                              onClick={(e) => { e.stopPropagation(); handleManagerClick(manager); }}
+                            >
+                              Be the first to review
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
+
+                <div className="managerRow addManagerCard" onClick={() => setShowAddManagerForm(true)}>
+                  <span className="addManagerPlus">+</span>
+                  <span className="addManagerLabel">Add a Manager</span>
+                </div>
             </div>
           </>
         )}
       </div>
 
+      {/* Add Manager Modal */}
       {showAddManagerForm && (
         <>
           <div className="modalOverlay" onClick={handleCancelAdd}></div>
           <div className="addManagerModal">
             <button className="modalCloseBtn" onClick={handleCancelAdd}>✕</button>
             <div className="modalContent">
-              <h2>Manager at {restaurant?.name}</h2>
-              
+              <h2>Add a Manager at {restaurant?.name}</h2>
+
               <div className="modalInputGroup">
                 <label>First Name <span className="required">*</span></label>
                 <input
                   type="text"
-                  placeholder=""
                   value={newManagerName}
                   onChange={(e) => setNewManagerName(e.target.value)}
                   className="modalInput"
+                  placeholder="e.g. Sarah"
                 />
               </div>
 
@@ -400,10 +356,10 @@ const ManagersList = () => {
                 <label>Position <span className="required">*</span></label>
                 <input
                   type="text"
-                  placeholder=""
                   value={newManagerPosition}
                   onChange={(e) => setNewManagerPosition(e.target.value)}
                   className="modalInput"
+                  placeholder="e.g. General Manager"
                 />
               </div>
 
