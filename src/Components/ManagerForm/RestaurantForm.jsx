@@ -32,7 +32,6 @@ const RestaurantForm = () => {
     "Low Pay"
   ];
 
-  // Generate or retrieve user ID
   useEffect(() => {
     let userId = localStorage.getItem('tempUserId');
     if (!userId) {
@@ -47,10 +46,9 @@ const RestaurantForm = () => {
     const rect = starElement.getBoundingClientRect();
     const clickX = event.clientX - rect.left;
     const starWidth = rect.width;
-    
     const isLeftHalf = clickX < starWidth / 2;
     const newValue = isLeftHalf ? starValue - 0.5 : starValue;
-    
+
     setRatings(prev => ({
       ...prev,
       [category]: prev[category] === newValue ? 0 : newValue
@@ -58,25 +56,16 @@ const RestaurantForm = () => {
   };
 
   const handleTagClick = (tag) => {
-    setSelectedTags(prev => {
-      if (prev.includes(tag)) {
-        return prev.filter(t => t !== tag);
-      } else {
-        return [...prev, tag];
-      }
-    });
+    setSelectedTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!currentUserId) return;
 
-    if (!currentUserId) {
-      alert('Error: Could not generate user ID');
-      return;
-    }
-
-    // Validation
-    if (Object.values(ratings).some(rating => rating === 0)) {
+    if (Object.values(ratings).some(r => r === 0)) {
       alert('Please rate all categories');
       return;
     }
@@ -110,9 +99,7 @@ const RestaurantForm = () => {
       dislikes: 0
     };
 
-    const { error } = await supabase
-      .from('restaurant_ratings')
-      .insert([newRating]);
+    const { error } = await supabase.from('restaurant_ratings').insert([newRating]);
 
     if (error) {
       console.error('Error submitting rating:', error);
@@ -129,44 +116,41 @@ const RestaurantForm = () => {
 
   const renderStars = (category) => {
     const currentRating = ratings[category];
-    const stars = [];
-
-    for (let i = 1; i <= 5; i++) {
+    return [1, 2, 3, 4, 5].map(i => {
       const isHalfFilled = currentRating === i - 0.5;
       const isFilled = currentRating >= i;
-
-      stars.push(
+      return (
         <div key={i} className="star-container">
           <span
             className={`star-whole ${isFilled ? 'filled' : isHalfFilled ? 'half-filled' : ''}`}
             onClick={(e) => handleStarClick(category, i, e)}
-          >
-            ★
-          </span>
+          >★</span>
         </div>
       );
-    }
-
-    return stars;
+    });
   };
 
   return (
     <div className="restaurantFormPage">
       <div className="formContainer">
+
         <div className="formHeader">
-          <h1>Rate {restaurantName}</h1>
+          <span className="formEyebrow">Leave a Review</span>
+          <h1>{restaurantName}</h1>
           <p className="locationName">Boston, MA</p>
         </div>
 
         <form onSubmit={handleSubmit}>
-          {/* Personal Information */}
+
+          {/* Personal Info */}
           <div className="formSection">
+            <h2>Your Role</h2>
             <div className="inputRow">
               <div className="inputGroup">
                 <label>Position</label>
                 <input
                   type="text"
-                  placeholder="Server"
+                  placeholder="e.g. Server"
                   value={position}
                   onChange={(e) => setPosition(e.target.value)}
                 />
@@ -175,7 +159,7 @@ const RestaurantForm = () => {
                 <label>Duration</label>
                 <input
                   type="text"
-                  placeholder="2 years"
+                  placeholder="e.g. 2 years"
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
                 />
@@ -183,48 +167,29 @@ const RestaurantForm = () => {
             </div>
           </div>
 
-          {/* Rating Categories */}
+          {/* Ratings */}
           <div className="formSection">
             <h2>Rate This Workplace</h2>
-            
-            <div className="ratingCategory">
-              <label>Team Environment</label>
-              <div className="stars-row">
-                {renderStars('teamEnvironment')}
-              </div>
-              <span className="rating-value">{ratings.teamEnvironment}/5</span>
-            </div>
 
-            <div className="ratingCategory">
-              <label>Shift Availability / Avg Hours</label>
-              <div className="stars-row">
-                {renderStars('shiftAvailability')}
+            {[
+              { key: 'teamEnvironment', label: 'Team Environment' },
+              { key: 'shiftAvailability', label: 'Shift Availability / Avg Hours' },
+              { key: 'pay', label: 'Pay' },
+              { key: 'staffWorkloadRatio', label: 'Staff-to-Workload Ratio' },
+            ].map(({ key, label }) => (
+              <div className="ratingCategory" key={key}>
+                <label>{label}</label>
+                <div className="stars-row">{renderStars(key)}</div>
+                <span className="rating-value">{ratings[key] || '—'}</span>
               </div>
-              <span className="rating-value">{ratings.shiftAvailability}/5</span>
-            </div>
-
-            <div className="ratingCategory">
-              <label>Pay</label>
-              <div className="stars-row">
-                {renderStars('pay')}
-              </div>
-              <span className="rating-value">{ratings.pay}/5</span>
-            </div>
-
-            <div className="ratingCategory">
-              <label>Staff-to-Workload Ratio</label>
-              <div className="stars-row">
-                {renderStars('staffWorkloadRatio')}
-              </div>
-              <span className="rating-value">{ratings.staffWorkloadRatio}/5</span>
-            </div>
+            ))}
           </div>
 
           {/* Tags */}
           <div className="formSection">
-            <h2>Select Tags (Optional)</h2>
+            <h2>Tags (Optional)</h2>
             <div className="tagsContainer">
-              {availableTags.map((tag) => (
+              {availableTags.map(tag => (
                 <button
                   key={tag}
                   type="button"
@@ -237,7 +202,7 @@ const RestaurantForm = () => {
             </div>
           </div>
 
-          {/* Recommendation */}
+          {/* Recommend */}
           <div className="formSection">
             <h2>Would you recommend this workplace? <span className="required">*</span></h2>
             <div className="recommendButtons">
@@ -263,18 +228,19 @@ const RestaurantForm = () => {
             <h2>Your Review</h2>
             <textarea
               className="commentBox"
-              placeholder="Share your experience working at this restaurant..."
+              placeholder="Share your experience working at this restaurant…"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               rows="6"
             />
           </div>
 
-          {/* Submit Buttons */}
+          {/* Actions */}
           <div className="formActions">
-            <button type="submit" className="submitBtn">Submit Rating</button>
+            <button type="submit" className="submitBtn">Submit Review</button>
             <button type="button" className="cancelBtn" onClick={handleCancel}>Cancel</button>
           </div>
+
         </form>
       </div>
     </div>
