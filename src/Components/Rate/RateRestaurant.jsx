@@ -564,9 +564,13 @@ const RateRestaurant = () => {
               <div className="ratingCard">
                 <div className="ratingNumber">{overallRating}</div>
                 <div className="ratingStars">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <span key={star} className={`ratingStar ${star <= Math.round(overallRating) ? 'filled' : ''}`}>★</span>
-                  ))}
+                {[1, 2, 3, 4, 5].map((star) => {
+                    const filled = star <= Math.floor(overallRating);
+                    const half = !filled && star === Math.ceil(overallRating) && overallRating % 1 >= 0.5;
+                    return (
+                      <span key={star} className={`ratingStar ${filled ? 'filled' : ''} ${half ? 'half' : ''}`}>★</span>
+                    );
+                  })}
                 </div>
                 <div className="ratingLabel">{existingRatings.length} {existingRatings.length === 1 ? 'Review' : 'Reviews'}</div>
               </div>
@@ -703,9 +707,13 @@ const RateRestaurant = () => {
                     <article key={rating.id} className="reviewCard">
                       <div className="reviewCardHeader">
                         <div className="reviewStars">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <span key={star} className={`reviewStar ${star <= avgRating ? 'filled' : ''}`}>★</span>
-                          ))}
+                        {[1, 2, 3, 4, 5].map((star) => {
+                          const filled = star <= Math.floor(avgRating);
+                          const half = !filled && star === Math.ceil(avgRating) && avgRating % 1 >= 0.5;
+                          return (
+                            <span key={star} className={`reviewStar ${filled ? 'filled' : ''} ${half ? 'half' : ''}`}>★</span>
+                          );
+                        })}
                         </div>
                         <div className="reviewMeta">
                           <span className="reviewPosition">{rating.position}</span>
