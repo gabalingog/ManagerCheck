@@ -1,11 +1,16 @@
-.authOverlay {
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap');
+
+/* ── OVERLAY ── */
+.authModalOverlay {
   position: fixed;
   inset: 0;
   background: rgba(30, 26, 20, 0.55);
   z-index: 1000;
   backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
+/* ── MODAL BOX ── */
 .authModal {
   position: fixed;
   top: 50%;
@@ -21,7 +26,8 @@
   box-shadow: 0 24px 60px rgba(30, 26, 20, 0.2);
 }
 
-.authClose {
+/* ── CLOSE BUTTON ── */
+.modalCloseBtn {
   position: absolute;
   top: 18px;
   right: 20px;
@@ -34,66 +40,69 @@
   line-height: 1;
   transition: color 0.2s;
 }
-.authClose:hover { color: #1e1a14; }
+.modalCloseBtn:hover { color: #1e1a14; }
 
-.authHeader { margin-bottom: 24px; }
+/* ── CONTENT ── */
+.modalContent { display: flex; flex-direction: column; gap: 0; }
 
-.authTitle {
+.modalContent h2 {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #2a7a4b;
+  margin: 0 0 16px 0;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.authSubtext {
   font-family: 'DM Serif Display', serif;
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 400;
   color: #1e1a14;
-  margin: 0 0 6px 0;
+  margin: 0 0 28px 0;
+  line-height: 1.2;
 }
 
-.authSubtitle {
-  font-size: 14px;
-  color: #7a6e5f;
-  margin: 0;
-  font-weight: 300;
+/* ── MESSAGES ── */
+.errorMessage {
+  font-size: 13px;
+  color: #c0392b;
+  background: #fdf0ee;
+  border: 1px solid rgba(192, 57, 43, 0.2);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
 }
 
-.authTabs {
-  display: flex;
-  gap: 0;
-  margin-bottom: 28px;
-  border-bottom: 1px solid rgba(60, 45, 20, 0.16);
-}
-
-.authTab {
-  flex: 1;
-  padding: 10px;
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  color: #a89d8e;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: -1px;
-}
-
-.authTab.active {
+.successMessage {
+  font-size: 13px;
   color: #2a7a4b;
-  border-bottom-color: #2a7a4b;
-  font-weight: 500;
+  background: #eaf5ee;
+  border: 1px solid rgba(42, 122, 75, 0.2);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
 }
 
-.authForm { display: flex; flex-direction: column; gap: 20px; }
+/* ── INPUTS ── */
+.modalInputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
 
-.authInputGroup { display: flex; flex-direction: column; gap: 8px; }
-
-.authInputGroup label {
+.modalInputGroup label {
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #a89d8e;
+  color: #2a7a4b;
+  font-family: 'DM Sans', sans-serif;
 }
 
-.authInput {
+.modalInput {
   padding: 12px 0;
   border: none;
   border-bottom: 1.5px solid rgba(60, 45, 20, 0.16);
@@ -104,70 +113,10 @@
   background: transparent;
   transition: border-color 0.2s;
   outline: none;
+  width: 100%;
 }
-
-.authInput:focus { border-bottom-color: #2a7a4b; }
-.authInput::placeholder { color: #a89d8e; }
-
-.authError {
-  font-size: 13px;
-  color: #c0392b;
-  background: #fdf0ee;
-  border: 1px solid rgba(192, 57, 43, 0.2);
-  border-radius: 6px;
-  padding: 10px 14px;
-  margin: 0;
-}
-
-.authSuccess {
-  font-size: 13px;
-  color: #2a7a4b;
-  background: #eaf5ee;
-  border: 1px solid rgba(42, 122, 75, 0.2);
-  border-radius: 6px;
-  padding: 10px 14px;
-  margin: 0;
-}
-
-.authSubmitBtn {
-  margin-top: 4px;
-  padding: 14px;
-  background: #2a7a4b;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
-}
-
-.authSubmitBtn:hover:not(:disabled) { background: #3dab68; transform: translateY(-1px); }
-.authSubmitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-.authSwitch {
-  margin-top: 20px;
-  text-align: center;
-  font-size: 14px;
-  color: #7a6e5f;
-  font-weight: 300;
-}
-
-.authSwitchLink {
-  color: #2a7a4b;
-  cursor: pointer;
-  font-weight: 500;
-  transition: opacity 0.2s;
-}
-
-.authSwitchLink:hover { opacity: 0.7; }
-
-@media (max-width: 480px) {
-  .authModal { padding: 36px 24px; }
-}
+.modalInput:focus { border-bottom-color: #2a7a4b; }
+.modalInput::placeholder { color: #a89d8e; }
 
 /* ── PASSWORD TOGGLE ── */
 .passwordWrapper {
@@ -176,24 +125,66 @@
   align-items: center;
 }
 
-.passwordInput {
-  padding-right: 44px !important;
-}
+.passwordInput { padding-right: 44px !important; }
 
 .passwordToggle {
   position: absolute;
-  right: 12px;
+  right: 8px;
   background: none;
   border: none;
   cursor: pointer;
-  color: #aaa;
+  color: #a89d8e;
   padding: 4px;
   display: flex;
   align-items: center;
   transition: color 0.2s;
   line-height: 0;
 }
+.passwordToggle:hover { color: #1e1a14; }
 
-.passwordToggle:hover {
-  color: #1a1a1a;
+/* ── BUTTONS ROW ── */
+.modalButtonsRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.modalPrimaryBtn {
+  flex: 1;
+  padding: 14px;
+  background: #2a7a4b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.modalPrimaryBtn:hover:not(:disabled) { background: #3dab68; transform: translateY(-1px); }
+.modalPrimaryBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.modalSecondaryBtn {
+  flex: 1;
+  padding: 14px;
+  background: none;
+  color: #7a6e5f;
+  border: 1px solid rgba(60, 45, 20, 0.16);
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.modalSecondaryBtn:hover { border-color: #1e1a14; color: #1e1a14; }
+
+@media (max-width: 480px) {
+  .authModal { padding: 36px 24px; }
+  .modalButtonsRow { flex-direction: column; }
 }
