@@ -186,7 +186,7 @@ const RestaurantLanding = () => {
                 setShowDropdown(false);
             }
             isSelectingRef.current = false;
-        }, 200);
+        }, 300);
     };
 
     const handleInputFocus = () => {
@@ -282,7 +282,8 @@ const RestaurantLanding = () => {
                                             <div
                                                 key={restaurant.id}
                                                 className="searchResultItem"
-                                                onMouseDown={(e) => handleSelectRestaurant(e, restaurant)}
+                                                onMouseDown={() => { isSelectingRef.current = true; }}
+                                                onClick={(e) => handleSelectRestaurant(e, restaurant)}
                                                 onTouchStart={(e) => handleSelectRestaurant(e, restaurant)}
                                             >
                                                 <span className="searchResultName">{restaurant.name}</span>
@@ -294,7 +295,12 @@ const RestaurantLanding = () => {
                                 {showDropdown && searchInput && filteredRestaurants.length === 0 && (
                                     <div className="searchResult">
                                         <span className='noManager'>Can't find the restaurant?&nbsp;
-                                            <span className='enterName' onMouseDown={handleEnterRestaurant} onTouchStart={handleEnterRestaurant}>Add it</span>
+                                        <span
+                                            className='enterName'
+                                            onMouseDown={() => { isSelectingRef.current = true; }}
+                                            onClick={handleEnterRestaurant}
+                                            onTouchStart={handleEnterRestaurant}
+                                        >Add it</span>
                                         </span>
                                     </div>
                                 )}
