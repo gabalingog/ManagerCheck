@@ -103,7 +103,6 @@ const RateManager = () => {
     fetchUserVotes();
   }, [currentUserId, managerID]);
 
-  const goHome = () => navigate('/');
   const goToRatingForm = () => navigate(`/rate/${managerID}/form`, { state: { managerName } });
   const goToAllManagers = () => {
     if (currentManager?.restaurant_id) {
