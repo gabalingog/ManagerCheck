@@ -856,3 +856,189 @@
      width: 32px;
      height: 32px;
    }
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — append to bottom of RestaurantLanding.css
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── TABLET (≤ 900px) ───────────────────────────────────── */
+@media (max-width: 900px) {
+  .bottom {
+    grid-template-columns: 1fr;
+    padding: 60px 32px 80px;
+    gap: 14px;
+  }
+
+  .mission {
+    padding: 80px 32px 0;
+  }
+
+  .footerInner {
+    flex-direction: column;
+    gap: 48px;
+    padding: 60px 32px 40px;
+  }
+
+  .footerContact { max-width: 100%; }
+
+  .footerBottom { padding: 20px 32px; }
+}
+
+/* ── MOBILE (≤ 640px) ───────────────────────────────────── */
+@media (max-width: 640px) {
+
+  /* HERO */
+  .bgmain {
+    min-height: 100svh;
+    align-items: flex-start;
+    padding-top: 0;
+  }
+
+  .mainBackground {
+    align-items: center;
+    padding: 0;
+  }
+
+  .main {
+    gap: 18px;
+    padding: 0 20px;
+  }
+
+  /* LOGO — key fix: much smaller on mobile */
+  .webLogo {
+    max-width: 260px;
+    width: 72vw;
+  }
+
+  .heroTagline {
+    font-size: clamp(13px, 3.8vw, 17px);
+    max-width: 300px;
+  }
+
+  /* SEARCH BAR */
+  .searching {
+    width: min(100%, 90vw);
+  }
+
+  .searchBarMan {
+    padding: 14px 12px 14px 44px;
+    font-size: 14px;
+  }
+
+  .searchSubmitBtn {
+    font-size: 12px;
+    padding: 0 16px;
+    height: 46px;
+    letter-spacing: 0.04em;
+  }
+
+  /* SCROLL CUE */
+  .heroScroll {
+    bottom: 20px;
+  }
+  .heroScroll span {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+  }
+  .heroScrollLine { height: 60px; }
+
+  /* MISSION */
+  .mission {
+    padding: 64px 24px 0;
+  }
+
+  .missionStatic,
+  .missionPhrase {
+    font-size: clamp(24px, 7vw, 36px);
+  }
+
+  .missionBody {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  /* FEATURE CARDS */
+  .bottom {
+    padding: 48px 20px 64px;
+    gap: 12px;
+  }
+
+  .boxImage { height: 180px; }
+
+  .headerBox,
+  .topRestos > .cardContent > span {
+    padding: 16px 20px 0;
+    font-size: 11px;
+  }
+
+  .cardHeadline {
+    font-size: clamp(18px, 5vw, 24px);
+    padding: 0 20px 16px;
+  }
+
+  .cardDesc {
+    font-size: 14px;
+    padding: 10px 20px 20px;
+  }
+
+  /* MODAL */
+  .addRestaurantModal {
+    padding: 36px 24px;
+    width: 94%;
+  }
+
+  .modalInputRow {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .modalButtons {
+    grid-template-columns: 1fr;
+  }
+
+  /* FOOTER */
+  .footerInner {
+    padding: 48px 20px 32px;
+    gap: 36px;
+  }
+
+  .footerInputRow {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .footerBottom {
+    padding: 16px 20px;
+    font-size: 11px;
+  }
+
+  .socials { gap: 20px; }
+  .social1 { width: 24px; height: 24px; }
+  .social2 { width: 26px; height: 26px; }
+}
+
+/* ── SMALL MOBILE (≤ 390px) ─────────────────────────────── */
+@media (max-width: 390px) {
+  .webLogo {
+    max-width: 220px;
+    width: 78vw;
+  }
+
+  .heroTagline {
+    font-size: 13px;
+  }
+
+  .searchBarMan {
+    font-size: 13px;
+  }
+
+  .searchSubmitBtn {
+    padding: 0 12px;
+    font-size: 11px;
+  }
+
+  .missionStatic,
+  .missionPhrase {
+    font-size: clamp(22px, 8vw, 30px);
+  }
+}
