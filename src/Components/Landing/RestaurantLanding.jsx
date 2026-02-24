@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 import { supabase } from './../../supabaseClient';
@@ -60,6 +61,8 @@ const RestaurantLanding = () => {
     const [restaurants, setRestaurants] = useState([]);
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [dropdownRect, setDropdownRect] = useState(null);
+    const searchingRef = useRef(null);
     const [footerForm, setFooterForm] = useState({ name: '', email: '', message: '' });
     const [footerStatus, setFooterStatus] = useState('');
 
@@ -143,6 +146,19 @@ const RestaurantLanding = () => {
         return () => observer.disconnect();
     }, []);
 
+    // Calculate the real page position of the search bar so the portal dropdown
+    // lines up correctly regardless of any parent stacking context or transform.
+    const updateDropdownRect = () => {
+        if (searchingRef.current) {
+            const rect = searchingRef.current.getBoundingClientRect();
+            setDropdownRect({
+                top: rect.bottom + window.scrollY + 4,
+                left: rect.left + window.scrollX,
+                width: rect.width,
+            });
+        }
+    };
+
     const handleSearch = (e) => {
         const searched = e.target.value;
         setSearchInput(searched);
@@ -154,16 +170,13 @@ const RestaurantLanding = () => {
                 restaurant.name.toLowerCase().includes(searched.toLowerCase())
             );
             setFilteredRestaurants(filtered);
+            updateDropdownRect();
             setShowDropdown(true);
         }
     };
 
-    const isSelectingRef = useRef(false);
-
     const handleSelectRestaurant = (e, restaurant) => {
-        e.preventDefault();
-        e.stopPropagation();
-        isSelectingRef.current = true;
+        e.preventDefault(); // prevents blur firing before navigation
         setSearchInput('');
         setFilteredRestaurants([]);
         setShowDropdown(false);
@@ -172,8 +185,6 @@ const RestaurantLanding = () => {
 
     const handleEnterRestaurant = (e) => {
         e.preventDefault();
-        e.stopPropagation();
-        isSelectingRef.current = true;
         setShowAddForm(true);
         setSearchInput('');
         setFilteredRestaurants([]);
@@ -181,16 +192,12 @@ const RestaurantLanding = () => {
     };
 
     const handleInputBlur = () => {
-        setTimeout(() => {
-            if (!isSelectingRef.current) {
-                setShowDropdown(false);
-            }
-            isSelectingRef.current = false;
-        }, 300);
+        setShowDropdown(false);
     };
 
     const handleInputFocus = () => {
         if (searchInput.trim() && filteredRestaurants.length > 0) {
+            updateDropdownRect();
             setShowDropdown(true);
         }
     };
@@ -245,6 +252,55 @@ const RestaurantLanding = () => {
         return restaurant.address || '';
     };
 
+    // Rendered via createPortal into document.body so it is never clipped or
+    // blocked by any parent stacking context, overflow, or z-index boundary.
+    const PortalDropdown = () => {
+        if (!showDropdown || !searchInput || !dropdownRect) return null;
+
+        const style = {
+            position: 'absolute',
+            top: dropdownRect.top,
+            left: dropdownRect.left,
+            width: dropdownRect.width,
+            background: 'var(--warm-white, #faf8f4)',
+            border: '1px solid rgba(60, 45, 20, 0.16)',
+            borderRadius: '6px',
+            maxHeight: '260px',
+            overflowY: 'auto',
+            zIndex: 99999,
+            textAlign: 'left',
+            boxShadow: '0 12px 40px rgba(30, 26, 20, 0.14)',
+            fontFamily: "'DM Sans', sans-serif",
+        };
+
+        return createPortal(
+            <div style={style}>
+                {filteredRestaurants.length > 0
+                    ? filteredRestaurants.map((restaurant) => (
+                        <div
+                            key={restaurant.id}
+                            className="searchResultItem"
+                            onMouseDown={(e) => handleSelectRestaurant(e, restaurant)}
+                        >
+                            <span className="searchResultName">{restaurant.name}</span>
+                            <span className="searchResultAddress">{getDisplayAddress(restaurant)}</span>
+                        </div>
+                    ))
+                    : (
+                        <span className='noManager'>
+                            Can't find the restaurant?&nbsp;
+                            <span
+                                className='enterName'
+                                onMouseDown={handleEnterRestaurant}
+                            >Add it</span>
+                        </span>
+                    )
+                }
+            </div>,
+            document.body
+        );
+    };
+
     return (
         <div className='restoLanding'>
             <div className="bgmain">
@@ -263,8 +319,8 @@ const RestaurantLanding = () => {
                             Know who you're working for, before you start.
                         </p>
                         <div className="right heroFadeUp" style={{ animationDelay: '0.75s' }}>
-                            {/* KEY FIX: .searching is position:relative, dropdown is a direct child of it — NOT inside .searchRes */}
-                            <div className="searching">
+                            {/* ref on .searching so we can measure its position for the portal */}
+                            <div className="searching" ref={searchingRef}>
                                 <div className="searchRes">
                                     <img src={search} alt="Search" className='searchLogo'/>
                                     <input
@@ -277,36 +333,8 @@ const RestaurantLanding = () => {
                                         onFocus={handleInputFocus}
                                     />
                                 </div>
-
-                                {/* Dropdown is now a sibling of .searchRes, not a child */}
-                                {showDropdown && searchInput && filteredRestaurants.length > 0 && (
-                                    <div className="searchResult">
-                                        {filteredRestaurants.map((restaurant) => (
-                                            <div
-                                                key={restaurant.id}
-                                                className="searchResultItem"
-                                                onMouseDown={() => { isSelectingRef.current = true; }}
-                                                onClick={(e) => handleSelectRestaurant(e, restaurant)}
-                                                onTouchStart={(e) => handleSelectRestaurant(e, restaurant)}
-                                            >
-                                                <span className="searchResultName">{restaurant.name}</span>
-                                                <span className="searchResultAddress">{getDisplayAddress(restaurant)}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                                {showDropdown && searchInput && filteredRestaurants.length === 0 && (
-                                    <div className="searchResult">
-                                        <span className='noManager'>Can't find the restaurant?&nbsp;
-                                            <span
-                                                className='enterName'
-                                                onMouseDown={() => { isSelectingRef.current = true; }}
-                                                onClick={handleEnterRestaurant}
-                                                onTouchStart={handleEnterRestaurant}
-                                            >Add it</span>
-                                        </span>
-                                    </div>
-                                )}
+                                {/* Dropdown teleports to document.body via portal */}
+                                <PortalDropdown />
                             </div>
                         </div>
                     </div>
