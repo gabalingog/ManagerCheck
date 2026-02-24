@@ -158,9 +158,12 @@ const RestaurantLanding = () => {
         }
     };
 
-    // KEY FIX: onMouseDown + preventDefault prevents blur from firing before click
+    const isSelectingRef = useRef(false);
+
     const handleSelectRestaurant = (e, restaurant) => {
         e.preventDefault();
+        e.stopPropagation();
+        isSelectingRef.current = true;
         setSearchInput('');
         setFilteredRestaurants([]);
         setShowDropdown(false);
@@ -169,6 +172,8 @@ const RestaurantLanding = () => {
 
     const handleEnterRestaurant = (e) => {
         e.preventDefault();
+        e.stopPropagation();
+        isSelectingRef.current = true;
         setShowAddForm(true);
         setSearchInput('');
         setFilteredRestaurants([]);
@@ -176,8 +181,12 @@ const RestaurantLanding = () => {
     };
 
     const handleInputBlur = () => {
-        // Small delay to allow mousedown to fire first on Windows
-        setTimeout(() => setShowDropdown(false), 150);
+        setTimeout(() => {
+            if (!isSelectingRef.current) {
+                setShowDropdown(false);
+            }
+            isSelectingRef.current = false;
+        }, 200);
     };
 
     const handleInputFocus = () => {
@@ -274,6 +283,7 @@ const RestaurantLanding = () => {
                                                 key={restaurant.id}
                                                 className="searchResultItem"
                                                 onMouseDown={(e) => handleSelectRestaurant(e, restaurant)}
+                                                onTouchStart={(e) => handleSelectRestaurant(e, restaurant)}
                                             >
                                                 <span className="searchResultName">{restaurant.name}</span>
                                                 <span className="searchResultAddress">{getDisplayAddress(restaurant)}</span>
@@ -284,7 +294,7 @@ const RestaurantLanding = () => {
                                 {showDropdown && searchInput && filteredRestaurants.length === 0 && (
                                     <div className="searchResult">
                                         <span className='noManager'>Can't find the restaurant?&nbsp;
-                                            <span className='enterName' onMouseDown={handleEnterRestaurant}>Add it</span>
+                                            <span className='enterName' onMouseDown={handleEnterRestaurant} onTouchStart={handleEnterRestaurant}>Add it</span>
                                         </span>
                                     </div>
                                 )}
