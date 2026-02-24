@@ -857,6 +857,22 @@
      height: 32px;
    }
 
+   .searchResultName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1;
+  }
+  
+  .searchResultAddress {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 0;
+    max-width: 140px;
+  }
+
 /* ═══════════════════════════════════════════════════════════
    RESPONSIVE — append to bottom of RestaurantLanding.css
    ═══════════════════════════════════════════════════════════ */
