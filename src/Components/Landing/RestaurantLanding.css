@@ -235,6 +235,7 @@
      max-height: 156px;
      overflow-y: auto;
      z-index: 100;
+     text-align: left;
      box-shadow: 0 12px 40px rgba(30, 26, 20, 0.14);
    }
    
@@ -262,6 +263,7 @@
     text-overflow: ellipsis;
     flex: 1;
     min-width: 0;
+    text-align: left;
   }
   
   .searchResultAddress {
