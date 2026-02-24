@@ -73,7 +73,7 @@ body {
 .recommendCard svg { color: var(--green); margin-bottom: 4px; }
 .recommendNumber { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--green); letter-spacing: 0.02em; line-height: 1; }
 .recommendLabel { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
-.ratingNumber { font-family: 'Bebas Neue', sans-serif; font-size: 56px; color: var(--green); letter-spacing: 0.02em; line-height: 1; margin-bottom: 8px; }
+.ratingNumber { font-family: 'Bebas Neue', sans-serif !important; font-size: 56px; color: var(--green) !important; letter-spacing: 0.02em; line-height: 1; margin-bottom: 8px; }
 .ratingStars { display: flex; gap: 4px; justify-content: center; margin-bottom: 8px; }
 .ratingStar { font-size: 20px; color: #e0e0e0; }
 .ratingStar.filled { color: #ffd700; }
