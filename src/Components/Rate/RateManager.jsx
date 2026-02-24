@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from './../../supabaseClient'
+import { useAuth } from './../../authContext'
 import './RateManager.css'
 import managerBG from './../Assets/managerBG.png';
 
@@ -9,6 +10,7 @@ const RateManager = () => {
   const location = useLocation();
   const managerName = location.state?.managerName;
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [restaurantSearchInput, setRestaurantSearchInput] = useState('');
   const [managerSearchInput, setManagerSearchInput] = useState('');
@@ -33,16 +35,7 @@ const RateManager = () => {
   const [allRatings, setAllRatings] = useState([]);
   const [userVotes, setUserVotes] = useState({});
   const [loading, setLoading] = useState(true);
-  const [currentUserId, setCurrentUserId] = useState(null);
-
-  useEffect(() => {
-    let userId = localStorage.getItem('tempUserId');
-    if (!userId) {
-      userId = 'user_' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('tempUserId', userId);
-    }
-    setCurrentUserId(userId);
-  }, []);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -91,9 +84,9 @@ const RateManager = () => {
 
   useEffect(() => {
     const fetchUserVotes = async () => {
-      if (!currentUserId || !managerID) return;
+      if (!user || !managerID) return;
       const { data, error } = await supabase
-        .from('user_votes').select('*').eq('user_id', currentUserId).eq('review_type', 'manager');
+        .from('user_votes').select('*').eq('user_id', user.id).eq('review_type', 'manager');
       if (!error) {
         const votesMap = {};
         data?.forEach(vote => { votesMap[vote.review_id] = vote.vote_type; });
@@ -101,7 +94,7 @@ const RateManager = () => {
       }
     };
     fetchUserVotes();
-  }, [currentUserId, managerID]);
+  }, [user, managerID]);
 
   const goToRatingForm = () => navigate(`/rate/${managerID}/form`, { state: { managerName } });
   const goToAllManagers = () => {
@@ -110,6 +103,18 @@ const RateManager = () => {
         state: { restaurantName: currentManager.restaurantName }
       });
     }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm('Are you sure you want to delete your review?')) return;
+    setDeletingId(reviewId);
+    const { error } = await supabase.from('manager_ratings').delete().eq('id', reviewId);
+    if (error) {
+      alert('Failed to delete review. Please try again.');
+    } else {
+      setAllRatings(prev => prev.filter(r => r.id !== reviewId));
+    }
+    setDeletingId(null);
   };
 
   const handleEnterManager = () => setShowAddManagerForm(true);
@@ -132,17 +137,17 @@ const RateManager = () => {
   };
 
   const handleVote = async (reviewId, voteType) => {
-    if (!currentUserId) return;
+    if (!user) return;
     const currentVote = userVotes[reviewId];
     const newVote = currentVote === voteType ? null : voteType;
     setUserVotes({ ...userVotes, [reviewId]: newVote });
 
     if (newVote === null) {
       await supabase.from('user_votes').delete()
-        .eq('user_id', currentUserId).eq('review_type', 'manager').eq('review_id', reviewId);
+        .eq('user_id', user.id).eq('review_type', 'manager').eq('review_id', reviewId);
     } else {
       await supabase.from('user_votes').upsert(
-        { user_id: currentUserId, review_type: 'manager', review_id: reviewId, vote_type: newVote, updated_at: new Date().toISOString() },
+        { user_id: user.id, review_type: 'manager', review_id: reviewId, vote_type: newVote, updated_at: new Date().toISOString() },
         { onConflict: 'user_id,review_type,review_id' }
       );
     }
@@ -254,7 +259,7 @@ const RateManager = () => {
     }
     if (tagFilter !== null) reviews = reviews.filter(r => r.tags && r.tags.includes(tagFilter));
     if (reviewFilter === 'top') return reviews.sort((a, b) => ((b.likes || 0) - (b.dislikes || 0)) - ((a.likes || 0) - (a.dislikes || 0)));
-    return reviews.reverse();
+    return reviews;
   };
 
   const sortedReviews = getSortedReviews();
@@ -286,38 +291,24 @@ const RateManager = () => {
 
   return (
     <div className='rateManagerPage'>
+      <nav className="topNav"><div className="navLogo">Manager<span>Check</span></div></nav>
 
-      <nav className="topNav">
-        <div className="navLogo">Manager<span>Check</span></div>
-      </nav>
-
-      {/* Search Bar */}
       <div className="searchBarSection">
         <div className="searchBarContainer">
           <div className="searchInputWrapper">
             <svg className="searchIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input
-              type="text"
-              placeholder={restaurantPlaceholder}
-              value={restaurantSearchInput}
-              onChange={handleRestaurantSearch}
-              className="searchInput"
-            />
+            <input type="text" placeholder={restaurantPlaceholder} value={restaurantSearchInput} onChange={handleRestaurantSearch} className="searchInput" />
             {!restaurantSearchInput && (
               <button className="searchToggle" onClick={handleClearRestaurantSearch}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
             )}
             {(showRestaurantDropdown || (restaurantSearchInput && filteredRestaurants.length > 0)) && (
               <div className="searchDropdown">
                 {filteredRestaurants.map(restaurant => (
-                  <div key={restaurant.id} className="searchDropdownItem" onClick={() => handleSelectRestaurant(restaurant)}>
-                    {restaurant.name}
-                  </div>
+                  <div key={restaurant.id} className="searchDropdownItem" onClick={() => handleSelectRestaurant(restaurant)}>{restaurant.name}</div>
                 ))}
               </div>
             )}
@@ -330,35 +321,23 @@ const RateManager = () => {
             <svg className="searchIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input
-              type="text"
-              placeholder={managerPlaceholder}
-              value={managerSearchInput}
-              onChange={handleManagerSearch}
-              className="searchInput"
-            />
+            <input type="text" placeholder={managerPlaceholder} value={managerSearchInput} onChange={handleManagerSearch} className="searchInput" />
             {!managerSearchInput && (
               <button className="searchToggle" onClick={handleClearManagerSearch}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
             )}
             {(showManagerDropdown || (managerSearchInput && filteredManagers.length > 0)) && (
               <div className="searchDropdown">
                 {filteredManagers.map(manager => (
-                  <div key={manager.id} className="searchDropdownItem" onClick={() => handleSelectManager(manager)}>
-                    {manager.name}
-                  </div>
+                  <div key={manager.id} className="searchDropdownItem" onClick={() => handleSelectManager(manager)}>{manager.name}</div>
                 ))}
               </div>
             )}
             {managerSearchInput && filteredManagers.length === 0 && (
               <div className="searchDropdown">
                 <div className="noResults">
-                  <span className="noManager">Can't find the manager?&nbsp;
-                    <span className="enterName" onClick={handleEnterManager}>Add manager</span>
-                  </span>
+                  <span className="noManager">Can't find the manager?&nbsp;<span className="enterName" onClick={handleEnterManager}>Add manager</span></span>
                 </div>
               </div>
             )}
@@ -366,17 +345,12 @@ const RateManager = () => {
         </div>
       </div>
 
-      {/* ── Hero Header ── className is NOW "rm-header" (not "restaurantHeader") so RateRestaurant.css can NEVER touch it */}
-      <header
-        className="rm-header"
-        style={{ backgroundImage: `url(${managerBG})` }}
-      >
+      <header className="rm-header" style={{ backgroundImage: `url(${managerBG})` }}>
         <div className="headerContent">
           <div className="headerLeft">
             <h1 className="restaurantName">{currentManager?.name || managerName}</h1>
             <p className="restaurantLocation">{currentManager?.restaurantName || 'Barcelona Wine Bar'}</p>
           </div>
-
           <div className="headerRight">
             <div className="headerStats">
               <div className="ratingCard">
@@ -390,7 +364,6 @@ const RateManager = () => {
                 </div>
                 <div className="ratingLabel">{existingRatings.length} {existingRatings.length === 1 ? 'Review' : 'Reviews'}</div>
               </div>
-
               {existingRatings.length > 0 && (
                 <div className="recommendCard">
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -401,7 +374,6 @@ const RateManager = () => {
                 </div>
               )}
             </div>
-
             <div className="headerActions">
               <button className="btnPrimary" onClick={goToRatingForm}>Rate Manager</button>
               <button className="btnSecondary" onClick={goToAllManagers}>View All Managers</button>
@@ -410,7 +382,6 @@ const RateManager = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <div className="mainContent">
         <aside className="sidebar">
           <div className="filterCard">
@@ -422,16 +393,10 @@ const RateManager = () => {
             {(ratingFilter !== null || tagFilter !== null) && (
               <div className="activeFilters">
                 {ratingFilter !== null && (
-                  <div className="filterBadge">
-                    {ratingFilter} stars
-                    <button onClick={() => setRatingFilter(null)} className="removeBadge">✕</button>
-                  </div>
+                  <div className="filterBadge">{ratingFilter} stars<button onClick={() => setRatingFilter(null)} className="removeBadge">✕</button></div>
                 )}
                 {tagFilter !== null && (
-                  <div className="filterBadge">
-                    {tagFilter}
-                    <button onClick={() => setTagFilter(null)} className="removeBadge">✕</button>
-                  </div>
+                  <div className="filterBadge">{tagFilter}<button onClick={() => setTagFilter(null)} className="removeBadge">✕</button></div>
                 )}
               </div>
             )}
@@ -443,9 +408,7 @@ const RateManager = () => {
               {[5, 4, 3, 2, 1].map(num => (
                 <div key={num} className={`distributionRow ${ratingFilter === num ? 'active' : ''}`} onClick={() => handleRatingClick(num)}>
                   <span className="distLabel">{num}</span>
-                  <div className="distBarTrack">
-                    <div className="distBarFill" style={{ width: maxCount > 0 ? `${(ratingDistribution[num] / maxCount) * 100}%` : '0%' }} />
-                  </div>
+                  <div className="distBarTrack"><div className="distBarFill" style={{ width: maxCount > 0 ? `${(ratingDistribution[num] / maxCount) * 100}%` : '0%' }} /></div>
                   <span className="distCount">{ratingDistribution[num]}</span>
                 </div>
               ))}
@@ -456,9 +419,7 @@ const RateManager = () => {
             <h3 className="cardTitle">Quick Filters</h3>
             <div className="tagsList">
               {['Good Scheduling', 'Good Pay', 'Bad Scheduling'].map(tag => (
-                <button key={tag} className={`tagButton ${tagFilter === tag ? 'active' : ''}`} onClick={() => handleTagClick(tag)}>
-                  {tag}
-                </button>
+                <button key={tag} className={`tagButton ${tagFilter === tag ? 'active' : ''}`} onClick={() => handleTagClick(tag)}>{tag}</button>
               ))}
             </div>
           </div>
@@ -482,6 +443,7 @@ const RateManager = () => {
               <div className="reviewsList">
                 {currentReviews.map(rating => {
                   const avgRating = Math.round((rating.communication + rating.fairness + rating.approachability + rating.organization) / 4);
+                  const isOwner = user && rating.user_id === user.id;
                   return (
                     <article key={rating.id} className="reviewCard">
                       <div className="reviewCardHeader">
@@ -490,10 +452,34 @@ const RateManager = () => {
                             <span key={star} className={`reviewStar ${star <= avgRating ? 'filled' : ''}`}>★</span>
                           ))}
                         </div>
-                        <div className="reviewMeta">
-                          <span className="reviewPosition">{rating.position}</span>
-                          <span className="reviewDot">•</span>
-                          <span className="reviewDuration">{rating.duration}</span>
+                        <div className="reviewMetaRow">
+                          <div className="reviewMeta">
+                            <span className="reviewPosition">{rating.position}</span>
+                            <span className="reviewDot">•</span>
+                            <span className="reviewDuration">{rating.duration}</span>
+                          </div>
+                          {isOwner && (
+                            <button
+                              className="deleteReviewBtn"
+                              onClick={() => handleDeleteReview(rating.id)}
+                              disabled={deletingId === rating.id}
+                              title="Delete your review"
+                            >
+                              {deletingId === rating.id ? (
+                                <span>Deleting...</span>
+                              ) : (
+                                <>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                                    <path d="M10 11v6M14 11v6"/>
+                                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                                  </svg>
+                                  Delete
+                                </>
+                              )}
+                            </button>
+                          )}
                         </div>
                       </div>
 
@@ -530,9 +516,7 @@ const RateManager = () => {
                   <button className="paginationBtn" onClick={handlePrevPage} disabled={currentPage === 1}>← Previous</button>
                   <div className="pageNumbers">
                     {[...Array(totalPages)].map((_, i) => (
-                      <button key={i + 1} className={`pageBtn ${currentPage === i + 1 ? 'active' : ''}`} onClick={() => handlePageChange(i + 1)}>
-                        {i + 1}
-                      </button>
+                      <button key={i + 1} className={`pageBtn ${currentPage === i + 1 ? 'active' : ''}`} onClick={() => handlePageChange(i + 1)}>{i + 1}</button>
                     ))}
                   </div>
                   <button className="paginationBtn" onClick={handleNextPage} disabled={currentPage === totalPages}>Next →</button>
@@ -543,7 +527,6 @@ const RateManager = () => {
         </section>
       </div>
 
-      {/* Add Manager Modal */}
       {showAddManagerForm && (
         <>
           <div className="modalOverlay" onClick={handleCancelAdd}></div>
