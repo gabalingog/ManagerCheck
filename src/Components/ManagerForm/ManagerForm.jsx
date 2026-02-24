@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { supabase } from './../../supabaseClient'
+import { supabase } from './../../supabaseClient';
+import { useAuth } from './../../authContext';
+import AuthModal from '../AuthModal/AuthModal';
 import './ManagerForm.css';
 
 const ManagerForm = () => {
@@ -8,7 +10,9 @@ const ManagerForm = () => {
   const location = useLocation();
   const managerName = location.state?.managerName;
   const navigate = useNavigate();
-  const [currentUserId, setCurrentUserId] = useState(null);
+  const { user } = useAuth();
+
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const [ratings, setRatings] = useState({
     communication: 0,
@@ -32,14 +36,12 @@ const ManagerForm = () => {
     "High Workload"
   ];
 
+  // If user is not logged in, show auth modal immediately
   useEffect(() => {
-    let userId = localStorage.getItem('tempUserId');
-    if (!userId) {
-      userId = 'user_' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('tempUserId', userId);
+    if (!user) {
+      setShowAuthModal(true);
     }
-    setCurrentUserId(userId);
-  }, []);
+  }, [user]);
 
   const handleStarClick = (category, starValue, event) => {
     const starElement = event.currentTarget;
@@ -47,7 +49,6 @@ const ManagerForm = () => {
     const clickX = event.clientX - rect.left;
     const isLeftHalf = clickX < rect.width / 2;
     const newValue = isLeftHalf ? starValue - 0.5 : starValue;
-
     setRatings(prev => ({
       ...prev,
       [category]: prev[category] === newValue ? 0 : newValue
@@ -62,7 +63,12 @@ const ManagerForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!currentUserId) return;
+
+    // Double-check auth at submit time
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
 
     if (Object.values(ratings).some(r => r === 0)) {
       alert('Please rate all categories');
@@ -83,7 +89,7 @@ const ManagerForm = () => {
 
     const newRating = {
       manager_id: parseInt(managerID),
-      user_id: currentUserId,
+      user_id: user.id,           // ← real Supabase user ID
       communication: ratings.communication,
       fairness: ratings.fairness,
       approachability: ratings.approachability,
@@ -131,115 +137,120 @@ const ManagerForm = () => {
 
   return (
     <div className="managerFormPage">
-      <div className="formContainer">
 
-        <div className="formHeader">
-          <span className="formEyebrow">Leave a Review</span>
-          <h1>{managerName}</h1>
-        </div>
+      {/* Auth gate — shown if not logged in */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => {
+          setShowAuthModal(false);
+          // If they closed without logging in, send them back
+          if (!user) handleCancel();
+        }}
+        mode="signin"
+      />
 
-        <form onSubmit={handleSubmit}>
+      {/* Only render the form if logged in */}
+      {user && (
+        <div className="formContainer">
 
-          {/* Personal Info */}
-          <div className="formSection">
-            <h2>Your Role</h2>
-            <div className="inputRow">
-              <div className="inputGroup">
-                <label>Position</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Server"
-                  value={position}
-                  onChange={(e) => setPosition(e.target.value)}
-                />
-              </div>
-              <div className="inputGroup">
-                <label>Duration</label>
-                <input
-                  type="text"
-                  placeholder="e.g. 2 years"
-                  value={duration}
-                  onChange={(e) => setDuration(e.target.value)}
-                />
+          <div className="formHeader">
+            <span className="formEyebrow">Leave a Review</span>
+            <h1>{managerName}</h1>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+
+            <div className="formSection">
+              <h2>Your Role</h2>
+              <div className="inputRow">
+                <div className="inputGroup">
+                  <label>Position</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Server"
+                    value={position}
+                    onChange={(e) => setPosition(e.target.value)}
+                  />
+                </div>
+                <div className="inputGroup">
+                  <label>Duration</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 2 years"
+                    value={duration}
+                    onChange={(e) => setDuration(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Ratings */}
-          <div className="formSection">
-            <h2>Rate This Manager</h2>
-            {[
-              { key: 'communication', label: 'Communication' },
-              { key: 'fairness', label: 'Fairness' },
-              { key: 'approachability', label: 'Approachability' },
-              { key: 'organization', label: 'Organization' },
-            ].map(({ key, label }) => (
-              <div className="ratingCategory" key={key}>
-                <label>{label}</label>
-                <div className="stars-row">{renderStars(key)}</div>
-                <span className="rating-value">{ratings[key] || '—'}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Tags */}
-          <div className="formSection">
-            <h2>Tags (Optional)</h2>
-            <div className="tagsContainer">
-              {availableTags.map(tag => (
-                <button
-                  key={tag}
-                  type="button"
-                  className={`tag-button ${selectedTags.includes(tag) ? 'selected' : ''}`}
-                  onClick={() => handleTagClick(tag)}
-                >
-                  {tag}
-                </button>
+            <div className="formSection">
+              <h2>Rate This Manager</h2>
+              {[
+                { key: 'communication', label: 'Communication' },
+                { key: 'fairness', label: 'Fairness' },
+                { key: 'approachability', label: 'Approachability' },
+                { key: 'organization', label: 'Organization' },
+              ].map(({ key, label }) => (
+                <div className="ratingCategory" key={key}>
+                  <label>{label}</label>
+                  <div className="stars-row">{renderStars(key)}</div>
+                  <span className="rating-value">{ratings[key] || '—'}</span>
+                </div>
               ))}
             </div>
-          </div>
 
-          {/* Recommend */}
-          <div className="formSection">
-            <h2>Would you recommend this manager? <span className="required">*</span></h2>
-            <div className="recommendButtons">
-              <button
-                type="button"
-                className={`recommend-btn ${wouldRecommend === true ? 'selected' : ''}`}
-                onClick={() => setWouldRecommend(true)}
-              >
-                Yes
-              </button>
-              <button
-                type="button"
-                className={`recommend-btn ${wouldRecommend === false ? 'selected' : ''}`}
-                onClick={() => setWouldRecommend(false)}
-              >
-                No
-              </button>
+            <div className="formSection">
+              <h2>Tags (Optional)</h2>
+              <div className="tagsContainer">
+                {availableTags.map(tag => (
+                  <button
+                    key={tag}
+                    type="button"
+                    className={`tag-button ${selectedTags.includes(tag) ? 'selected' : ''}`}
+                    onClick={() => handleTagClick(tag)}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Comment */}
-          <div className="formSection">
-            <h2>Your Review</h2>
-            <textarea
-              className="commentBox"
-              placeholder="Share your experience working with this manager…"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              rows="6"
-            />
-          </div>
+            <div className="formSection">
+              <h2>Would you recommend this manager? <span className="required">*</span></h2>
+              <div className="recommendButtons">
+                <button
+                  type="button"
+                  className={`recommend-btn ${wouldRecommend === true ? 'selected' : ''}`}
+                  onClick={() => setWouldRecommend(true)}
+                >Yes</button>
+                <button
+                  type="button"
+                  className={`recommend-btn ${wouldRecommend === false ? 'selected' : ''}`}
+                  onClick={() => setWouldRecommend(false)}
+                >No</button>
+              </div>
+            </div>
 
-          {/* Actions */}
-          <div className="formActions">
-            <button type="submit" className="submitBtn">Submit Review</button>
-            <button type="button" className="cancelBtn" onClick={handleCancel}>Cancel</button>
-          </div>
+            <div className="formSection">
+              <h2>Your Review</h2>
+              <textarea
+                className="commentBox"
+                placeholder="Share your experience working with this manager…"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                rows="6"
+              />
+            </div>
 
-        </form>
-      </div>
+            <div className="formActions">
+              <button type="submit" className="submitBtn">Submit Review</button>
+              <button type="button" className="cancelBtn" onClick={handleCancel}>Cancel</button>
+            </div>
+
+          </form>
+        </div>
+      )}
     </div>
   );
 };
