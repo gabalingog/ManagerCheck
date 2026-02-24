@@ -258,6 +258,10 @@
     color: var(--text);
     letter-spacing: 0.01em;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
   }
   
   .searchResultAddress {
@@ -268,6 +272,7 @@
     letter-spacing: 0.01em;
     text-align: right;
     white-space: nowrap;
+    flex-shrink: 0;
   }
    
    .noManager {

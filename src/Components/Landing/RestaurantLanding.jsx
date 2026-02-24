@@ -59,6 +59,7 @@ const RestaurantLanding = () => {
     const [searchInput, setSearchInput] = useState('');
     const [restaurants, setRestaurants] = useState([]);
     const [filteredRestaurants, setFilteredRestaurants] = useState([]);
+    const [showDropdown, setShowDropdown] = useState(false);
     const [footerForm, setFooterForm] = useState({ name: '', email: '', message: '' });
     const [footerStatus, setFooterStatus] = useState('');
 
@@ -147,24 +148,42 @@ const RestaurantLanding = () => {
         setSearchInput(searched);
         if (searched.trim() === '') {
             setFilteredRestaurants([]);
+            setShowDropdown(false);
         } else {
             const filtered = restaurants.filter(restaurant =>
                 restaurant.name.toLowerCase().includes(searched.toLowerCase())
             );
             setFilteredRestaurants(filtered);
+            setShowDropdown(true);
         }
     };
 
-    const handleSelectRestaurant = (restaurant) => {
+    // KEY FIX: onMouseDown + preventDefault prevents blur from firing before click
+    const handleSelectRestaurant = (e, restaurant) => {
+        e.preventDefault();
         setSearchInput('');
         setFilteredRestaurants([]);
+        setShowDropdown(false);
         navigate(`/restaurant/${restaurant.id}`, { state: { restaurantName: restaurant.name } });
     };
 
-    const handleEnterRestaurant = () => {
+    const handleEnterRestaurant = (e) => {
+        e.preventDefault();
         setShowAddForm(true);
         setSearchInput('');
         setFilteredRestaurants([]);
+        setShowDropdown(false);
+    };
+
+    const handleInputBlur = () => {
+        // Small delay to allow mousedown to fire first on Windows
+        setTimeout(() => setShowDropdown(false), 150);
+    };
+
+    const handleInputFocus = () => {
+        if (searchInput.trim() && filteredRestaurants.length > 0) {
+            setShowDropdown(true);
+        }
     };
 
     const handleAddRestaurant = async () => {
@@ -244,25 +263,28 @@ const RestaurantLanding = () => {
                                         className='searchBarMan'
                                         value={searchInput}
                                         onChange={handleSearch}
+                                        onBlur={handleInputBlur}
+                                        onFocus={handleInputFocus}
                                     />
                                 </div>
-                                {searchInput && filteredRestaurants.length > 0 && (
+                                {showDropdown && searchInput && filteredRestaurants.length > 0 && (
                                     <div className="searchResult">
                                         {filteredRestaurants.map((restaurant) => (
                                             <div
                                                 key={restaurant.id}
                                                 className="searchResultItem"
-                                                onClick={() => handleSelectRestaurant(restaurant)}>
+                                                onMouseDown={(e) => handleSelectRestaurant(e, restaurant)}
+                                            >
                                                 <span className="searchResultName">{restaurant.name}</span>
                                                 <span className="searchResultAddress">{getDisplayAddress(restaurant)}</span>
                                             </div>
                                         ))}
                                     </div>
                                 )}
-                                {searchInput && filteredRestaurants.length === 0 && (
+                                {showDropdown && searchInput && filteredRestaurants.length === 0 && (
                                     <div className="searchResult">
                                         <span className='noManager'>Can't find the restaurant?&nbsp;
-                                            <span className='enterName' onClick={handleEnterRestaurant}>Add it</span>
+                                            <span className='enterName' onMouseDown={handleEnterRestaurant}>Add it</span>
                                         </span>
                                     </div>
                                 )}
