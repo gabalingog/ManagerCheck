@@ -1,7 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
    MANAGERCHECK — RestaurantLanding.css
    ═══════════════════════════════════════════════════════════ */
-
    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap');
 
    /* ── VARIABLES ─────────────────────────────────────────── */
@@ -26,7 +25,6 @@
      margin: 0;
      padding: 0;
    }
-   
    body {
      background-color: var(--cream);
      margin: 0;
@@ -54,9 +52,8 @@
      min-height: 680px;
      display: flex;
      align-items: center;
-     overflow: hidden;
+     /* REMOVED overflow: hidden — it was clipping the search dropdown */
    }
-   
    .bgImage {
      position: absolute;
      inset: 0;
@@ -67,12 +64,10 @@
      animation: heroZoom 18s ease-out forwards;
      z-index: 0;
    }
-   
    @keyframes heroZoom {
      from { transform: scale(1.05); }
      to   { transform: scale(1.00); }
    }
-   
    .bgImage::after {
      content: '';
      position: absolute;
@@ -88,7 +83,6 @@
          rgba(245, 240, 232, 1.00) 100%
        );
    }
-   
    .mainBackground {
      position: relative;
      z-index: 1;
@@ -98,17 +92,14 @@
      justify-content: center;
      align-items: center;
    }
-   
    @keyframes fadeUp {
      from { opacity: 0; transform: translateY(24px); }
      to   { opacity: 1; transform: translateY(0); }
    }
-   
    .heroFadeUp {
      opacity: 0;
      animation: fadeUp 0.9s ease forwards;
    }
-   
    .main {
      display: flex;
      flex-direction: column;
@@ -118,20 +109,17 @@
      gap: 22px;
      padding: 0 24px;
    }
-   
    .left {
      display: flex;
      justify-content: center;
      align-items: center;
    }
-   
    .right {
      display: flex;
      justify-content: center;
      align-items: center;
      width: 100%;
    }
-   
    .webLogo {
      width: auto;
      max-width: 480px;
@@ -140,7 +128,6 @@
      display: block;
      filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.35));
    }
-   
    .heroTagline {
      font-family: 'DM Serif Display', serif;
      font-style: italic;
@@ -155,11 +142,10 @@
    /* ── SEARCH BAR ────────────────────────────────────────── */
    .searching {
      width: min(560px, 90vw);
-     position: relative;
+     position: relative;    /* dropdown positions relative to this */
      display: flex;
      flex-direction: column;
    }
-   
    .searchRes {
      display: flex;
      align-items: center;
@@ -169,14 +155,12 @@
      background-color: rgba(255, 255, 255, 0.92);
      border: 1px solid rgba(255, 255, 255, 0.6);
      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
-     overflow: hidden;
+     overflow: hidden;      /* keeps border-radius clean on the input — safe because dropdown is now a sibling */
      transition: box-shadow 0.2s;
    }
-   
    .searchRes:focus-within {
      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22), 0 0 0 3px rgba(42, 122, 75, 0.2);
    }
-   
    .searchLogo {
      width: 16px;
      height: 16px;
@@ -188,7 +172,6 @@
      opacity: 0.45;
      z-index: 1;
    }
-   
    .searchBarMan {
      flex: 1;
      padding: 17px 16px 17px 50px;
@@ -201,11 +184,9 @@
      color: var(--text);
      letter-spacing: 0.01em;
    }
-   
    .searchBarMan::placeholder {
      color: var(--muted2);
    }
-   
    .searchSubmitBtn {
      background: var(--green);
      border: none;
@@ -224,6 +205,7 @@
    }
    .searchSubmitBtn:hover { background: var(--green-light); }
    
+   /* Dropdown — positions relative to .searching, never clipped by .searchRes */
    .searchResult {
      position: absolute;
      top: calc(100% + 4px);
@@ -232,51 +214,50 @@
      background: var(--warm-white);
      border: 1px solid var(--border2);
      border-radius: 6px;
-     max-height: 156px;
+     max-height: 260px;
      overflow-y: auto;
-     z-index: 100;
+     z-index: 9999;
      text-align: left;
      box-shadow: 0 12px 40px rgba(30, 26, 20, 0.14);
    }
-   
    .searchResultItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 20px;
-    cursor: pointer;
-    transition: background 0.15s;
-    border-bottom: 1px solid var(--border);
-    gap: 24px;
-  }
-  .searchResultItem:last-child { border-bottom: none; }
-  .searchResultItem:hover { background: var(--sand); }
-  
-  .searchResultName {
-    font-size: 15px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    color: var(--text);
-    letter-spacing: 0.01em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex: 1;
-    min-width: 0;
-    text-align: left;
-  }
-  
-  .searchResultAddress {
-    font-size: 12px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    color: var(--muted2);
-    letter-spacing: 0.01em;
-    text-align: right;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-   
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     padding: 14px 20px;
+     cursor: pointer;
+     transition: background 0.15s;
+     border-bottom: 1px solid var(--border);
+     gap: 24px;
+   }
+   .searchResultItem:last-child { border-bottom: none; }
+   .searchResultItem:hover { background: var(--sand); }
+   .searchResultName {
+     font-size: 15px;
+     font-family: 'DM Sans', sans-serif;
+     font-weight: 300;
+     color: var(--text);
+     letter-spacing: 0.01em;
+     white-space: nowrap;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     flex: 1;
+     min-width: 0;
+     text-align: left;
+   }
+   .searchResultAddress {
+     font-size: 12px;
+     font-family: 'DM Sans', sans-serif;
+     font-weight: 300;
+     color: var(--muted2);
+     letter-spacing: 0.01em;
+     text-align: right;
+     white-space: nowrap;
+     flex-shrink: 0;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     max-width: 140px;
+   }
    .noManager {
      display: block;
      padding: 14px 20px;
@@ -286,7 +267,6 @@
      font-weight: 300;
      text-align: left;
    }
-   
    .enterName {
      color: var(--green);
      cursor: pointer;
@@ -337,7 +317,6 @@
      justify-content: center;
      box-sizing: border-box;
    }
-   
    .missionContent {
      max-width: 860px;
      width: 100%;
@@ -347,7 +326,6 @@
      align-items: center;
      gap: 0;
    }
-   
    .missionEyebrow {
      font-size: 15px;
      letter-spacing: 0.25em;
@@ -363,7 +341,6 @@
      opacity: 1;
      transform: translateY(0);
    }
-   
    .missionHeadlineWrap {
      display: flex;
      flex-direction: column;
@@ -376,7 +353,6 @@
      opacity: 1;
      transform: translateY(0);
    }
-   
    .missionStatic {
      font-family: 'DM Serif Display', serif;
      font-size: clamp(28px, 4.5vw, 52px);
@@ -384,7 +360,6 @@
      color: var(--text);
      white-space: nowrap;
    }
-   
    .missionPhrase {
      font-family: 'DM Serif Display', serif;
      font-size: clamp(28px, 4.5vw, 52px);
@@ -397,18 +372,15 @@
      transition: opacity 0.5s ease, transform 0.5s ease;
      min-height: 1.3em;
    }
-   
    .missionHighlight {
      font-style: italic;
      color: var(--green);
      font-weight: 400;
    }
-   
    .missionSuffix {
      color: var(--text);
      font-weight: 400;
    }
-   
    .missionBody {
      margin-top: 26px;
      font-size: 17px;
@@ -425,12 +397,10 @@
      opacity: 1;
      transform: translateY(0);
    }
-   
    .fadeIn {
      opacity: 1;
      transform: translateY(0);
    }
-   
    .fadeOut {
      opacity: 0;
      transform: translateY(10px);
@@ -448,7 +418,6 @@
      margin: 0 auto;
      box-sizing: border-box;
    }
-   
    .anonBox,
    .topRestos {
      display: flex;
@@ -462,32 +431,26 @@
      transition: box-shadow 0.3s, transform 0.3s, background 0.2s;
      position: relative;
    }
-   
    .cardContent {
      display: flex;
      flex-direction: column;
      flex: 1;
    }
-   
    .featureCard {
      opacity: 0;
      transform: translateY(20px);
      transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s, background 0.2s;
    }
-   
    .featureCard:nth-child(2) {
      transition-delay: 0.12s;
    }
-   
    .featureCard.cardVisible {
      opacity: 1;
      transform: translateY(0);
    }
-   
    .featureCard.cardVisible:hover {
      transform: translateY(-3px);
    }
-   
    .anonBox::after,
    .topRestos::after {
      content: '';
@@ -501,18 +464,15 @@
      transform-origin: left;
      transition: transform 0.4s ease;
    }
-   
    .anonBox:hover,
    .topRestos:hover {
      box-shadow: 0 8px 32px rgba(60, 45, 20, 0.10);
      background: #fff;
    }
-   
    .anonBox:hover::after,
    .topRestos:hover::after {
      transform: scaleX(1);
    }
-   
    .boxImage {
      width: 100%;
      height: 220px;
@@ -520,12 +480,10 @@
      display: block;
      transition: transform 0.5s ease;
    }
-   
    .anonBox:hover .boxImage,
    .topRestos:hover .boxImage {
      transform: scale(1.03);
    }
-   
    .headerBox,
    .topRestos > .cardContent > span {
      font-family: 'DM Sans', sans-serif;
@@ -537,7 +495,6 @@
      padding: 20px 28px 0 28px;
      display: block;
    }
-   
    .cardHeadline {
      font-family: 'DM Serif Display', serif;
      font-size: clamp(20px, 2.2vw, 28px);
@@ -545,7 +502,6 @@
      line-height: 1.25;
      padding: 0 28px 24px;
    }
-   
    .cardDesc {
      font-size: 15px;
      line-height: 1.75;
@@ -554,153 +510,142 @@
      font-weight: 300;
    }
    
+   /* ═══════════════════════════════════════════════════════════
+      MODAL
+      ═══════════════════════════════════════════════════════════ */
    .modalOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(30, 26, 20, 0.55);
-    z-index: 1000;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-  }
-  
-  .addRestaurantModal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--sand);
-    border: 1px solid var(--border2);
-    border-radius: 10px;
-    padding: 44px 48px;
-    max-width: 520px;
-    width: 90%;
-    z-index: 1001;
-    box-shadow: 0 24px 60px rgba(30, 26, 20, 0.2);
-  }
-  
-  .modalCloseBtn {
-    position: absolute;
-    top: 20px;
-    right: 22px;
-    background: none;
-    border: none;
-    font-size: 18px;
-    color: var(--muted2);
-    cursor: pointer;
-    padding: 4px;
-    line-height: 1;
-    transition: color 0.2s;
-  }
-  .modalCloseBtn:hover { color: var(--text); }
-  
-  .modalContent h2 {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--green);
-    margin-bottom: 28px;
-  }
-  
-  .required { color: #c0392b; }
-  
-  .modalInputGroup {
-    margin-bottom: 24px;
-  }
-  
-  .modalInputGroup label {
-    display: block;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--green);
-    margin-bottom: 10px;
-    font-family: 'DM Sans', sans-serif;
-  }
-  
-  .modalInput {
-    width: 100%;
-    padding: 10px 0 8px;
-    font-size: 15px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    color: var(--text);
-    background: transparent;
-    box-sizing: border-box;
-    border: none;
-    border-radius: 0;
-    outline: none;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  
-  .modalInput::placeholder { color: var(--muted2); }
-  
-  .modalSelect {
-    width: 100%;
-    padding: 10px 0 8px;
-    font-size: 15px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    color: var(--text);
-    background: transparent;
-    box-sizing: border-box;
-    border: none;
-    border-radius: 0;
-    outline: none;
-    -webkit-appearance: none;
-    appearance: none;
-    cursor: pointer;
-  }
-  
-  .modalInputRow {
-    display: grid;
-    grid-template-columns: 1fr 80px 100px;
-    gap: 16px;
-    align-items: end;
-  }
-  
-  .modalButtons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 36px;
-  }
-  
-  .modalAddBtn,
-  .modalCancelBtn {
-    padding: 14px;
-    border-radius: 4px;
-    font-size: 13px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: none;
-  }
-  
-  .modalAddBtn {
-    background: var(--green);
-    color: #fff;
-  }
-  .modalAddBtn:hover {
-    background: var(--green-light);
-    transform: translateY(-1px);
-  }
-  
-  .modalCancelBtn {
-    background: none;
-    color: var(--muted);
-    border: 1px solid var(--border2);
-  }
-  .modalCancelBtn:hover {
-    border-color: var(--text);
-    color: var(--text);
-  }
+     position: fixed;
+     inset: 0;
+     background: rgba(30, 26, 20, 0.55);
+     z-index: 1000;
+     backdrop-filter: blur(4px);
+     -webkit-backdrop-filter: blur(4px);
+   }
+   .addRestaurantModal {
+     position: fixed;
+     top: 50%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+     background: var(--sand);
+     border: 1px solid var(--border2);
+     border-radius: 10px;
+     padding: 44px 48px;
+     max-width: 520px;
+     width: 90%;
+     z-index: 1001;
+     box-shadow: 0 24px 60px rgba(30, 26, 20, 0.2);
+   }
+   .modalCloseBtn {
+     position: absolute;
+     top: 20px;
+     right: 22px;
+     background: none;
+     border: none;
+     font-size: 18px;
+     color: var(--muted2);
+     cursor: pointer;
+     padding: 4px;
+     line-height: 1;
+     transition: color 0.2s;
+   }
+   .modalCloseBtn:hover { color: var(--text); }
+   .modalContent h2 {
+     font-family: 'DM Sans', sans-serif;
+     font-size: 11px;
+     font-weight: 500;
+     letter-spacing: 0.25em;
+     text-transform: uppercase;
+     color: var(--green);
+     margin-bottom: 28px;
+   }
+   .required { color: #c0392b; }
+   .modalInputGroup {
+     margin-bottom: 24px;
+   }
+   .modalInputGroup label {
+     display: block;
+     font-size: 11px;
+     font-weight: 500;
+     letter-spacing: 0.15em;
+     text-transform: uppercase;
+     color: var(--green);
+     margin-bottom: 10px;
+     font-family: 'DM Sans', sans-serif;
+   }
+   .modalInput {
+     width: 100%;
+     padding: 10px 0 8px;
+     font-size: 15px;
+     font-family: 'DM Sans', sans-serif;
+     font-weight: 300;
+     color: var(--text);
+     background: transparent;
+     box-sizing: border-box;
+     border: none;
+     border-radius: 0;
+     outline: none;
+     -webkit-appearance: none;
+     appearance: none;
+   }
+   .modalInput::placeholder { color: var(--muted2); }
+   .modalSelect {
+     width: 100%;
+     padding: 10px 0 8px;
+     font-size: 15px;
+     font-family: 'DM Sans', sans-serif;
+     font-weight: 300;
+     color: var(--text);
+     background: transparent;
+     box-sizing: border-box;
+     border: none;
+     border-radius: 0;
+     outline: none;
+     -webkit-appearance: none;
+     appearance: none;
+     cursor: pointer;
+   }
+   .modalInputRow {
+     display: grid;
+     grid-template-columns: 1fr 80px 100px;
+     gap: 16px;
+     align-items: end;
+   }
+   .modalButtons {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 12px;
+     margin-top: 36px;
+   }
+   .modalAddBtn,
+   .modalCancelBtn {
+     padding: 14px;
+     border-radius: 4px;
+     font-size: 13px;
+     font-family: 'DM Sans', sans-serif;
+     font-weight: 500;
+     letter-spacing: 0.08em;
+     text-transform: uppercase;
+     cursor: pointer;
+     transition: all 0.2s;
+     border: none;
+   }
+   .modalAddBtn {
+     background: var(--green);
+     color: #fff;
+   }
+   .modalAddBtn:hover {
+     background: var(--green-light);
+     transform: translateY(-1px);
+   }
+   .modalCancelBtn {
+     background: none;
+     color: var(--muted);
+     border: 1px solid var(--border2);
+   }
+   .modalCancelBtn:hover {
+     border-color: var(--text);
+     color: var(--text);
+   }
    
    /* ═══════════════════════════════════════════════════════════
       FOOTER
@@ -709,7 +654,6 @@
      background: var(--sand);
      border-top: 1px solid var(--border2);
    }
-   
    .footerInner {
      max-width: 1100px;
      margin: 0 auto;
@@ -718,7 +662,6 @@
      gap: 80px;
      align-items: flex-start;
    }
-   
    .footerContact {
      display: flex;
      flex-direction: column;
@@ -727,7 +670,6 @@
      flex-shrink: 0;
      padding-top: 4px;
    }
-   
    .footerEyebrow {
      font-size: 11px;
      font-weight: 500;
@@ -735,40 +677,34 @@
      text-transform: uppercase;
      color: var(--green);
    }
-   
    .footerSub {
      font-size: 14px;
      color: var(--muted);
      line-height: 1.75;
      font-weight: 300;
    }
-   
    .footerEmail {
      font-size: 13px;
      color: var(--muted);
      font-weight: 300;
      letter-spacing: 0.01em;
    }
-   
    .footerForm {
      flex: 1;
      display: flex;
      flex-direction: column;
      gap: 20px;
    }
-   
    .footerInputRow {
      display: grid;
      grid-template-columns: 1fr 1fr;
      gap: 20px;
    }
-   
    .footerInputGroup {
      display: flex;
      flex-direction: column;
      gap: 8px;
    }
-   
    .footerInputGroup label {
      font-size: 11px;
      font-weight: 500;
@@ -776,7 +712,6 @@
      text-transform: uppercase;
      color: var(--muted2);
    }
-   
    .footerInput {
      width: 100%;
      padding: 11px 0;
@@ -791,16 +726,12 @@
      transition: border-color 0.2s;
      resize: none;
    }
-   
    .footerInput:focus {
      outline: none;
      border-bottom-color: var(--green);
    }
-   
    .footerInput::placeholder { color: var(--muted2); }
-   
    .footerTextarea { line-height: 1.7; }
-   
    .footerSubmitBtn {
      align-self: flex-start;
      background: var(--green);
@@ -825,7 +756,6 @@
      cursor: not-allowed;
      transform: none;
    }
-   
    .footerBottom {
      border-top: 1px solid var(--border);
      padding: 20px 48px;
@@ -835,21 +765,17 @@
      color: var(--muted2);
      letter-spacing: 0.04em;
    }
-   
    .footerStatusMsg {
      font-size: 13px;
      font-weight: 300;
    }
-   
    .footerStatusSuccess { color: var(--green); }
    .footerStatusError   { color: #c0392b; }
-   
    .socials {
      display: flex;
      align-items: center;
      gap: 30px;
    }
-   
    .social1,
    .social2 {
      width: 30px;
@@ -858,230 +784,174 @@
      cursor: pointer;
      transition: opacity 0.2s;
    }
-   
    .social2 {
      width: 32px;
      height: 32px;
    }
-
-   .searchResultName {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    min-width: 0;
-    flex: 1;
-  }
-  
-  .searchResultAddress {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex-shrink: 0;
-    max-width: 140px;
-  }
-
-/* ═══════════════════════════════════════════════════════════
-   RESPONSIVE — append to bottom of RestaurantLanding.css
-   ═══════════════════════════════════════════════════════════ */
-
-/* ── TABLET (≤ 900px) ───────────────────────────────────── */
-@media (max-width: 900px) {
-  .bottom {
-    grid-template-columns: 1fr;
-    padding: 60px 32px 80px;
-    gap: 14px;
-  }
-
-  .mission {
-    padding: 80px 32px 0;
-  }
-
-  .footerInner {
-    flex-direction: column;
-    gap: 48px;
-    padding: 60px 32px 40px;
-  }
-
-  .footerContact { max-width: 100%; }
-
-  .footerBottom { padding: 20px 32px; }
-}
-
-/* ── MOBILE (≤ 640px) ───────────────────────────────────── */
-@media (max-width: 640px) {
-
-  /* HERO */
-  .bgmain {
-    min-height: 100svh;
-    align-items: flex-start;
-    padding-top: 0;
-  }
-
-  .mainBackground {
-    align-items: center;
-    padding: 0;
-  }
-
-  .main {
-    gap: 18px;
-    padding: 0 20px;
-  }
-
-  /* LOGO — key fix: much smaller on mobile */
-  .webLogo {
-    max-width: 260px;
-    width: 72vw;
-  }
-
-  .heroTagline {
-    font-size: clamp(13px, 3.8vw, 17px);
-    max-width: 300px;
-  }
-
-  /* SEARCH BAR */
-  .searching {
-    width: min(100%, 90vw);
-  }
-
-  .searchBarMan {
-    padding: 14px 12px 14px 44px;
-    font-size: 14px;
-  }
-
-  .searchSubmitBtn {
-    font-size: 12px;
-    padding: 0 16px;
-    height: 46px;
-    letter-spacing: 0.04em;
-  }
-
-  /* SCROLL CUE */
-  .heroScroll {
-    bottom: 20px;
-  }
-  .heroScroll span {
-    font-size: 11px;
-    letter-spacing: 0.18em;
-  }
-  .heroScrollLine { height: 60px; }
-
-  /* MISSION */
-  .mission {
-    padding: 64px 24px 0;
-  }
-
-  .missionStatic,
-  .missionPhrase {
-    font-size: clamp(24px, 7vw, 36px);
-  }
-
-  .missionBody {
-    font-size: 15px;
-    line-height: 1.8;
-  }
-
-  /* FEATURE CARDS */
-  .bottom {
-    padding: 48px 20px 64px;
-    gap: 12px;
-  }
-
-  .boxImage { height: 180px; }
-
-  .headerBox,
-  .topRestos > .cardContent > span {
-    padding: 16px 20px 0;
-    font-size: 11px;
-  }
-
-  .cardHeadline {
-    font-size: clamp(18px, 5vw, 24px);
-    padding: 0 20px 16px;
-  }
-
-  .cardDesc {
-    font-size: 14px;
-    padding: 10px 20px 20px;
-  }
-
-  /* MODAL */
-  .addRestaurantModal {
-    padding: 36px 24px;
-    width: 94%;
-  }
-
-  .modalInputRow {
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .modalButtons {
-    grid-template-columns: 1fr;
-  }
-
-  /* FOOTER */
-  .footerInner {
-    padding: 48px 20px 32px;
-    gap: 36px;
-  }
-
-  .footerInputRow {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .footerBottom {
-    padding: 16px 20px;
-    font-size: 11px;
-  }
-
-  .socials { gap: 20px; }
-  .social1 { width: 24px; height: 24px; }
-  .social2 { width: 26px; height: 26px; }
-}
-
-/* ── SMALL MOBILE (≤ 390px) ─────────────────────────────── */
-@media (max-width: 390px) {
-  .webLogo {
-    max-width: 220px;
-    width: 78vw;
-  }
-
-  .heroTagline {
-    font-size: 13px;
-  }
-
-  .searchBarMan {
-    font-size: 13px;
-  }
-
-  .searchSubmitBtn {
-    padding: 0 12px;
-    font-size: 11px;
-  }
-
-  .missionStatic,
-  .missionPhrase {
-    font-size: clamp(22px, 8vw, 30px);
-  }
-}
-
-@media (max-width: 640px) {
-  .searchResultName {
-    font-size: 13px;
-  }
-
-  .searchResultAddress {
-    font-size: 11px;
-  }
-
-  .searchResultItem {
-    padding: 11px 16px;
-    gap: 12px;
-  }
-
-  .noManager {
-    font-size: 12px;
-    padding: 11px 16px;
-  }
-}
+   
+   /* ═══════════════════════════════════════════════════════════
+      RESPONSIVE
+      ═══════════════════════════════════════════════════════════ */
+   
+   /* ── TABLET (≤ 900px) ───────────────────────────────────── */
+   @media (max-width: 900px) {
+     .bottom {
+       grid-template-columns: 1fr;
+       padding: 60px 32px 80px;
+       gap: 14px;
+     }
+     .mission {
+       padding: 80px 32px 0;
+     }
+     .footerInner {
+       flex-direction: column;
+       gap: 48px;
+       padding: 60px 32px 40px;
+     }
+     .footerContact { max-width: 100%; }
+     .footerBottom { padding: 20px 32px; }
+   }
+   
+   /* ── MOBILE (≤ 640px) ───────────────────────────────────── */
+   @media (max-width: 640px) {
+     /* HERO */
+     .bgmain {
+       min-height: 100svh;
+       align-items: flex-start;
+       padding-top: 0;
+     }
+     .mainBackground {
+       align-items: center;
+       padding: 0;
+     }
+     .main {
+       gap: 18px;
+       padding: 0 20px;
+     }
+     .webLogo {
+       max-width: 260px;
+       width: 72vw;
+     }
+     .heroTagline {
+       font-size: clamp(13px, 3.8vw, 17px);
+       max-width: 300px;
+     }
+     /* SEARCH BAR */
+     .searching {
+       width: min(100%, 90vw);
+     }
+     .searchBarMan {
+       padding: 14px 12px 14px 44px;
+       font-size: 14px;
+     }
+     .searchSubmitBtn {
+       font-size: 12px;
+       padding: 0 16px;
+       height: 46px;
+       letter-spacing: 0.04em;
+     }
+     .searchResultName {
+       font-size: 13px;
+     }
+     .searchResultAddress {
+       font-size: 11px;
+     }
+     .searchResultItem {
+       padding: 11px 16px;
+       gap: 12px;
+     }
+     .noManager {
+       font-size: 12px;
+       padding: 11px 16px;
+     }
+     /* SCROLL CUE */
+     .heroScroll {
+       bottom: 20px;
+     }
+     .heroScroll span {
+       font-size: 11px;
+       letter-spacing: 0.18em;
+     }
+     .heroScrollLine { height: 60px; }
+     /* MISSION */
+     .mission {
+       padding: 64px 24px 0;
+     }
+     .missionStatic,
+     .missionPhrase {
+       font-size: clamp(24px, 7vw, 36px);
+     }
+     .missionBody {
+       font-size: 15px;
+       line-height: 1.8;
+     }
+     /* FEATURE CARDS */
+     .bottom {
+       padding: 48px 20px 64px;
+       gap: 12px;
+     }
+     .boxImage { height: 180px; }
+     .headerBox,
+     .topRestos > .cardContent > span {
+       padding: 16px 20px 0;
+       font-size: 11px;
+     }
+     .cardHeadline {
+       font-size: clamp(18px, 5vw, 24px);
+       padding: 0 20px 16px;
+     }
+     .cardDesc {
+       font-size: 14px;
+       padding: 10px 20px 20px;
+     }
+     /* MODAL */
+     .addRestaurantModal {
+       padding: 36px 24px;
+       width: 94%;
+     }
+     .modalInputRow {
+       grid-template-columns: 1fr 1fr;
+       gap: 12px;
+     }
+     .modalButtons {
+       grid-template-columns: 1fr;
+     }
+     /* FOOTER */
+     .footerInner {
+       padding: 48px 20px 32px;
+       gap: 36px;
+     }
+     .footerInputRow {
+       grid-template-columns: 1fr;
+       gap: 16px;
+     }
+     .footerBottom {
+       padding: 16px 20px;
+       font-size: 11px;
+     }
+     .socials { gap: 20px; }
+     .social1 { width: 24px; height: 24px; }
+     .social2 { width: 26px; height: 26px; }
+   }
+   
+   /* ── SMALL MOBILE (≤ 390px) ─────────────────────────────── */
+   @media (max-width: 390px) {
+     .webLogo {
+       max-width: 220px;
+       width: 78vw;
+     }
+     .heroTagline {
+       font-size: 13px;
+     }
+     .searchBarMan {
+       font-size: 13px;
+     }
+     .searchSubmitBtn {
+       padding: 0 12px;
+       font-size: 11px;
+     }
+     .missionStatic,
+     .missionPhrase {
+       font-size: clamp(22px, 8vw, 30px);
+     }
+   }

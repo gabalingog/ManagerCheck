@@ -263,6 +263,7 @@ const RestaurantLanding = () => {
                             Know who you're working for, before you start.
                         </p>
                         <div className="right heroFadeUp" style={{ animationDelay: '0.75s' }}>
+                            {/* KEY FIX: .searching is position:relative, dropdown is a direct child of it — NOT inside .searchRes */}
                             <div className="searching">
                                 <div className="searchRes">
                                     <img src={search} alt="Search" className='searchLogo'/>
@@ -276,6 +277,8 @@ const RestaurantLanding = () => {
                                         onFocus={handleInputFocus}
                                     />
                                 </div>
+
+                                {/* Dropdown is now a sibling of .searchRes, not a child */}
                                 {showDropdown && searchInput && filteredRestaurants.length > 0 && (
                                     <div className="searchResult">
                                         {filteredRestaurants.map((restaurant) => (
@@ -295,12 +298,12 @@ const RestaurantLanding = () => {
                                 {showDropdown && searchInput && filteredRestaurants.length === 0 && (
                                     <div className="searchResult">
                                         <span className='noManager'>Can't find the restaurant?&nbsp;
-                                        <span
-                                            className='enterName'
-                                            onMouseDown={() => { isSelectingRef.current = true; }}
-                                            onClick={handleEnterRestaurant}
-                                            onTouchStart={handleEnterRestaurant}
-                                        >Add it</span>
+                                            <span
+                                                className='enterName'
+                                                onMouseDown={() => { isSelectingRef.current = true; }}
+                                                onClick={handleEnterRestaurant}
+                                                onTouchStart={handleEnterRestaurant}
+                                            >Add it</span>
                                         </span>
                                     </div>
                                 )}
