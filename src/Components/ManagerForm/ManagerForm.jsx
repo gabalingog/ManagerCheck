@@ -9,7 +9,7 @@ const ManagerForm = () => {
   const { managerID } = useParams();
   const location = useLocation();
   const managerName = location.state?.managerName;
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
   const { user } = useAuth();
 
   const [showAuthModal, setShowAuthModal] = useState(false);
