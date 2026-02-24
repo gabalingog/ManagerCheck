@@ -1,152 +1,199 @@
+.authOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 26, 20, 0.55);
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
 .authModal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    z-index: 1001;
-    max-width: 450px;
-    width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  
-  .modalContent h2 {
-    font-size: 28px;
-    color: #1a1a1a;
-    margin-bottom: 8px;
-    font-weight: 500;
-    text-align: center;
-  }
-  
-  .authSubtext {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 30px;
-    text-align: center;
-  }
-  
-  .errorMessage {
-    background-color: #fee;
-    color: #c33;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 14px;
-    text-align: center;
-  }
-  
-  .successMessage {
-    background-color: #efe;
-    color: #3c3;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 14px;
-    text-align: center;
-  }
-  
-  .modalInputGroup {
-    margin-bottom: 20px;
-  }
-  
-  .modalInputGroup label {
-    display: block;
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-  
-  .modalInput {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 15px;
-    transition: border-color 0.2s;
-    background: white;
-    box-sizing: border-box;
-  }
-  
-  .modalInput:focus {
-    outline: none;
-    border-color: #1a1a1a;
-  }
-  
-  .modalInput::placeholder {
-    color: #bbb;
-  }
-  
-  /* New Button Row Layout */
-  .modalButtonsRow {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 24px;
-  }
-  
-  .modalSecondaryBtn,
-  .modalPrimaryBtn {
-    padding: 14px;
-    border: none;
-    border-radius: 8px;
-    font-size: 15px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 500;
-  }
-  
-  .modalSecondaryBtn {
-    background: white;
-    color: #666;
-    border: 1px solid #e0e0e0;
-  }
-  
-  .modalSecondaryBtn:hover:not(:disabled) {
-    border-color: #1a1a1a;
-    color: #1a1a1a;
-    transform: translateY(-1px);
-  }
-  
-  .modalPrimaryBtn {
-    background: #1a1a1a;
-    color: white;
-    border: 1px solid #1a1a1a;
-  }
-  
-  .modalPrimaryBtn:hover:not(:disabled) {
-    background: #000;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .modalSecondaryBtn:disabled,
-  .modalPrimaryBtn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  @media (max-width: 768px) {
-    .authModal {
-      padding: 30px 24px;
-      width: 95%;
-    }
-  
-    .modalContent h2 {
-      font-size: 24px;
-    }
-  
-    .modalButtonsRow {
-      gap: 10px;
-    }
-  
-    .modalSecondaryBtn,
-    .modalPrimaryBtn {
-      padding: 12px;
-      font-size: 14px;
-    }
-  }
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #faf8f4;
+  border: 1px solid rgba(60, 45, 20, 0.16);
+  border-radius: 12px;
+  padding: 44px 48px;
+  max-width: 420px;
+  width: 92%;
+  z-index: 1001;
+  box-shadow: 0 24px 60px rgba(30, 26, 20, 0.2);
+}
+
+.authClose {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #a89d8e;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+.authClose:hover { color: #1e1a14; }
+
+.authHeader { margin-bottom: 24px; }
+
+.authTitle {
+  font-family: 'DM Serif Display', serif;
+  font-size: 26px;
+  font-weight: 400;
+  color: #1e1a14;
+  margin: 0 0 6px 0;
+}
+
+.authSubtitle {
+  font-size: 14px;
+  color: #7a6e5f;
+  margin: 0;
+  font-weight: 300;
+}
+
+.authTabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 28px;
+  border-bottom: 1px solid rgba(60, 45, 20, 0.16);
+}
+
+.authTab {
+  flex: 1;
+  padding: 10px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #a89d8e;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: -1px;
+}
+
+.authTab.active {
+  color: #2a7a4b;
+  border-bottom-color: #2a7a4b;
+  font-weight: 500;
+}
+
+.authForm { display: flex; flex-direction: column; gap: 20px; }
+
+.authInputGroup { display: flex; flex-direction: column; gap: 8px; }
+
+.authInputGroup label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #a89d8e;
+}
+
+.authInput {
+  padding: 12px 0;
+  border: none;
+  border-bottom: 1.5px solid rgba(60, 45, 20, 0.16);
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  color: #1e1a14;
+  background: transparent;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.authInput:focus { border-bottom-color: #2a7a4b; }
+.authInput::placeholder { color: #a89d8e; }
+
+.authError {
+  font-size: 13px;
+  color: #c0392b;
+  background: #fdf0ee;
+  border: 1px solid rgba(192, 57, 43, 0.2);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 0;
+}
+
+.authSuccess {
+  font-size: 13px;
+  color: #2a7a4b;
+  background: #eaf5ee;
+  border: 1px solid rgba(42, 122, 75, 0.2);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 0;
+}
+
+.authSubmitBtn {
+  margin-top: 4px;
+  padding: 14px;
+  background: #2a7a4b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.authSubmitBtn:hover:not(:disabled) { background: #3dab68; transform: translateY(-1px); }
+.authSubmitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.authSwitch {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #7a6e5f;
+  font-weight: 300;
+}
+
+.authSwitchLink {
+  color: #2a7a4b;
+  cursor: pointer;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.authSwitchLink:hover { opacity: 0.7; }
+
+@media (max-width: 480px) {
+  .authModal { padding: 36px 24px; }
+}
+
+/* ── PASSWORD TOGGLE ── */
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordInput {
+  padding-right: 44px !important;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #aaa;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+  line-height: 0;
+}
+
+.passwordToggle:hover {
+  color: #1a1a1a;
+}
