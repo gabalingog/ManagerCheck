@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from './../../supabaseClient'
 import './RateRestaurant.css'
+import restaurantBG from './../Assets/pic2-18.png';
 
 const RateRestaurant = () => {
   const { restaurantID } = useParams();
@@ -541,7 +542,11 @@ const RateRestaurant = () => {
       </div>
 
       {/* Hero Header */}
-      <header className="restaurantHeader">
+      <header className="restaurantHeader" style={{ 
+        backgroundImage: `url(${restaurantBG})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}>
         <div className="headerContent">
           <div className="headerLeft">
                   {/* <button className="homeBtn" onClick={goHome}>
