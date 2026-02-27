@@ -316,7 +316,7 @@ const RestaurantLanding = () => {
                             <img src={logo} alt="ManagerCheck" className='webLogo' />
                         </div>
                         <p className="heroTagline heroFadeUp" style={{ animationDelay: '0.5s' }}>
-                            Know who you're working for, before you start.
+                            Know who you're working for before you start
                         </p>
                         <div className="right heroFadeUp" style={{ animationDelay: '0.75s' }}>
                             {/* ref on .searching so we can measure its position for the portal */}
