@@ -18,6 +18,7 @@
   display: flex;
   align-items: center;
   gap: 20px;
+  min-width: 0;
 }
 
 .navLogo {
@@ -27,6 +28,7 @@
   color: #1e1a14;
   letter-spacing: -0.01em;
   user-select: none;
+  white-space: nowrap;
 }
 
 .navLogo span { color: #2a7a4b; }
@@ -45,6 +47,7 @@
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .navHomeBtn:hover {
@@ -57,6 +60,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 /* ── LOGGED OUT BUTTONS ── */
@@ -173,7 +177,6 @@
   min-width: 220px;
   z-index: 499;
   box-shadow: 0 8px 32px rgba(30, 26, 20, 0.12);
-  /* small arrow pointing up */
 }
 
 .navUserMenu::before {
@@ -229,10 +232,62 @@
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-  .mainNavbar { padding: 0 20px; }
-  .navUserInfo { display: none; }
+  .mainNavbar {
+    padding: 0 20px;
+    height: 56px;
+  }
+
+  .navUserInfo {
+    display: none;
+  }
+
+  .navHomeBtn span,
+  .navHomeBtn {
+    /* Keep icon only on mobile */
+    padding: 7px 10px;
+  }
+
+  .navHomeBtn .navHomeBtnText {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
-  .navBtnLogin, .navBtnSignup { padding: 7px 12px; font-size: 12px; }
+  .mainNavbar {
+    padding: 0 16px;
+  }
+
+  .navLogo {
+    font-size: 18px;
+  }
+
+  /* Compact login/signup buttons */
+  .navBtnLogin,
+  .navBtnSignup {
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+
+  /* Slightly smaller avatar */
+  .navAvatar {
+    width: 34px;
+    height: 34px;
+    font-size: 13px;
+  }
+
+  /* Ensure dropdown doesn't overflow screen */
+  .navUserMenu {
+    min-width: 180px;
+    right: -8px;
+  }
+
+  /* Hide the Home text label, keep icon */
+  .navHomeBtn {
+    padding: 7px 8px;
+    gap: 0;
+  }
+
+  .navHomeBtn svg {
+    display: block;
+  }
 }
