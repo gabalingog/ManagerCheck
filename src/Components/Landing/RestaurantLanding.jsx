@@ -265,7 +265,7 @@ const RestaurantLanding = () => {
             background: 'var(--warm-white, #faf8f4)',
             border: '1px solid rgba(60, 45, 20, 0.16)',
             borderRadius: '6px',
-            maxHeight: '260px',
+            maxHeight: '150px',
             overflowY: 'auto',
             zIndex: 99999,
             textAlign: 'left',
