@@ -104,6 +104,13 @@ const RateManager = () => {
       });
     }
   };
+  const goToRestaurant = () => {
+    if (currentManager?.restaurant_id) {
+      navigate(`/restaurant/${currentManager.restaurant_id}`, {
+        state: { restaurantName: currentManager.restaurantName }
+      });
+    }
+  };
 
   const handleDeleteReview = async (reviewId) => {
     if (!window.confirm('Are you sure you want to delete your review?')) return;
@@ -350,6 +357,7 @@ const RateManager = () => {
           <div className="headerLeft">
             <h1 className="restaurantName">{currentManager?.name || managerName}</h1>
             <p className="restaurantLocation">{currentManager?.restaurantName || 'Barcelona Wine Bar'}</p>
+            <button className="rmBackToRestaurantBtn" onClick={goToRestaurant}>Back to Restaurant</button>
           </div>
           <div className="headerRight">
             <div className="headerStats">
