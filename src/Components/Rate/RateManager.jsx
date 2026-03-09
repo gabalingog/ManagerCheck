@@ -72,7 +72,7 @@ const RateManager = () => {
 
   useEffect(() => {
     const fetchRatings = async () => {
-      if (!managerID) return;
+      if (!managerID) { setLoading(false); return; }
       setLoading(true);
       const { data, error } = await supabase
         .from('manager_ratings').select('*').eq('manager_id', managerID).order('created_at', { ascending: false });
@@ -116,11 +116,8 @@ const RateManager = () => {
     if (!window.confirm('Are you sure you want to delete your review?')) return;
     setDeletingId(reviewId);
     const { error } = await supabase.from('manager_ratings').delete().eq('id', reviewId);
-    if (error) {
-      alert('Failed to delete review. Please try again.');
-    } else {
-      setAllRatings(prev => prev.filter(r => r.id !== reviewId));
-    }
+    if (error) { alert('Failed to delete review. Please try again.'); }
+    else { setAllRatings(prev => prev.filter(r => r.id !== reviewId)); }
     setDeletingId(null);
   };
 
@@ -360,31 +357,33 @@ const RateManager = () => {
             <button className="rmBackToRestaurantBtn" onClick={goToRestaurant}>Back to Restaurant</button>
           </div>
           <div className="headerRight">
-            <div className="headerStats">
-              <div className="ratingCard">
-                <div className="ratingNumber">{overallRating}</div>
-                <div className="ratingStars">
-                  {[1, 2, 3, 4, 5].map(star => {
-                    const filled = star <= Math.floor(overallRating);
-                    const half = !filled && star === Math.ceil(overallRating) && overallRating % 1 >= 0.5;
-                    return <span key={star} className={`ratingStar ${filled ? 'filled' : ''} ${half ? 'half' : ''}`}>★</span>;
-                  })}
+            <div className="statsAndActions">
+              <div className="headerStats">
+                <div className="ratingCard">
+                  <div className="ratingNumber">{overallRating}</div>
+                  <div className="ratingStars">
+                    {[1, 2, 3, 4, 5].map(star => {
+                      const filled = star <= Math.floor(overallRating);
+                      const half = !filled && star === Math.ceil(overallRating) && overallRating % 1 >= 0.5;
+                      return <span key={star} className={`ratingStar ${filled ? 'filled' : ''} ${half ? 'half' : ''}`}>★</span>;
+                    })}
+                  </div>
+                  <div className="ratingLabel">{existingRatings.length} {existingRatings.length === 1 ? 'Review' : 'Reviews'}</div>
                 </div>
-                <div className="ratingLabel">{existingRatings.length} {existingRatings.length === 1 ? 'Review' : 'Reviews'}</div>
+                {existingRatings.length > 0 && (
+                  <div className="recommendCard">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                    </svg>
+                    <div className="recommendNumber">{recommendationPercentage}%</div>
+                    <div className="recommendLabel">Recommend</div>
+                  </div>
+                )}
               </div>
-              {existingRatings.length > 0 && (
-                <div className="recommendCard">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
-                  </svg>
-                  <div className="recommendNumber">{recommendationPercentage}%</div>
-                  <div className="recommendLabel">Recommend</div>
-                </div>
-              )}
-            </div>
-            <div className="headerActions">
-              <button className="btnPrimary" onClick={goToRatingForm}>Rate Manager</button>
-              <button className="btnSecondary" onClick={goToAllManagers}>View All Managers</button>
+              <div className="headerActions">
+                <button className="btnPrimary" onClick={goToRatingForm}>Rate Manager</button>
+                <button className="btnSecondary" onClick={goToAllManagers}>View All Managers</button>
+              </div>
             </div>
           </div>
         </div>
