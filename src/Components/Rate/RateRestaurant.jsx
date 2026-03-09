@@ -25,7 +25,7 @@ const RateRestaurant = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 10;
   
-  const [managers, setManagers] = useState([]);
+  // const [managers, setManagers] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
   const [currentRestaurant, setCurrentRestaurant] = useState(null);
   const [allRatings, setAllRatings] = useState([]);
@@ -41,15 +41,15 @@ const RateRestaurant = () => {
     fetchRestaurants();
   }, []);
 
-  useEffect(() => {
-    const fetchManagers = async () => {
-      const { data, error } = await supabase.from('managers').select('*, restaurants(name)').order('name');
-      if (!error) {
-        setManagers(data.map(m => ({ ...m, restaurantName: m.restaurants?.name || 'Unknown' })));
-      }
-    };
-    fetchManagers();
-  }, []);
+  // useEffect(() => {
+  //   const fetchManagers = async () => {
+  //     const { data, error } = await supabase.from('managers').select('*, restaurants(name)').order('name');
+  //     if (!error) {
+  //       setManagers(data.map(m => ({ ...m, restaurantName: m.restaurants?.name || 'Unknown' })));
+  //     }
+  //   };
+  //   fetchManagers();
+  // }, []);
 
   useEffect(() => {
     const fetchCurrentRestaurant = async () => {
@@ -104,7 +104,7 @@ const RateRestaurant = () => {
     setDeletingId(null);
   };
 
-  const handleEnterManager = () => setShowAddManagerForm(true);
+  // const handleEnterManager = () => setShowAddManagerForm(true);
 
   const handleAddManager = async () => {
     if (!newManagerName.trim()) { alert("Please enter the manager's first name"); return; }
