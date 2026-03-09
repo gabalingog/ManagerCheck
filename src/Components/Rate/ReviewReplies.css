@@ -1,4 +1,4 @@
-/* ReviewReplies.css — threaded reply system */
+/* ReviewReplies.css — threaded nested reply system */
 /* Uses .rr- prefix to avoid conflicts */
 
 .rr-root {
@@ -30,13 +30,11 @@
     cursor: pointer;
     transition: all 0.18s ease;
   }
-  
   .rr-reply-trigger:hover {
     background: var(--green-pale);
     border-color: rgba(42, 122, 75, 0.2);
     color: var(--green);
   }
-  
   .rr-reply-trigger--disabled {
     opacity: 0.4;
     cursor: not-allowed;
@@ -58,7 +56,6 @@
     margin-top: 12px;
     animation: rr-slide-in 0.2s ease;
   }
-  
   @keyframes rr-slide-in {
     from { opacity: 0; transform: translateY(-6px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -78,7 +75,6 @@
     justify-content: center;
     flex-shrink: 0;
     margin-top: 2px;
-    letter-spacing: 0;
   }
   
   .rr-composer-body {
@@ -102,17 +98,12 @@
     line-height: 1.6;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
-  
   .rr-composer-input:focus {
     outline: none;
     border-color: var(--green);
     box-shadow: 0 0 0 3px rgba(42, 122, 75, 0.08);
   }
-  
-  .rr-composer-input::placeholder {
-    color: var(--muted2);
-    font-weight: 300;
-  }
+  .rr-composer-input::placeholder { color: var(--muted2); font-weight: 300; }
   
   .rr-composer-actions {
     display: flex;
@@ -120,7 +111,6 @@
     justify-content: space-between;
     gap: 8px;
   }
-  
   .rr-hint {
     font-size: 11px;
     color: var(--muted2);
@@ -128,11 +118,7 @@
     font-weight: 300;
     letter-spacing: 0.03em;
   }
-  
-  .rr-composer-btns {
-    display: flex;
-    gap: 8px;
-  }
+  .rr-composer-btns { display: flex; gap: 8px; }
   
   .rr-btn-cancel {
     padding: 6px 14px;
@@ -146,11 +132,7 @@
     cursor: pointer;
     transition: all 0.15s;
   }
-  
-  .rr-btn-cancel:hover {
-    border-color: var(--muted);
-    color: var(--text);
-  }
+  .rr-btn-cancel:hover { border-color: var(--muted); color: var(--text); }
   
   .rr-btn-submit {
     padding: 6px 16px;
@@ -168,16 +150,8 @@
     justify-content: center;
     min-width: 52px;
   }
-  
-  .rr-btn-submit:hover:not(:disabled) {
-    background: var(--green-light);
-    transform: translateY(-1px);
-  }
-  
-  .rr-btn-submit:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
+  .rr-btn-submit:hover:not(:disabled) { background: var(--green-light); transform: translateY(-1px); }
+  .rr-btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
   
   .rr-spinner {
     width: 12px;
@@ -188,10 +162,7 @@
     animation: rr-spin 0.7s linear infinite;
     display: block;
   }
-  
-  @keyframes rr-spin {
-    to { transform: rotate(360deg); }
-  }
+  @keyframes rr-spin { to { transform: rotate(360deg); } }
   
   /* ── Thread ── */
   .rr-thread {
@@ -203,7 +174,7 @@
   
   .rr-thread-line {
     width: 1px;
-    background: linear-gradient(to bottom, rgba(42,122,75,0.25), rgba(42,122,75,0.05));
+    background: linear-gradient(to bottom, rgba(42,122,75,0.3), rgba(42,122,75,0.05));
     margin-left: 13px;
     margin-right: 14px;
     border-radius: 1px;
@@ -223,12 +194,12 @@
     gap: 10px;
     animation: rr-fade-up 0.22s ease both;
   }
-  
   @keyframes rr-fade-up {
     from { opacity: 0; transform: translateY(6px); }
     to   { opacity: 1; transform: translateY(0); }
   }
   
+  /* Avatar color shifts by depth */
   .rr-reply-avatar {
     width: 26px;
     height: 26px;
@@ -245,25 +216,34 @@
     flex-shrink: 0;
     margin-top: 1px;
   }
+  .rr-reply-avatar[data-depth="0"] { background: var(--sand2); color: var(--muted); }
+  .rr-reply-avatar[data-depth="1"] { background: var(--green-pale); color: var(--green); border-color: rgba(42,122,75,0.2); }
+  .rr-reply-avatar[data-depth="2"] { background: rgba(42,122,75,0.12); color: var(--green); border-color: rgba(42,122,75,0.25); }
+  .rr-reply-avatar[data-depth="3"] { background: rgba(42,122,75,0.18); color: var(--green); border-color: rgba(42,122,75,0.3); }
+  
+  .rr-reply-content-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
   
   .rr-reply-content {
-    flex: 1;
     background: var(--warm-white);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 10px 14px;
     transition: border-color 0.18s;
   }
-  
-  .rr-reply-content:hover {
-    border-color: var(--border2);
-  }
+  .rr-reply-content:hover { border-color: var(--border2); }
   
   .rr-reply-header {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     margin-bottom: 5px;
+    flex-wrap: wrap;
   }
   
   .rr-reply-name {
@@ -271,8 +251,22 @@
     font-size: 12px;
     font-weight: 500;
     color: var(--text);
-    letter-spacing: 0.01em;
   }
+  
+  /* "→ ParentName" indicator for nested replies */
+  .rr-reply-to {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--green);
+    background: var(--green-pale);
+    border-radius: 3px;
+    padding: 1px 6px 1px 4px;
+  }
+  .rr-reply-to svg { flex-shrink: 0; }
   
   .rr-reply-time {
     font-family: 'DM Sans', sans-serif;
@@ -294,15 +288,8 @@
     transition: all 0.15s;
     opacity: 0;
   }
-  
-  .rr-reply-content:hover .rr-delete-btn {
-    opacity: 1;
-  }
-  
-  .rr-delete-btn:hover {
-    color: #c0392b;
-    background: #fdf0ee;
-  }
+  .rr-reply-content:hover .rr-delete-btn { opacity: 1; }
+  .rr-delete-btn:hover { color: #c0392b; background: #fdf0ee; }
   
   .rr-reply-text {
     font-family: 'DM Sans', sans-serif;
@@ -313,7 +300,82 @@
     margin: 0;
   }
   
-  /* ── Expand toggle ── */
+  /* ── Inline reply button on each reply ── */
+  .rr-inline-reply-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    background: none;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--muted2);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.15s;
+    align-self: flex-start;
+  }
+  .rr-inline-reply-btn:hover {
+    background: var(--green-pale);
+    color: var(--green);
+  }
+  
+  /* ── Nested composer (under a reply) ── */
+  .rr-nested-composer {
+    animation: rr-slide-in 0.18s ease;
+  }
+  .rr-nested-composer .rr-composer { margin-top: 0; }
+  .rr-nested-composer .rr-composer-avatar {
+    width: 22px;
+    height: 22px;
+    font-size: 9px;
+  }
+  .rr-nested-composer .rr-composer-input {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+  
+  /* ── Children container ── */
+  .rr-children {
+    display: flex;
+    margin-top: 4px;
+    gap: 0;
+  }
+  
+  .rr-thread-line--child {
+    width: 1px;
+    background: linear-gradient(to bottom, rgba(42,122,75,0.2), rgba(42,122,75,0.03));
+    margin-left: 11px;
+    margin-right: 12px;
+    flex-shrink: 0;
+    border-radius: 1px;
+  }
+  
+  .rr-children-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+  
+  /* Nested replies slightly smaller */
+  .rr-reply--nested .rr-reply-avatar {
+    width: 22px;
+    height: 22px;
+    font-size: 9px;
+  }
+  .rr-reply--nested .rr-reply-content {
+    padding: 8px 12px;
+  }
+  .rr-reply--nested .rr-reply-text {
+    font-size: 12.5px;
+  }
+  
+  /* ── Expand toggles ── */
   .rr-expand-btn {
     display: inline-flex;
     align-items: center;
@@ -331,16 +393,21 @@
     align-self: flex-start;
     letter-spacing: 0.03em;
   }
-  
   .rr-expand-btn:hover {
     background: var(--green-pale);
     border-color: rgba(42, 122, 75, 0.3);
     color: var(--green);
   }
   
+  .rr-expand-btn--child {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 5px;
+  }
+  
   /* ── Responsive ── */
   @media (max-width: 480px) {
     .rr-hint { display: none; }
-    .rr-composer-input { font-size: 14px; }
     .rr-thread-line { margin-left: 11px; margin-right: 10px; }
+    .rr-thread-line--child { margin-left: 9px; margin-right: 8px; }
   }

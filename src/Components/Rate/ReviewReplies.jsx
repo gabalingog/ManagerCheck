@@ -3,20 +3,207 @@ import { supabase } from './../../supabaseClient';
 import { useAuth } from './../../authContext';
 import './ReviewReplies.css';
 
+// ── Reusable Composer ────────────────────────────────────────────────────────
+const Composer = ({ user, placeholder, onSubmit, onCancel, autoFocus }) => {
+  const [text, setText] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (autoFocus) setTimeout(() => ref.current?.focus(), 50);
+  }, [autoFocus]);
+
+  const handleSubmit = async () => {
+    if (!text.trim() || submitting) return;
+    setSubmitting(true);
+    await onSubmit(text.trim());
+    setText('');
+    setSubmitting(false);
+  };
+
+  return (
+    <div className="rr-composer">
+      <div className="rr-composer-avatar">
+        {(user.user_metadata?.full_name || user.email || '?')[0].toUpperCase()}
+      </div>
+      <div className="rr-composer-body">
+        <textarea
+          ref={ref}
+          className="rr-composer-input"
+          placeholder={placeholder || 'Write a reply...'}
+          value={text}
+          onChange={e => setText(e.target.value)}
+          rows={2}
+          onKeyDown={e => {
+            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSubmit();
+            if (e.key === 'Escape') { setText(''); onCancel?.(); }
+          }}
+        />
+        <div className="rr-composer-actions">
+          <span className="rr-hint">⌘↵ to submit · Esc to cancel</span>
+          <div className="rr-composer-btns">
+            {onCancel && (
+              <button className="rr-btn-cancel" onClick={() => { setText(''); onCancel(); }}>
+                Cancel
+              </button>
+            )}
+            <button
+              className="rr-btn-submit"
+              onClick={handleSubmit}
+              disabled={!text.trim() || submitting}
+            >
+              {submitting ? <span className="rr-spinner" /> : 'Post'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── Single Reply (recursive) ─────────────────────────────────────────────────
+const Reply = ({
+  reply, allReplies, depth, user,
+  onDelete, onAddReply, deletingId, formatTimeAgo,
+  showAllMap, setShowAllMap,
+}) => {
+  const [showReplyBox, setShowReplyBox] = useState(false);
+  const MAX_DEPTH = 4;
+
+  const children = allReplies.filter(r => r.parent_reply_id === reply.id);
+  const showAll = !!showAllMap[reply.id];
+  // depth 0 → show 1 child by default; depth 1+ → show none until expanded
+  const defaultVisible = depth === 0 ? 1 : 0;
+  const visibleChildren = showAll ? children : children.slice(0, defaultVisible);
+  const hiddenCount = children.length - defaultVisible;
+
+  const handleSubmitNestedReply = async (text) => {
+    await onAddReply(text, reply.id, reply.display_name);
+    setShowReplyBox(false);
+    // intentionally not auto-expanding — always show only 1
+  };
+
+  return (
+    <div className={`rr-reply${depth > 0 ? ' rr-reply--nested' : ''}`}>
+      <div className="rr-reply-avatar" data-depth={Math.min(depth, 3)}>
+        {reply.display_name?.[0]?.toUpperCase() || '?'}
+      </div>
+      <div className="rr-reply-content-wrap">
+        <div className="rr-reply-content">
+          <div className="rr-reply-header">
+            <span className="rr-reply-name">{reply.display_name}</span>
+            {reply.parent_display_name && depth > 0 && (
+              <span className="rr-reply-to">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+                {reply.parent_display_name}
+              </span>
+            )}
+            <span className="rr-reply-time">{formatTimeAgo(reply.created_at)}</span>
+            {user && reply.user_id === user.id && (
+              <button
+                className="rr-delete-btn"
+                onClick={() => onDelete(reply.id)}
+                disabled={deletingId === reply.id}
+              >
+                {deletingId === reply.id ? '…' : (
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                  </svg>
+                )}
+              </button>
+            )}
+          </div>
+          <p className="rr-reply-text">{reply.content}</p>
+        </div>
+
+        {user && depth < MAX_DEPTH && (
+          <button
+            className="rr-inline-reply-btn"
+            onClick={() => setShowReplyBox(prev => !prev)}
+          >
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <polyline points="9 17 4 12 9 7"/>
+              <path d="M20 18v-2a4 4 0 0 0-4-4H4"/>
+            </svg>
+            Reply
+          </button>
+        )}
+
+        {showReplyBox && user && (
+          <div className="rr-nested-composer">
+            <Composer
+              user={user}
+              placeholder={`Reply to ${reply.display_name}…`}
+              onSubmit={handleSubmitNestedReply}
+              onCancel={() => setShowReplyBox(false)}
+              autoFocus
+            />
+          </div>
+        )}
+
+        {children.length > 0 && (
+          <div className="rr-children">
+            <div className="rr-thread-line rr-thread-line--child" />
+            <div className="rr-children-list">
+              {visibleChildren.map(child => (
+                <Reply
+                  key={child.id}
+                  reply={child}
+                  allReplies={allReplies}
+                  depth={depth + 1}
+                  user={user}
+                  onDelete={onDelete}
+                  onAddReply={onAddReply}
+                  deletingId={deletingId}
+                  formatTimeAgo={formatTimeAgo}
+                  showAllMap={showAllMap}
+                  setShowAllMap={setShowAllMap}
+                />
+              ))}
+              {children.length > 1 && (
+                <button
+                  className="rr-expand-btn rr-expand-btn--child"
+                  onClick={() => setShowAllMap(prev => ({ ...prev, [reply.id]: !showAll }))}
+                >
+                  {showAll ? (
+                    <>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <polyline points="18 15 12 9 6 15"/>
+                      </svg>
+                      Hide
+                    </>
+                  ) : (
+                    <>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <polyline points="6 9 12 15 18 9"/>
+                      </svg>
+                      {hiddenCount} more {hiddenCount === 1 ? 'reply' : 'replies'}
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ── Main Component ───────────────────────────────────────────────────────────
 const ReviewReplies = ({ reviewId, reviewType = 'manager' }) => {
   const { user } = useAuth();
   const [replies, setReplies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showAll, setShowAll] = useState(false);
-  const [replyText, setReplyText] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [showReplyBox, setShowReplyBox] = useState(false);
+  const [showTopLevelComposer, setShowTopLevelComposer] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
-  const textareaRef = useRef(null);
+  const [showAllTop, setShowAllTop] = useState(false);
+  const [showAllMap, setShowAllMap] = useState({});
 
-  useEffect(() => {
-    fetchReplies();
-  }, [reviewId]);
+  useEffect(() => { fetchReplies(); }, [reviewId]);
 
   const fetchReplies = async () => {
     setLoading(true);
@@ -30,13 +217,10 @@ const ReviewReplies = ({ reviewId, reviewType = 'manager' }) => {
     setLoading(false);
   };
 
-  const handleSubmitReply = async () => {
-    if (!replyText.trim() || !user) return;
-    setSubmitting(true);
-
-    const displayName = user.user_metadata?.full_name
-      || user.email?.split('@')[0]
-      || 'Anonymous';
+  const handleAddReply = async (text, parentReplyId = null, parentDisplayName = null) => {
+    if (!user) return;
+    const displayName =
+      user.user_metadata?.full_name || user.email?.split('@')[0] || 'Anonymous';
 
     const { data, error } = await supabase
       .from('review_replies')
@@ -45,35 +229,31 @@ const ReviewReplies = ({ reviewId, reviewType = 'manager' }) => {
         review_type: reviewType,
         user_id: user.id,
         display_name: displayName,
-        content: replyText.trim(),
+        content: text,
+        parent_reply_id: parentReplyId || null,
+        parent_display_name: parentDisplayName || null,
       }])
       .select()
       .single();
 
     if (!error && data) {
       setReplies(prev => [...prev, data]);
-      setReplyText('');
-      setShowReplyBox(false);
-      setShowAll(true);
+      // intentionally not auto-expanding — always show only 1
     }
-    setSubmitting(false);
+  };
+
+  const getDescendantIds = (id, allReplies) => {
+    const children = allReplies.filter(r => r.parent_reply_id === id);
+    return children.flatMap(c => [c.id, ...getDescendantIds(c.id, allReplies)]);
   };
 
   const handleDelete = async (replyId) => {
-    if (!window.confirm('Delete this reply?')) return;
+    if (!window.confirm('Delete this reply? Any replies to it will also be removed.')) return;
     setDeletingId(replyId);
-    const { error } = await supabase
-      .from('review_replies')
-      .delete()
-      .eq('id', replyId);
-    if (!error) setReplies(prev => prev.filter(r => r.id !== replyId));
+    const idsToDelete = [replyId, ...getDescendantIds(replyId, replies)];
+    await supabase.from('review_replies').delete().in('id', idsToDelete);
+    setReplies(prev => prev.filter(r => !idsToDelete.includes(r.id)));
     setDeletingId(null);
-  };
-
-  const handleReplyClick = () => {
-    if (!user) return;
-    setShowReplyBox(prev => !prev);
-    setTimeout(() => textareaRef.current?.focus(), 50);
   };
 
   const formatTimeAgo = (dateStr) => {
@@ -88,16 +268,17 @@ const ReviewReplies = ({ reviewId, reviewType = 'manager' }) => {
     return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
-  const visibleReplies = showAll ? replies : replies.slice(0, 1);
-  const hiddenCount = replies.length - 1;
+  const topLevelReplies = replies.filter(r => !r.parent_reply_id);
+  const visibleTopLevel = showAllTop ? topLevelReplies : topLevelReplies.slice(0, 1);
+  const hiddenTopCount = topLevelReplies.length - 1;
+  const totalReplies = replies.length;
 
   return (
     <div className="rr-root">
-      {/* Thread connector line */}
       <div className="rr-action-row">
         <button
-          className={`rr-reply-trigger ${!user ? 'rr-reply-trigger--disabled' : ''}`}
-          onClick={handleReplyClick}
+          className={`rr-reply-trigger${!user ? ' rr-reply-trigger--disabled' : ''}`}
+          onClick={() => user && setShowTopLevelComposer(prev => !prev)}
           title={!user ? 'Sign in to reply' : ''}
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
@@ -106,100 +287,52 @@ const ReviewReplies = ({ reviewId, reviewType = 'manager' }) => {
           </svg>
           Reply
         </button>
-
-        {replies.length > 0 && (
+        {totalReplies > 0 && (
           <span className="rr-count-pill">
-            {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
+            {totalReplies} {totalReplies === 1 ? 'reply' : 'replies'}
           </span>
         )}
       </div>
 
-      {/* Inline reply composer */}
-      {showReplyBox && user && (
-        <div className="rr-composer">
-          <div className="rr-composer-avatar">
-            {(user.user_metadata?.full_name || user.email || '?')[0].toUpperCase()}
-          </div>
-          <div className="rr-composer-body">
-            <textarea
-              ref={textareaRef}
-              className="rr-composer-input"
-              placeholder="Write a reply..."
-              value={replyText}
-              onChange={e => setReplyText(e.target.value)}
-              rows={2}
-              onKeyDown={e => {
-                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSubmitReply();
-                if (e.key === 'Escape') { setShowReplyBox(false); setReplyText(''); }
-              }}
-            />
-            <div className="rr-composer-actions">
-              <span className="rr-hint">⌘↵ to submit · Esc to cancel</span>
-              <div className="rr-composer-btns">
-                <button
-                  className="rr-btn-cancel"
-                  onClick={() => { setShowReplyBox(false); setReplyText(''); }}
-                >Cancel</button>
-                <button
-                  className="rr-btn-submit"
-                  onClick={handleSubmitReply}
-                  disabled={!replyText.trim() || submitting}
-                >
-                  {submitting ? (
-                    <span className="rr-spinner" />
-                  ) : 'Post'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+      {showTopLevelComposer && user && (
+        <Composer
+          user={user}
+          placeholder="Write a reply..."
+          onSubmit={async (text) => {
+            await handleAddReply(text, null, null);
+            setShowTopLevelComposer(false);
+          }}
+          onCancel={() => setShowTopLevelComposer(false)}
+          autoFocus
+        />
       )}
 
-      {/* Replies thread */}
-      {!loading && replies.length > 0 && (
+      {!loading && topLevelReplies.length > 0 && (
         <div className="rr-thread">
           <div className="rr-thread-line" />
           <div className="rr-replies-list">
-            {visibleReplies.map((reply, index) => (
-              <div
+            {visibleTopLevel.map(reply => (
+              <Reply
                 key={reply.id}
-                className="rr-reply"
-                style={{ animationDelay: `${index * 40}ms` }}
-              >
-                <div className="rr-reply-avatar">
-                  {reply.display_name?.[0]?.toUpperCase() || '?'}
-                </div>
-                <div className="rr-reply-content">
-                  <div className="rr-reply-header">
-                    <span className="rr-reply-name">{reply.display_name}</span>
-                    <span className="rr-reply-time">{formatTimeAgo(reply.created_at)}</span>
-                    {user && reply.user_id === user.id && (
-                      <button
-                        className="rr-delete-btn"
-                        onClick={() => handleDelete(reply.id)}
-                        disabled={deletingId === reply.id}
-                      >
-                        {deletingId === reply.id ? '…' : (
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <polyline points="3 6 5 6 21 6"/>
-                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                          </svg>
-                        )}
-                      </button>
-                    )}
-                  </div>
-                  <p className="rr-reply-text">{reply.content}</p>
-                </div>
-              </div>
+                reply={reply}
+                allReplies={replies}
+                depth={0}
+                user={user}
+                onDelete={handleDelete}
+                onAddReply={handleAddReply}
+                deletingId={deletingId}
+                formatTimeAgo={formatTimeAgo}
+                showAllMap={showAllMap}
+                setShowAllMap={setShowAllMap}
+              />
             ))}
 
-            {/* Show more / less toggle */}
-            {replies.length > 1 && (
+            {topLevelReplies.length > 1 && (
               <button
                 className="rr-expand-btn"
-                onClick={() => setShowAll(prev => !prev)}
+                onClick={() => setShowAllTop(prev => !prev)}
               >
-                {showAll ? (
+                {showAllTop ? (
                   <>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <polyline points="18 15 12 9 6 15"/>
@@ -211,7 +344,7 @@ const ReviewReplies = ({ reviewId, reviewType = 'manager' }) => {
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <polyline points="6 9 12 15 18 9"/>
                     </svg>
-                    View {hiddenCount} more {hiddenCount === 1 ? 'reply' : 'replies'}
+                    View {hiddenTopCount} more {hiddenTopCount === 1 ? 'reply' : 'replies'}
                   </>
                 )}
               </button>
