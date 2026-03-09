@@ -12,9 +12,7 @@ const RateRestaurant = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const [managerSearchInput, setManagerSearchInput] = useState('');
   const [restaurantSearchInput, setRestaurantSearchInput] = useState('');
-  const [filteredManagers, setFilteredManagers] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [showRestaurantDropdown, setShowRestaurantDropdown] = useState(false);
   const [restaurantPlaceholder, setRestaurantPlaceholder] = useState('Barcelona Wine Bar');
@@ -64,7 +62,10 @@ const RateRestaurant = () => {
 
   useEffect(() => {
     const fetchRatings = async () => {
-      if (!restaurantID) return;
+      if (!restaurantID) {
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       const { data, error } = await supabase
         .from('restaurant_ratings').select('*').eq('restaurant_id', restaurantID).order('created_at', { ascending: false });
@@ -101,17 +102,6 @@ const RateRestaurant = () => {
       setAllRatings(prev => prev.filter(r => r.id !== reviewId));
     }
     setDeletingId(null);
-  };
-
-  const handleManagerSearch = (e) => {
-    const searched = e.target.value;
-    setManagerSearchInput(searched);
-    setShowAddManagerForm(false);
-    if (searched.trim() === '') {
-      setFilteredManagers([]);
-    } else {
-      setFilteredManagers(managers.filter(m => m.restaurant_id === parseInt(restaurantID) && m.name.toLowerCase().includes(searched.toLowerCase())));
-    }
   };
 
   const handleEnterManager = () => setShowAddManagerForm(true);
@@ -171,8 +161,11 @@ const RateRestaurant = () => {
     }
   };
 
-  const handleSelectManager = (manager) => { setManagerSearchInput(''); setFilteredManagers([]); navigate(`/rate/${manager.id}`, { state: { managerName: manager.name } }); };
-  const handleSelectRestaurant = (restaurant) => { setRestaurantSearchInput(''); setFilteredRestaurants([]); setShowRestaurantDropdown(false); setRestaurantPlaceholder('Barcelona Wine Bar'); navigate(`/restaurant/${restaurant.id}`, { state: { restaurantName: restaurant.name } }); };
+  const handleSelectRestaurant = (restaurant) => {
+    setRestaurantSearchInput(''); setFilteredRestaurants([]); setShowRestaurantDropdown(false);
+    setRestaurantPlaceholder('Barcelona Wine Bar');
+    navigate(`/restaurant/${restaurant.id}`, { state: { restaurantName: restaurant.name } });
+  };
 
   const existingRatings = allRatings;
 
@@ -240,17 +233,7 @@ const RateRestaurant = () => {
             )}
             {restaurantSearchInput && filteredRestaurants.length === 0 && <div className="searchDropdown"><div className="noResults">No restaurants found</div></div>}
           </div>
-
-          <div className="searchInputWrapper">
-            <svg className="searchIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" placeholder="Search for a manager" value={managerSearchInput} onChange={handleManagerSearch} className="searchInput" />
-            {managerSearchInput && filteredManagers.length > 0 && (
-              <div className="searchDropdown">{filteredManagers.map(m => <div key={m.id} className="searchDropdownItem" onClick={() => handleSelectManager(m)}>{m.name}</div>)}</div>
-            )}
-            {managerSearchInput && filteredManagers.length === 0 && (
-              <div className="searchDropdown"><div className="noResults"><span className='noManager'>Can't find the manager?&nbsp;<span className='enterName' onClick={handleEnterManager}>Add manager</span></span></div></div>
-            )}
-          </div>
+          <button className="rrViewAllManagersBtn" onClick={goToAllManagers}>View All Managers</button>
         </div>
       </div>
 
@@ -258,7 +241,9 @@ const RateRestaurant = () => {
         <div className="headerContent">
           <div className="headerLeft">
             <h1 className="restaurantName">{currentRestaurant?.name || restaurantName}</h1>
-            <p className="restaurantLocation">{currentRestaurant?.location || 'Boston, MA'}</p>
+            <p className="restaurantLocation">
+              {currentRestaurant ? `${currentRestaurant.address}, ${currentRestaurant.city}, ${currentRestaurant.state} ${currentRestaurant.zip_code}` : 'Boston, MA'}
+            </p>
           </div>
           <div className="headerRight">
             <div className="headerStats">
@@ -283,7 +268,6 @@ const RateRestaurant = () => {
             </div>
             <div className="headerActions">
               <button className="btnPrimary" onClick={goToRatingForm}>Rate Restaurant</button>
-              <button className="btnSecondary" onClick={goToAllManagers}>View Managers</button>
             </div>
           </div>
         </div>
