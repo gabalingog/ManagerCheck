@@ -4,6 +4,7 @@ import { supabase } from './../../supabaseClient'
 import { useAuth } from './../../authContext'
 import './RateRestaurant.css'
 import restaurantBG from './../Assets/pic2-18.png';
+import ReviewReplies from './ReviewReplies';
 
 const RateRestaurant = () => {
   const { restaurantID } = useParams();
@@ -378,6 +379,10 @@ const RateRestaurant = () => {
                           </button>
                         </div>
                       </div>
+                      <ReviewReplies
+                        reviewId={rating.id}
+                        reviewType="restaurant"   // ← only difference from the manager version
+                      />
                     </article>
                   );
                 })}
