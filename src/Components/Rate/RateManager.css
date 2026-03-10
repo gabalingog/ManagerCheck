@@ -71,134 +71,129 @@ body {
   z-index: 0;
 }
 
-.headerContent { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 40px; }
-.headerLeft { display: flex; flex-direction: column; }
+.rateManagerPage .headerContent { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 40px; }
+.rateManagerPage .headerLeft { display: flex; flex-direction: column; }
 
-.restaurantName { font-family: 'DM Serif Display', serif; font-size: clamp(36px, 5vw, 64px); font-weight: 400; color: #ffffff; line-height: 1.1; margin-top: 20px; margin-bottom: 12px; text-shadow: 2px 2px 8px rgba(0,0,0,0.6); max-width: 700px; }
-.restaurantLocation { font-size: 14px; color: rgba(255,255,255,0.75); font-weight: 300; margin: 0; }
+.rateManagerPage .restaurantName { font-family: 'DM Serif Display', serif; font-size: clamp(36px, 5vw, 64px); font-weight: 400; color: #ffffff; line-height: 1.1; margin-top: 20px; margin-bottom: 12px; text-shadow: 2px 2px 8px rgba(0,0,0,0.6); max-width: 700px; }
+.rateManagerPage .restaurantLocation { font-size: 14px; color: rgba(255,255,255,0.75); font-weight: 300; margin: 0; }
 
-.headerRight { display: flex; flex-direction: column; align-items: flex-start; }
+.rateManagerPage .headerRight { display: flex; flex-direction: column; align-items: flex-start; }
 
 /* ─── STATS + ACTIONS WRAPPER ─── */
-.statsAndActions { display: flex; flex-direction: column; gap: 16px; }
+.rateManagerPage .statsAndActions { display: inline-flex; flex-direction: column; gap: 16px; }
+.rateManagerPage .headerStats { display: flex; gap: 16px; }
 
-.headerStats { display: flex; gap: 16px; }
+.rateManagerPage .ratingCard { background: var(--warm-white); border: 1px solid var(--border2); border-radius: 8px; padding: 28px 36px; text-align: center; width: 200px; }
+.rateManagerPage .recommendCard { background: var(--warm-white); border: 1px solid var(--border2); border-radius: 8px; padding: 28px 36px; text-align: center; width: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+.rateManagerPage .recommendCard svg { color: var(--green); margin-bottom: 4px; }
 
-.ratingCard, .recommendCard {
-  width: 200px;
-}
+.rateManagerPage .recommendNumber { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--green); letter-spacing: 0.02em; line-height: 1; }
+.rateManagerPage .recommendLabel { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
+.rateManagerPage .ratingNumber { font-family: 'Bebas Neue', sans-serif; font-size: 56px; color: var(--green); letter-spacing: 0.02em; line-height: 1; margin-bottom: 8px; }
+.rateManagerPage .ratingStars { display: flex; gap: 4px; justify-content: center; margin-bottom: 8px; }
+.rateManagerPage .ratingStar { font-size: 20px; color: #e0e0e0; }
+.rateManagerPage .ratingStar.filled { color: #ffd700; }
+.rateManagerPage .ratingStar.half { position: relative; color: #e0e0e0; }
+.rateManagerPage .ratingStar.half::before { content: '★'; position: absolute; left: 0; width: 50%; overflow: hidden; color: #ffd700; }
+.rateManagerPage .ratingLabel { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
 
-.ratingCard { background: var(--warm-white); border: 1px solid var(--border2); border-radius: 8px; padding: 28px 36px; text-align: center; }
-.recommendCard { background: var(--warm-white); border: 1px solid var(--border2); border-radius: 8px; padding: 28px 36px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
-.recommendCard svg { color: var(--green); margin-bottom: 4px; }
+.rateManagerPage .headerActions { display: flex; gap: 16px; width: 100%; }
+.rateManagerPage .headerActions button { flex: 1; min-width: 0; }
 
-.recommendNumber { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--green); letter-spacing: 0.02em; line-height: 1; }
-.recommendLabel { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
-.ratingNumber { font-family: 'Bebas Neue', sans-serif; font-size: 56px; color: var(--green); letter-spacing: 0.02em; line-height: 1; margin-bottom: 8px; }
-.ratingStars { display: flex; gap: 4px; justify-content: center; margin-bottom: 8px; }
-.ratingStar { font-size: 20px; color: #e0e0e0; }
-.ratingStar.filled { color: #ffd700; }
-.ratingStar.half { position: relative; color: #e0e0e0; }
-.ratingStar.half::before { content: '★'; position: absolute; left: 0; width: 50%; overflow: hidden; color: #ffd700; }
-.ratingLabel { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
-
-.headerActions { display: flex; gap: 16px; width: 100%; }
-.headerActions button { flex: 1; min-width: 0; }
-
-.btnPrimary { background: var(--green); border: none; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 14px 26px; border-radius: 4px; cursor: pointer; transition: background 0.2s, transform 0.15s; white-space: nowrap; }
-.btnPrimary:hover { background: var(--green-light); transform: translateY(-2px); }
-.btnSecondary { background: var(--sand); color: var(--text); border: 1px solid var(--border2); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase; padding: 14px 26px; border-radius: 4px; cursor: pointer; transition: border-color 0.2s, background 0.2s, transform 0.15s; white-space: nowrap; }
-.btnSecondary:hover { background: var(--warm-white); transform: translateY(-2px); }
+.rateManagerPage .btnPrimary { background: var(--green); border: none; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 14px 26px; border-radius: 4px; cursor: pointer; transition: background 0.2s, transform 0.15s; white-space: nowrap; }
+.rateManagerPage .btnPrimary:hover { background: var(--green-light); transform: translateY(-2px); }
+.rateManagerPage .btnSecondary { background: var(--sand); color: var(--text); border: 1px solid var(--border2); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase; padding: 14px 26px; border-radius: 4px; cursor: pointer; transition: border-color 0.2s, background 0.2s, transform 0.15s; white-space: nowrap; }
+.rateManagerPage .btnSecondary:hover { background: var(--warm-white); transform: translateY(-2px); }
 
 /* ─── MAIN CONTENT ─── */
-.mainContent { max-width: 1200px; margin: 0 auto; padding: 48px 52px; display: grid; grid-template-columns: 300px 1fr; gap: 40px; }
-.sidebar { display: flex; flex-direction: column; gap: 20px; position: sticky; top: 84px; align-self: flex-start; max-height: calc(100vh - 104px); overflow-y: auto; }
-.filterCard { background: var(--warm-white); border: 1px solid var(--border2); border-radius: 8px; padding: 24px; }
-.cardTitle { font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted2); margin-bottom: 18px; }
+.rateManagerPage .mainContent { max-width: 1200px; margin: 0 auto; padding: 48px 52px; display: grid; grid-template-columns: 300px 1fr; gap: 40px; }
+.rateManagerPage .sidebar { display: flex; flex-direction: column; gap: 20px; position: sticky; top: 84px; align-self: flex-start; max-height: calc(100vh - 104px); overflow-y: auto; }
+.rateManagerPage .filterCard { background: var(--warm-white); border: 1px solid var(--border2); border-radius: 8px; padding: 24px; }
+.rateManagerPage .cardTitle { font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted2); margin-bottom: 18px; }
 
-.filterSelect { width: 100%; padding: 12px 16px; border: 1px solid var(--border2); background: white; border-radius: 6px; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 300; color: var(--text); cursor: pointer; transition: border-color 0.2s; appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%237a6e5f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
-.filterSelect:hover { border-color: var(--green); }
-.filterSelect:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(42,122,75,0.1); }
+.rateManagerPage .filterSelect { width: 100%; padding: 12px 16px; border: 1px solid var(--border2); background: white; border-radius: 6px; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 300; color: var(--text); cursor: pointer; transition: border-color 0.2s; appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%237a6e5f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+.rateManagerPage .filterSelect:hover { border-color: var(--green); }
+.rateManagerPage .filterSelect:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(42,122,75,0.1); }
 
-.activeFilters { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-.filterBadge { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--green-pale); border: 1px solid rgba(42,122,75,0.2); border-radius: 6px; font-size: 13px; color: var(--green); font-weight: 400; }
-.removeBadge { background: none; border: none; font-size: 16px; color: var(--green); cursor: pointer; padding: 0 4px; line-height: 1; transition: opacity 0.2s; }
-.removeBadge:hover { opacity: 0.6; }
+.rateManagerPage .activeFilters { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.rateManagerPage .filterBadge { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--green-pale); border: 1px solid rgba(42,122,75,0.2); border-radius: 6px; font-size: 13px; color: var(--green); font-weight: 400; }
+.rateManagerPage .removeBadge { background: none; border: none; font-size: 16px; color: var(--green); cursor: pointer; padding: 0 4px; line-height: 1; transition: opacity 0.2s; }
+.rateManagerPage .removeBadge:hover { opacity: 0.6; }
 
-.distributionBars { display: flex; flex-direction: column; gap: 10px; }
-.distributionRow { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
-.distributionRow:hover { background: var(--sand); }
-.distributionRow.active { background: var(--green-pale); border: 1px solid rgba(42,122,75,0.2); margin: -1px; }
-.distLabel { width: 20px; font-weight: 400; color: var(--text); flex-shrink: 0; font-size: 14px; }
-.distBarTrack { flex: 1; height: 20px; border: 1px solid var(--border2); border-radius: 4px; overflow: hidden; background: var(--sand); }
-.distBarFill { height: 100%; background: var(--green); transition: width 0.3s ease; }
-.distCount { width: 30px; text-align: right; font-size: 14px; color: var(--muted); font-weight: 400; flex-shrink: 0; }
+.rateManagerPage .distributionBars { display: flex; flex-direction: column; gap: 10px; }
+.rateManagerPage .distributionRow { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+.rateManagerPage .distributionRow:hover { background: var(--sand); }
+.rateManagerPage .distributionRow.active { background: var(--green-pale); border: 1px solid rgba(42,122,75,0.2); margin: -1px; }
+.rateManagerPage .distLabel { width: 20px; font-weight: 400; color: var(--text); flex-shrink: 0; font-size: 14px; }
+.rateManagerPage .distBarTrack { flex: 1; height: 20px; border: 1px solid var(--border2); border-radius: 4px; overflow: hidden; background: var(--sand); }
+.rateManagerPage .distBarFill { height: 100%; background: var(--green); transition: width 0.3s ease; }
+.rateManagerPage .distCount { width: 30px; text-align: right; font-size: 14px; color: var(--muted); font-weight: 400; flex-shrink: 0; }
 
-.tagsList { display: flex; flex-direction: column; gap: 10px; }
-.tagButton { padding: 12px 16px; border: 1px solid var(--border2); border-radius: 6px; background: var(--sand); text-align: center; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 400; color: var(--text); cursor: pointer; transition: all 0.2s; }
-.tagButton:hover { background: var(--sand2); border-color: var(--green); }
-.tagButton.active { background: var(--green); border-color: var(--green); color: white; }
+.rateManagerPage .tagsList { display: flex; flex-direction: column; gap: 10px; }
+.rateManagerPage .tagButton { padding: 12px 16px; border: 1px solid var(--border2); border-radius: 6px; background: var(--sand); text-align: center; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 400; color: var(--text); cursor: pointer; transition: all 0.2s; }
+.rateManagerPage .tagButton:hover { background: var(--sand2); border-color: var(--green); }
+.rateManagerPage .tagButton.active { background: var(--green); border-color: var(--green); color: white; }
 
 /* ─── REVIEWS ─── */
-.reviewsSection { display: flex; flex-direction: column; gap: 20px; }
-.emptyState { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px 40px; background: var(--warm-white); border: 1px solid var(--border2); border-radius: 8px; gap: 0; }
-.emptyState svg { color: var(--sand2); margin-bottom: 28px; }
-.emptyState h2 { font-family: 'DM Serif Display', serif; font-size: 26px; font-weight: 400; color: var(--text); margin: 0 0 10px 0; }
-.emptyState p { font-size: 14px; color: var(--muted2); margin: 0 0 32px 0; max-width: 320px; font-weight: 300; line-height: 1.6; }
-.emptyState .btnPrimary { font-size: 12px; padding: 12px 28px; }
+.rateManagerPage .reviewsSection { display: flex; flex-direction: column; gap: 20px; }
+.rateManagerPage .emptyState { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px 40px; background: var(--warm-white); border: 1px solid var(--border2); border-radius: 8px; gap: 0; }
+.rateManagerPage .emptyState svg { color: var(--sand2); margin-bottom: 28px; }
+.rateManagerPage .emptyState h2 { font-family: 'DM Serif Display', serif; font-size: 26px; font-weight: 400; color: var(--text); margin: 0 0 10px 0; }
+.rateManagerPage .emptyState p { font-size: 14px; color: var(--muted2); margin: 0 0 32px 0; max-width: 320px; font-weight: 300; line-height: 1.6; }
+.rateManagerPage .emptyState .btnPrimary { font-size: 12px; padding: 12px 28px; }
 
-.reviewsList { display: flex; flex-direction: column; gap: 16px; }
-.reviewCard { background: var(--warm-white); border: 1px solid var(--border2); border-radius: 8px; padding: 28px 32px; transition: box-shadow 0.2s, transform 0.2s; }
-.reviewCard:hover { box-shadow: 0 4px 20px rgba(60,45,20,0.08); transform: translateY(-2px); }
-.reviewCardHeader { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-.reviewStars { display: flex; gap: 4px; }
-.reviewStar { font-size: 18px; color: #e0e0e0; }
-.reviewStar.filled { color: #ffd700; }
-.reviewMeta { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
-.reviewPosition { font-weight: 500; color: var(--text); }
-.reviewDot { color: var(--muted2); }
-.reviewDuration { font-weight: 300; }
-.reviewText { font-size: 15px; line-height: 1.8; color: var(--text); margin-bottom: 18px; font-weight: 300; }
-.reviewCardFooter { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
-.reviewTags { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; }
-.reviewTag { padding: 6px 14px; border: 1px solid var(--border2); border-radius: 6px; background: var(--sand); font-size: 12px; color: var(--muted); font-weight: 400; }
-.reviewVotes { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
-.voteBtn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: white; border: 1px solid var(--border2); border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 400; color: var(--muted); }
-.voteBtn:hover { border-color: var(--green); background: var(--green-pale); color: var(--green); }
-.voteBtn.active { border-color: var(--green); background: var(--green); color: white; }
-.voteBtn svg { width: 16px; height: 16px; flex-shrink: 0; }
-.voteBtn span { font-weight: 500; min-width: 16px; text-align: center; }
+.rateManagerPage .reviewsList { display: flex; flex-direction: column; gap: 16px; }
+.rateManagerPage .reviewCard { background: var(--warm-white); border: 1px solid var(--border2); border-radius: 8px; padding: 28px 32px; transition: box-shadow 0.2s, transform 0.2s; }
+.rateManagerPage .reviewCard:hover { box-shadow: 0 4px 20px rgba(60,45,20,0.08); transform: translateY(-2px); }
+.rateManagerPage .reviewCardHeader { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.rateManagerPage .reviewStars { display: flex; gap: 4px; }
+.rateManagerPage .reviewStar { font-size: 18px; color: #e0e0e0; }
+.rateManagerPage .reviewStar.filled { color: #ffd700; }
+.rateManagerPage .reviewMeta { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
+.rateManagerPage .reviewPosition { font-weight: 500; color: var(--text); }
+.rateManagerPage .reviewDot { color: var(--muted2); }
+.rateManagerPage .reviewDuration { font-weight: 300; }
+.rateManagerPage .reviewText { font-size: 15px; line-height: 1.8; color: var(--text); margin-bottom: 18px; font-weight: 300; }
+.rateManagerPage .reviewCardFooter { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+.rateManagerPage .reviewTags { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; }
+.rateManagerPage .reviewTag { padding: 6px 14px; border: 1px solid var(--border2); border-radius: 6px; background: var(--sand); font-size: 12px; color: var(--muted); font-weight: 400; }
+.rateManagerPage .reviewVotes { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+.rateManagerPage .voteBtn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: white; border: 1px solid var(--border2); border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 400; color: var(--muted); }
+.rateManagerPage .voteBtn:hover { border-color: var(--green); background: var(--green-pale); color: var(--green); }
+.rateManagerPage .voteBtn.active { border-color: var(--green); background: var(--green); color: white; }
+.rateManagerPage .voteBtn svg { width: 16px; height: 16px; flex-shrink: 0; }
+.rateManagerPage .voteBtn span { font-weight: 500; min-width: 16px; text-align: center; }
 
 /* ─── PAGINATION ─── */
-.pagination { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 40px; padding: 20px 0; }
-.paginationBtn { padding: 10px 20px; border: 1px solid var(--border2); background: var(--warm-white); border-radius: 6px; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 400; cursor: pointer; transition: all 0.2s; color: var(--text); }
-.paginationBtn:hover:not(:disabled) { border-color: var(--green); background: var(--green-pale); color: var(--green); }
-.paginationBtn:disabled { cursor: not-allowed; opacity: 0.4; }
-.pageNumbers { display: flex; gap: 8px; }
-.pageBtn { padding: 10px 16px; border: 1px solid var(--border2); background: var(--warm-white); border-radius: 6px; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 400; cursor: pointer; transition: all 0.2s; color: var(--muted); min-width: 44px; }
-.pageBtn:hover { border-color: var(--green); background: var(--green-pale); color: var(--green); }
-.pageBtn.active { background: var(--green); border-color: var(--green); color: white; }
+.rateManagerPage .pagination { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 40px; padding: 20px 0; }
+.rateManagerPage .paginationBtn { padding: 10px 20px; border: 1px solid var(--border2); background: var(--warm-white); border-radius: 6px; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 400; cursor: pointer; transition: all 0.2s; color: var(--text); }
+.rateManagerPage .paginationBtn:hover:not(:disabled) { border-color: var(--green); background: var(--green-pale); color: var(--green); }
+.rateManagerPage .paginationBtn:disabled { cursor: not-allowed; opacity: 0.4; }
+.rateManagerPage .pageNumbers { display: flex; gap: 8px; }
+.rateManagerPage .pageBtn { padding: 10px 16px; border: 1px solid var(--border2); background: var(--warm-white); border-radius: 6px; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 400; cursor: pointer; transition: all 0.2s; color: var(--muted); min-width: 44px; }
+.rateManagerPage .pageBtn:hover { border-color: var(--green); background: var(--green-pale); color: var(--green); }
+.rateManagerPage .pageBtn.active { background: var(--green); border-color: var(--green); color: white; }
 
 /* ─── MODAL ─── */
-.modalOverlay { position: fixed; inset: 0; background: rgba(30,26,20,0.55); z-index: 1000; backdrop-filter: blur(4px); }
-.modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: var(--warm-white); border: 1px solid var(--border2); border-radius: 10px; padding: 44px 48px; max-width: 480px; width: 90%; z-index: 1001; box-shadow: 0 24px 60px rgba(30,26,20,0.2); }
-.modalClose { position: absolute; top: 20px; right: 22px; background: none; border: none; font-size: 20px; color: var(--muted2); cursor: pointer; padding: 4px; line-height: 1; transition: color 0.2s; }
-.modalClose:hover { color: var(--text); }
-.modalContent { display: flex; flex-direction: column; }
-.modalTitle { font-family: 'DM Serif Display', serif; font-size: 26px; font-weight: 400; color: var(--text); margin-bottom: 6px; }
-.modalSubtitle { font-size: 14px; color: var(--muted); margin-bottom: 28px; font-style: italic; }
-.required { color: #c0392b; }
-.modalInputGroup { margin-bottom: 24px; }
-.modalInputGroup label { display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted2); margin-bottom: 10px; }
-.modalInput { width: 100%; padding: 11px 0; border: none; border-bottom: 1.5px solid var(--border2); font-size: 15px; font-family: 'DM Sans', sans-serif; font-weight: 300; color: var(--text); background: transparent; box-sizing: border-box; transition: border-color 0.2s; }
-.modalInput:focus { outline: none; border-bottom-color: var(--green); }
-.modalInput::placeholder { color: var(--muted2); }
-.modalActions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 36px; }
-.modalBtnPrimary, .modalBtnSecondary { padding: 14px; border-radius: 5px; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; }
-.modalBtnPrimary { background: var(--green); color: #fff; }
-.modalBtnPrimary:hover { background: var(--green-light); }
-.modalBtnSecondary { background: none; color: var(--muted); border: 1px solid var(--border2); }
-.modalBtnSecondary:hover { border-color: var(--text); color: var(--text); }
+.rateManagerPage .modalOverlay { position: fixed; inset: 0; background: rgba(30,26,20,0.55); z-index: 1000; backdrop-filter: blur(4px); }
+.rateManagerPage .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: var(--warm-white); border: 1px solid var(--border2); border-radius: 10px; padding: 44px 48px; max-width: 480px; width: 90%; z-index: 1001; box-shadow: 0 24px 60px rgba(30,26,20,0.2); }
+.rateManagerPage .modalClose { position: absolute; top: 20px; right: 22px; background: none; border: none; font-size: 20px; color: var(--muted2); cursor: pointer; padding: 4px; line-height: 1; transition: color 0.2s; }
+.rateManagerPage .modalClose:hover { color: var(--text); }
+.rateManagerPage .modalContent { display: flex; flex-direction: column; }
+.rateManagerPage .modalTitle { font-family: 'DM Serif Display', serif; font-size: 26px; font-weight: 400; color: var(--text); margin-bottom: 6px; }
+.rateManagerPage .modalSubtitle { font-size: 14px; color: var(--muted); margin-bottom: 28px; font-style: italic; }
+.rateManagerPage .required { color: #c0392b; }
+.rateManagerPage .modalInputGroup { margin-bottom: 24px; }
+.rateManagerPage .modalInputGroup label { display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted2); margin-bottom: 10px; }
+.rateManagerPage .modalInput { width: 100%; padding: 11px 0; border: none; border-bottom: 1.5px solid var(--border2); font-size: 15px; font-family: 'DM Sans', sans-serif; font-weight: 300; color: var(--text); background: transparent; box-sizing: border-box; transition: border-color 0.2s; }
+.rateManagerPage .modalInput:focus { outline: none; border-bottom-color: var(--green); }
+.rateManagerPage .modalInput::placeholder { color: var(--muted2); }
+.rateManagerPage .modalActions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 36px; }
+.rateManagerPage .modalBtnPrimary, .rateManagerPage .modalBtnSecondary { padding: 14px; border-radius: 5px; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; }
+.rateManagerPage .modalBtnPrimary { background: var(--green); color: #fff; }
+.rateManagerPage .modalBtnPrimary:hover { background: var(--green-light); }
+.rateManagerPage .modalBtnSecondary { background: none; color: var(--muted); border: 1px solid var(--border2); }
+.rateManagerPage .modalBtnSecondary:hover { border-color: var(--text); color: var(--text); }
 
 /* ─── LOADING ─── */
 .loadingState { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 20px; }
@@ -211,53 +206,53 @@ body {
   .rateManagerPage .searchBarSection { padding: 24px 32px; }
   .rateManagerPage .searchBarContainer { grid-template-columns: 1fr; gap: 16px; }
   .rm-header { padding: 60px 32px; }
-  .headerContent { gap: 40px; flex-direction: column; }
-  .headerRight { width: 100%; align-items: stretch; }
-  .statsAndActions { width: 100%; }
-  .headerStats { width: 100%; justify-content: center; }
-  .ratingCard, .recommendCard { flex: 1; min-width: 0; width: auto; }
-  .headerActions { width: 100%; }
-  .headerActions button { flex: 1; }
-  .mainContent { padding: 40px 32px; grid-template-columns: 1fr; gap: 32px; }
-  .sidebar { position: static; max-height: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .rateManagerPage .headerContent { gap: 40px; flex-direction: column; }
+  .rateManagerPage .headerRight { width: 100%; align-items: stretch; }
+  .rateManagerPage .statsAndActions { display: flex; flex-direction: column; width: 100%; gap: 16px; }
+  .rateManagerPage .headerStats { width: 100%; justify-content: center; }
+  .rateManagerPage .ratingCard, .rateManagerPage .recommendCard { flex: 1; min-width: 0; width: auto; }
+  .rateManagerPage .headerActions { width: 100%; }
+  .rateManagerPage .headerActions button { flex: 1; }
+  .rateManagerPage .mainContent { padding: 40px 32px; grid-template-columns: 1fr; gap: 32px; }
+  .rateManagerPage .sidebar { position: static; max-height: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
 }
 
 @media (max-width: 768px) {
   .rateManagerPage .searchBarSection { padding: 20px; }
   .rateManagerPage .searchInput { padding: 12px 40px 12px 44px; font-size: 14px; }
   .rm-header { padding: 36px 20px; }
-  .restaurantName { font-size: 32px; }
-  .restaurantLocation { font-size: 13px; }
-  .ratingNumber { font-size: 48px; }
-  .recommendNumber { font-size: 40px; }
-  .headerStats { flex-direction: column; width: 100%; }
-  .ratingCard, .recommendCard { width: 100%; }
-  .headerActions { flex-direction: column; }
-  .headerActions button { width: 100%; }
-  .mainContent { padding: 32px 20px; gap: 24px; }
-  .sidebar { grid-template-columns: 1fr; }
-  .reviewCard { padding: 20px; }
-  .reviewCardFooter { flex-direction: column; align-items: flex-start; }
-  .modal { padding: 36px 28px; width: 92%; }
-  .modalActions { grid-template-columns: 1fr; }
-  .pagination { flex-wrap: wrap; gap: 8px; }
-  .paginationBtn { padding: 8px 16px; font-size: 13px; }
-  .pageBtn { padding: 8px 12px; min-width: 38px; }
+  .rateManagerPage .restaurantName { font-size: 32px; }
+  .rateManagerPage .restaurantLocation { font-size: 13px; }
+  .rateManagerPage .ratingNumber { font-size: 48px; }
+  .rateManagerPage .recommendNumber { font-size: 40px; }
+  .rateManagerPage .headerStats { flex-direction: column; width: 100%; }
+  .rateManagerPage .ratingCard, .rateManagerPage .recommendCard { width: 100%; }
+  .rateManagerPage .headerActions { flex-direction: column; }
+  .rateManagerPage .headerActions button { width: 100%; }
+  .rateManagerPage .mainContent { padding: 32px 20px; gap: 24px; }
+  .rateManagerPage .sidebar { grid-template-columns: 1fr; }
+  .rateManagerPage .reviewCard { padding: 20px; }
+  .rateManagerPage .reviewCardFooter { flex-direction: column; align-items: flex-start; }
+  .rateManagerPage .modal { padding: 36px 28px; width: 92%; }
+  .rateManagerPage .modalActions { grid-template-columns: 1fr; }
+  .rateManagerPage .pagination { flex-wrap: wrap; gap: 8px; }
+  .rateManagerPage .paginationBtn { padding: 8px 16px; font-size: 13px; }
+  .rateManagerPage .pageBtn { padding: 8px 12px; min-width: 38px; }
 }
 
 @media (max-width: 480px) {
-  .restaurantName { font-size: 28px; }
-  .ratingNumber { font-size: 42px; }
-  .recommendNumber { font-size: 36px; }
-  .reviewCard { padding: 16px; }
-  .reviewText { font-size: 14px; }
+  .rateManagerPage .restaurantName { font-size: 28px; }
+  .rateManagerPage .ratingNumber { font-size: 42px; }
+  .rateManagerPage .recommendNumber { font-size: 36px; }
+  .rateManagerPage .reviewCard { padding: 16px; }
+  .rateManagerPage .reviewText { font-size: 14px; }
 }
 
 /* ─── DELETE REVIEW BUTTON ─── */
-.reviewMetaRow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.deleteReviewBtn { display: flex; align-items: center; gap: 5px; padding: 5px 10px; background: none; border: 1px solid rgba(192, 57, 43, 0.25); border-radius: 5px; color: #c0392b; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 400; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; opacity: 0.7; }
-.deleteReviewBtn:hover { background: #fdf0ee; border-color: #c0392b; opacity: 1; }
-.deleteReviewBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.rateManagerPage .reviewMetaRow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.rateManagerPage .deleteReviewBtn { display: flex; align-items: center; gap: 5px; padding: 5px 10px; background: none; border: 1px solid rgba(192, 57, 43, 0.25); border-radius: 5px; color: #c0392b; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 400; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; opacity: 0.7; }
+.rateManagerPage .deleteReviewBtn:hover { background: #fdf0ee; border-color: #c0392b; opacity: 1; }
+.rateManagerPage .deleteReviewBtn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .rmBackToRestaurantBtn {
   margin-top: 14px;

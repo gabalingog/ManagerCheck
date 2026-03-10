@@ -5,6 +5,7 @@ import { useAuth } from './../../authContext'
 import './RateRestaurant.css'
 import restaurantBG from './../Assets/pic2-18.png';
 import ReviewReplies from './ReviewReplies';
+import SuggestChanges from './SuggestChanges';
 
 const RateRestaurant = () => {
   const { restaurantID } = useParams();
@@ -304,12 +305,9 @@ const RateRestaurant = () => {
           </div>
 
           <div className="filterCard">
-            <h3 className="cardTitle">Quick Filters</h3>
-            <div className="tagsList">
-              {['Good Management', 'Good Pay', 'Bad Scheduling'].map(tag => (
-                <button key={tag} className={`tagButton ${tagFilter === tag ? 'active' : ''}`} onClick={() => handleTagClick(tag)}>{tag}</button>
-              ))}
-            </div>
+            <p style={{ fontSize: '13px', color: 'var(--muted)', fontWeight: 300, marginBottom: '14px', lineHeight: 1.5 }}>
+              Notice something wrong? Let us know.
+            </p>
           </div>
         </aside>
 
@@ -382,6 +380,17 @@ const RateRestaurant = () => {
                       <ReviewReplies
                         reviewId={rating.id}
                         reviewType="restaurant"   // ← only difference from the manager version
+                      />
+                      <SuggestChanges
+                        reviewId={rating.id}
+                        reviewType="restaurant"
+                        contextName={currentRestaurant?.name || restaurantName}
+                        subContextName={
+                          currentRestaurant
+                            ? `${currentRestaurant.address}, ${currentRestaurant.city}, ${currentRestaurant.state}`
+                            : 'Boston, MA'
+                        }
+                        reviewSnippet={rating.comment?.slice(0, 80)}
                       />
                     </article>
                   );

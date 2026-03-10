@@ -5,6 +5,7 @@ import { useAuth } from './../../authContext'
 import './RateManager.css'
 import managerBG from './../Assets/managerBG.png';
 import ReviewReplies from './ReviewReplies';
+import SuggestChanges from './SuggestChanges';
 
 const RateManager = () => {
   const { managerID } = useParams();
@@ -431,6 +432,13 @@ const RateManager = () => {
               ))}
             </div>
           </div>
+
+          <div className="filterCard">
+            <h3 className="cardTitle">Suggest Changes</h3>
+            <p style={{ fontSize: '13px', color: 'var(--muted)', fontWeight: 300, marginBottom: '14px', lineHeight: 1.5 }}>
+              Notice something wrong? Let us know.
+            </p>
+          </div>
         </aside>
 
         <section className="reviewsSection">
@@ -515,6 +523,13 @@ const RateManager = () => {
                         </div>
                       </div>
                       <ReviewReplies reviewId={rating.id} reviewType="manager" />
+                      <SuggestChanges
+                        reviewId={rating.id}
+                        reviewType="manager"
+                        contextName={currentManager?.name || managerName}
+                        subContextName={currentManager?.restaurantName || 'Barcelona Wine Bar'}
+                        reviewSnippet={rating.comment?.slice(0, 80)}
+                      />
                     </article>
                   );
                 })}

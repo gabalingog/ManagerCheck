@@ -199,27 +199,12 @@
     to   { opacity: 1; transform: translateY(0); }
   }
   
-  /* Avatar color shifts by depth */
-  .rr-reply-avatar {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: var(--sand2);
-    border: 1px solid var(--border2);
-    color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-top: 1px;
+  /* Avatar — hidden, no dot */
+  .rr-reply-avatar,
+  .rr-composer-avatar,
+  .rr-composer-avatar--anon {
+    display: none;
   }
-  .rr-reply-avatar[data-depth="0"] { background: var(--sand2); color: var(--muted); }
-  .rr-reply-avatar[data-depth="1"] { background: var(--green-pale); color: var(--green); border-color: rgba(42,122,75,0.2); }
-  .rr-reply-avatar[data-depth="2"] { background: rgba(42,122,75,0.12); color: var(--green); border-color: rgba(42,122,75,0.25); }
-  .rr-reply-avatar[data-depth="3"] { background: rgba(42,122,75,0.18); color: var(--green); border-color: rgba(42,122,75,0.3); }
   
   .rr-reply-content-wrap {
     flex: 1;
@@ -250,23 +235,26 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 12px;
     font-weight: 500;
-    color: var(--text);
+    color: var(--muted);
+    font-style: italic;
   }
   
-  /* "→ ParentName" indicator for nested replies */
-  .rr-reply-to {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 400;
-    color: var(--green);
-    background: var(--green-pale);
-    border-radius: 3px;
-    padding: 1px 6px 1px 4px;
+  /* Deleted reply block */
+  .rr-reply-content--deleted {
+    background: var(--sand);
+    border-color: var(--border);
+    border-style: dashed;
   }
-  .rr-reply-to svg { flex-shrink: 0; }
+  .rr-deleted-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--muted2);
+    margin: 0;
+  }
+  
+  
   
   .rr-reply-time {
     font-family: 'DM Sans', sans-serif;
@@ -362,12 +350,7 @@
     min-width: 0;
   }
   
-  /* Nested replies slightly smaller */
-  .rr-reply--nested .rr-reply-avatar {
-    width: 22px;
-    height: 22px;
-    font-size: 9px;
-  }
+  /* Nested replies slightly smaller text */
   .rr-reply--nested .rr-reply-content {
     padding: 8px 12px;
   }
