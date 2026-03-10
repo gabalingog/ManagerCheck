@@ -200,19 +200,20 @@ const ReviewReplies = ({ reviewId, reviewType = 'manager' }) => {
   const [showAllTop, setShowAllTop] = useState(false);
   const [showAllMap, setShowAllMap] = useState({});
 
-  useEffect(() => { fetchReplies(); }, [reviewId]);
-
-  const fetchReplies = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('review_replies')
-      .select('*')
-      .eq('review_id', reviewId)
-      .eq('review_type', reviewType)
-      .order('created_at', { ascending: true });
-    if (!error) setReplies(data || []);
-    setLoading(false);
-  };
+  useEffect(() => {
+    const fetchReplies = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('review_replies')
+        .select('*')
+        .eq('review_id', reviewId)
+        .eq('review_type', reviewType)
+        .order('created_at', { ascending: true });
+      if (!error) setReplies(data || []);
+      setLoading(false);
+    };
+    fetchReplies();
+  }, [reviewId, reviewType]);
 
   const handleAddReply = async (text, parentReplyId = null) => {
     if (!user) return;
@@ -236,10 +237,10 @@ const ReviewReplies = ({ reviewId, reviewType = 'manager' }) => {
     }
   };
 
-  const getDescendantIds = (id, allReplies) => {
-    const children = allReplies.filter(r => r.parent_reply_id === id);
-    return children.flatMap(c => [c.id, ...getDescendantIds(c.id, allReplies)]);
-  };
+  // const getDescendantIds = (id, allReplies) => {
+  //   const children = allReplies.filter(r => r.parent_reply_id === id);
+  //   return children.flatMap(c => [c.id, ...getDescendantIds(c.id, allReplies)]);
+  // };
 
   const handleDelete = async (replyId, hasChildren) => {
     if (!window.confirm('Delete this reply?')) return;
