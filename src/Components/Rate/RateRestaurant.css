@@ -69,7 +69,7 @@ body {
 .rateRestaurantPage .restaurantAddress { font-size: 15px; color: var(--muted); font-weight: 400; margin: 0; }
 .rateRestaurantPage .restaurantLocation { font-size: 15px; color: rgba(255,255,255,0.75); font-weight: 300; margin: 0; }
 
-.rateRestaurantPage .headerRight { display: flex; flex-direction: column; align-items: flex-end; gap: 24px; }
+.rateRestaurantPage .headerRight { display: flex; flex-direction: column; align-items: flex-end; gap: 24px; }.rateRestaurantPage .headerStats { display: flex; gap: 16px; }
 .rateRestaurantPage .headerStats { display: flex; gap: 16px; }
 .rateRestaurantPage .ratingCard { background: var(--warm-white); border: 1px solid var(--border2); border-radius: 8px; padding: 28px 36px; text-align: center; width: 200px; }
 .rateRestaurantPage .recommendCard { background: var(--warm-white); border: 1px solid var(--border2); border-radius: 8px; padding: 28px 36px; text-align: center; width: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
@@ -84,8 +84,8 @@ body {
 .rateRestaurantPage .ratingStar.half::before { content: '★'; position: absolute; left: 0; width: 50%; overflow: hidden; color: #ffd700; }
 .rateRestaurantPage .ratingLabel { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
 
-.rateRestaurantPage .headerActions { display: flex; gap: 16px; width: 200px; align-self: center; }
-.rateRestaurantPage .headerActions button { flex: 1; min-width: unset; white-space: nowrap; }
+.rateRestaurantPage .headerActions { display: flex; gap: 12px; width: auto; align-self: flex-start; margin-top: 12px; }
+.rateRestaurantPage .headerActions button { flex: unset; white-space: nowrap; }
 
 .rateRestaurantPage .btnPrimary { background: var(--green); border: none; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 14px 26px; border-radius: 4px; cursor: pointer; transition: background 0.2s, transform 0.15s; white-space: nowrap; }
 .rateRestaurantPage .btnPrimary:hover { background: var(--green-light); transform: translateY(-2px); }

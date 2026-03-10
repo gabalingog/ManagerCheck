@@ -236,18 +236,21 @@ const RateRestaurant = () => {
             )}
             {restaurantSearchInput && filteredRestaurants.length === 0 && <div className="searchDropdown"><div className="noResults">No restaurants found</div></div>}
           </div>
-          <button className="rrViewAllManagersBtn" onClick={goToAllManagers}>View All Managers</button>
         </div>
       </div>
 
       <header className="restaurantHeader" style={{ backgroundImage: `url(${restaurantBG})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="headerContent">
-          <div className="headerLeft">
-            <h1 className="restaurantName">{currentRestaurant?.name || restaurantName}</h1>
-            <p className="restaurantLocation">
-              {currentRestaurant ? `${currentRestaurant.address}, ${currentRestaurant.city}, ${currentRestaurant.state} ${currentRestaurant.zip_code}` : 'Boston, MA'}
-            </p>
+        <div className="headerLeft">
+          <h1 className="restaurantName">{currentRestaurant?.name || restaurantName}</h1>
+          <p className="restaurantLocation">
+            {currentRestaurant ? `${currentRestaurant.address}, ${currentRestaurant.city}, ${currentRestaurant.state} ${currentRestaurant.zip_code}` : 'Boston, MA'}
+          </p>
+          <div className="headerActions">
+            <button className="btnPrimary" onClick={goToRatingForm}>Rate Restaurant</button>
+            <button className="btnSecondary" onClick={goToAllManagers}>View All Managers</button>
           </div>
+        </div>
           <div className="headerRight">
             <div className="headerStats">
               <div className="ratingCard">
@@ -268,9 +271,6 @@ const RateRestaurant = () => {
                   <div className="recommendLabel">Recommend</div>
                 </div>
               )}
-            </div>
-            <div className="headerActions">
-              <button className="btnPrimary" onClick={goToRatingForm}>Rate Restaurant</button>
             </div>
           </div>
         </div>
