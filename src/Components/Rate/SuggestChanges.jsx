@@ -59,7 +59,6 @@ const SuggestChanges = ({ reviewType, contextName, subContextName }) => {
     }
   };
 
-  const pageType = reviewType === 'manager' ? 'Manager' : 'Restaurant';
 
   return (
     <>
