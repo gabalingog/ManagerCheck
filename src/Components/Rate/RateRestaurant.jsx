@@ -305,9 +305,19 @@ const RateRestaurant = () => {
           </div>
 
           <div className="filterCard">
+            <h3 className="cardTitle">Suggest Changes</h3>
             <p style={{ fontSize: '13px', color: 'var(--muted)', fontWeight: 300, marginBottom: '14px', lineHeight: 1.5 }}>
               Notice something wrong? Let us know.
             </p>
+            <SuggestChanges
+              reviewType="restaurant"
+              contextName={currentRestaurant?.name || restaurantName}
+              subContextName={
+                currentRestaurant
+                  ? `${currentRestaurant.address}, ${currentRestaurant.city}, ${currentRestaurant.state}`
+                  : 'Boston, MA'
+              }
+            />
           </div>
         </aside>
 
@@ -380,17 +390,6 @@ const RateRestaurant = () => {
                       <ReviewReplies
                         reviewId={rating.id}
                         reviewType="restaurant"   // ← only difference from the manager version
-                      />
-                      <SuggestChanges
-                        reviewId={rating.id}
-                        reviewType="restaurant"
-                        contextName={currentRestaurant?.name || restaurantName}
-                        subContextName={
-                          currentRestaurant
-                            ? `${currentRestaurant.address}, ${currentRestaurant.city}, ${currentRestaurant.state}`
-                            : 'Boston, MA'
-                        }
-                        reviewSnippet={rating.comment?.slice(0, 80)}
                       />
                     </article>
                   );

@@ -438,6 +438,11 @@ const RateManager = () => {
             <p style={{ fontSize: '13px', color: 'var(--muted)', fontWeight: 300, marginBottom: '14px', lineHeight: 1.5 }}>
               Notice something wrong? Let us know.
             </p>
+            <SuggestChanges
+              reviewType="manager"
+              contextName={currentManager?.name || managerName}
+              subContextName={currentManager?.restaurantName || 'Barcelona Wine Bar'}
+            />
           </div>
         </aside>
 
@@ -523,13 +528,6 @@ const RateManager = () => {
                         </div>
                       </div>
                       <ReviewReplies reviewId={rating.id} reviewType="manager" />
-                      <SuggestChanges
-                        reviewId={rating.id}
-                        reviewType="manager"
-                        contextName={currentManager?.name || managerName}
-                        subContextName={currentManager?.restaurantName || 'Barcelona Wine Bar'}
-                        reviewSnippet={rating.comment?.slice(0, 80)}
-                      />
                     </article>
                   );
                 })}
