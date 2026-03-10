@@ -101,7 +101,6 @@ const SuggestChanges = ({ reviewType, contextName, subContextName }) => {
                   <span className="sc-eyebrow">Suggest Changes</span>
                 </div>
 
-                <h2 className="sc-title">Suggest an edit</h2>
                 <p className="sc-subtitle">
                   For <strong>{contextName}</strong>
                   {subContextName ? <> · {subContextName}</> : null}
@@ -113,7 +112,7 @@ const SuggestChanges = ({ reviewType, contextName, subContextName }) => {
                   </label>
                   <textarea
                     className="sc-textarea"
-                    placeholder={`Describe what information about this ${pageType.toLowerCase()} needs to be updated or corrected…`}
+                    placeholder={``}
                     value={suggestion}
                     onChange={e => { setSuggestion(e.target.value); setError(''); }}
                     rows={5}

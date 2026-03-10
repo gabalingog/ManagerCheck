@@ -305,6 +305,15 @@ const RateRestaurant = () => {
           </div>
 
           <div className="filterCard">
+            <h3 className="cardTitle">Quick Filters</h3>
+            <div className="tagsList">
+              {['Good Management', 'Good Pay', 'Bad Scheduling'].map(tag => (
+                <button key={tag} className={`tagButton ${tagFilter === tag ? 'active' : ''}`} onClick={() => handleTagClick(tag)}>{tag}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="filterCard">
             <h3 className="cardTitle">Suggest Changes</h3>
             <p style={{ fontSize: '13px', color: 'var(--muted)', fontWeight: 300, marginBottom: '14px', lineHeight: 1.5 }}>
               Notice something wrong? Let us know.

@@ -54,6 +54,7 @@
     box-shadow: 0 24px 60px rgba(30, 26, 20, 0.2);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
   
   /* ── CLOSE ── */
@@ -139,6 +140,7 @@
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     box-sizing: border-box;
+    max-height: 300px;
   }
   .sc-textarea:focus {
     border-color: var(--green);
