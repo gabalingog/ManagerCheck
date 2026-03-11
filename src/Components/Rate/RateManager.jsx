@@ -385,7 +385,7 @@ const RateManager = () => {
               </div>
               <div className="headerActions">
                 <button className="btnPrimary" onClick={goToRatingForm}>Rate Manager</button>
-                <button className="btnSecondary" onClick={goToAllManagers}>View All Managers</button>
+                <button className="btnSecondary" onClick={goToAllManagers}>View Managers</button>
               </div>
             </div>
           </div>
