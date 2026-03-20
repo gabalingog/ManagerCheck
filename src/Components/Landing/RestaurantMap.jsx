@@ -171,7 +171,8 @@ const RestaurantMap = ({ onClose }) => {
                 // 2. Fetch only rated restaurants
                 const { data, error } = await supabase
                     .from('restaurants')
-                    .select('id, name, address, city, state, zip_code, latitude, longitude, restaurant_ratings(team_environment, shift_availability, pay, staff_workload_ratio, would_recommend)')                    .in('id', ratedIds)
+                    .select('id, name, address, city, state, zip_code, latitude, longitude, restaurant_ratings(team_environment, shift_availability, pay, staff_workload_ratio, would_recommend)')
+                    .in('id', ratedIds)
                     .order('name', { ascending: true });
                 if (error) throw error;
     
