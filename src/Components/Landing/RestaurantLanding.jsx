@@ -10,7 +10,9 @@ import waitress from './../Assets/waitress.png';
 import pic1 from './../Assets/pic1.png';
 import pic3 from './../Assets/pic2-4.png';
 import insta from './../Assets/favicon-3.png';
-import linkedin from './../Assets/favicon-2.png'
+import linkedin from './../Assets/favicon-2.png';
+import RestaurantMap, { MapButton } from './RestaurantMap';
+
 
 const missionPhrases = [
     { highlight: "bring transparency", suffix: "to restaurants" },
@@ -19,7 +21,7 @@ const missionPhrases = [
     { highlight: "support employees'", suffix: "perspectives" },
 ];
 
-const MissionSection = ({ missionRef, missionVisible }) => {
+const MissionSection = ({ missionRef, missionVisible, onMapClick }) => {
     const [index, setIndex] = useState(0);
     const [visible, setVisible] = useState(true);
 
@@ -51,6 +53,7 @@ const MissionSection = ({ missionRef, missionVisible }) => {
             <p className={`missionBody ${missionVisible ? 'visible' : ''}`}>
                 Manager Check gives the service industry workers a trusted, anonymous space to share their experiences so the next person can make a more informed choice about their workplace.
             </p>
+            <MapButton onClick={onMapClick} />
         </div>
     );
 };
@@ -65,6 +68,7 @@ const RestaurantLanding = () => {
     const searchingRef = useRef(null);
     const [footerForm, setFooterForm] = useState({ name: '', email: '', message: '' });
     const [footerStatus, setFooterStatus] = useState('');
+    const [showMap, setShowMap] = useState(false);
 
     useEffect(() => {
         const fetchRestaurants = async () => {
@@ -346,7 +350,11 @@ const RestaurantLanding = () => {
             </div>
 
             <div className="mission">
-                <MissionSection missionRef={missionRef} missionVisible={missionVisible} />
+                <MissionSection 
+                    missionRef={missionRef} 
+                    missionVisible={missionVisible}
+                    onMapClick={() => setShowMap(true)}
+                />
             </div>
 
             <div className="bottom" ref={bottomRef}>
@@ -500,6 +508,7 @@ const RestaurantLanding = () => {
                     </div>
                 </>
             )}
+            {showMap && <RestaurantMap onClose={() => setShowMap(false)} />}
         </div>
     );
 };
