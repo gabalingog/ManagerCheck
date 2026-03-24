@@ -89,8 +89,8 @@ body {
 
 .rateRestaurantPage .btnPrimary { background: var(--green); border: none; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 14px 26px; border-radius: 4px; cursor: pointer; transition: background 0.2s, transform 0.15s; white-space: nowrap; }
 .rateRestaurantPage .btnPrimary:hover { background: var(--green-light); transform: translateY(-2px); }
-.rateRestaurantPage .btnSecondary { background: var(--sand); color: var(--text); border: 1px solid var(--border2); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase; padding: 14px 26px; border-radius: 4px; cursor: pointer; transition: border-color 0.2s, background 0.2s, transform 0.15s; white-space: nowrap; }
-.rateRestaurantPage .btnSecondary:hover { background: var(--warm-white); transform: translateY(-2px); }
+.rateRestaurantPage .btnSecondary { background: var(--warm-white); color: var(--green); border: 1px solid var(--border2); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 14px 26px; border-radius: 4px; cursor: pointer; transition: border-color 0.2s, background 0.2s, transform 0.15s; white-space: nowrap; }
+.rateRestaurantPage .btnSecondary:hover { background: var(--muted); transform: translateY(-2px); }
 
 /* ─── MAIN CONTENT ─── */
 .rateRestaurantPage .mainContent { max-width: 1200px; margin: 0 auto; padding: 48px 52px; display: grid; grid-template-columns: 300px 1fr; gap: 40px; }

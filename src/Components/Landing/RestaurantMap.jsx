@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from './../../supabaseClient';
 import './RestaurantMap.css';
 
@@ -40,14 +40,12 @@ const loadGoogleMaps = (apiKey) => {
 
         const existing = document.getElementById('gmap-script');
         if (existing) {
-            // Script tag exists but maps may not be ready yet — poll for it
             const poll = setInterval(() => {
                 if (window.google && window.google.maps) {
                     clearInterval(poll);
                     resolve(window.google.maps);
                 }
             }, 100);
-            // Give up after 10 seconds
             setTimeout(() => {
                 clearInterval(poll);
                 reject(new Error('Google Maps timed out'));
@@ -101,9 +99,10 @@ export const MapButton = ({ onClick }) => (
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            marginTop: '28px',
-            background: 'transparent',
-            border: '1px solid rgba(42,122,75,0.4)',
+            marginTop: '4px',
+            marginBottom: '0',
+            background: '#2a7a4b',
+            border: '1px solid #2a7a4b',
             borderRadius: '4px',
             padding: '11px 22px',
             fontFamily: "'DM Sans', sans-serif",
@@ -111,19 +110,17 @@ export const MapButton = ({ onClick }) => (
             fontWeight: 500,
             letterSpacing: '0.14em',
             textTransform: 'uppercase',
-            color: '#2a7a4b',
+            color: '#ffffff',
             cursor: 'pointer',
             transition: 'all 0.2s',
         }}
         onMouseOver={e => {
-            e.currentTarget.style.background = '#2a7a4b';
-            e.currentTarget.style.color = '#fff';
-            e.currentTarget.style.borderColor = '#2a7a4b';
+            e.currentTarget.style.background = '#3dab68';
+            e.currentTarget.style.borderColor = '#3dab68';
         }}
         onMouseOut={e => {
-            e.currentTarget.style.background = 'transparent';
-            e.currentTarget.style.color = '#2a7a4b';
-            e.currentTarget.style.borderColor = 'rgba(42,122,75,0.4)';
+            e.currentTarget.style.background = '#2a7a4b';
+            e.currentTarget.style.borderColor = '#2a7a4b';
         }}
     >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -143,44 +140,51 @@ const RestaurantMap = ({ onClose }) => {
     const hasRun = useRef(false);
     const [status, setStatus] = useState('loading');
     const [pinCount, setPinCount] = useState(0);
+    const [zipInput, setZipInput] = useState('');
 
     const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
+    const handleZipSearch = () => {
+        if (!zipInput.trim() || !mapInstanceRef.current || !window.google) return;
+        const geocoder = new window.google.maps.Geocoder();
+        geocoder.geocode({ address: zipInput + ', USA' }, (results, status) => {
+            if (status === 'OK' && results[0]) {
+                mapInstanceRef.current.setCenter(results[0].geometry.location);
+                mapInstanceRef.current.setZoom(13);
+            }
+        });
+    };
+
     useEffect(() => {
-        // Prevent React StrictMode from running this twice in development
         if (hasRun.current) return;
         hasRun.current = true;
-    
+
         const init = async () => {
             try {
-                // 1. Fetch only restaurant IDs that have at least one rating
                 const { data: ratingRows, error: ratingError } = await supabase
                     .from('restaurant_ratings')
                     .select('restaurant_id');
-    
+
                 if (ratingError) throw ratingError;
-    
+
                 const ratedIds = [...new Set(ratingRows.map(r => r.restaurant_id))];
-    
+
                 if (ratedIds.length === 0) {
                     setStatus('ready');
                     setPinCount(0);
                     return;
                 }
-    
-                // 2. Fetch only rated restaurants
+
                 const { data, error } = await supabase
                     .from('restaurants')
                     .select('id, name, address, city, state, zip_code, latitude, longitude, restaurant_ratings(team_environment, shift_availability, pay, staff_workload_ratio, would_recommend)')
                     .in('id', ratedIds)
                     .order('name', { ascending: true });
                 if (error) throw error;
-    
-                // 3. Load Maps SDK
+
                 if (!API_KEY) throw new Error('Missing REACT_APP_GOOGLE_MAPS_API_KEY');
                 const maps = await loadGoogleMaps(API_KEY);
-    
-                // 4. Geocode any restaurants missing coords
+
                 setStatus('geocoding');
                 const enriched = [];
                 for (const r of data) {
@@ -199,12 +203,11 @@ const RestaurantMap = ({ onClose }) => {
                         }
                     }
                 }
-    
+
                 setStatus('ready');
-    
-                // 5. Init map
+
                 if (!mapRef.current) return;
-    
+
                 const map = new maps.Map(mapRef.current, {
                     center: { lat: 42.3601, lng: -71.0589 },
                     zoom: 13,
@@ -217,18 +220,17 @@ const RestaurantMap = ({ onClose }) => {
                     clickableIcons: false,
                 });
                 mapInstanceRef.current = map;
-    
-                // 6. Drop pins
+
                 const bounds = new maps.LatLngBounds();
                 const iw = new maps.InfoWindow({ maxWidth: 260 });
                 infoWindowRef.current = iw;
-    
+
                 let count = 0;
                 enriched.forEach(r => {
                     if (!r.latitude || !r.longitude) return;
                     const pos = { lat: Number(r.latitude), lng: Number(r.longitude) };
                     bounds.extend(pos);
-    
+
                     const marker = new maps.Marker({
                         position: pos,
                         map,
@@ -240,7 +242,7 @@ const RestaurantMap = ({ onClose }) => {
                         },
                         cursor: 'pointer',
                     });
-    
+
                     marker.addListener('mouseover', () => {
                         marker.setIcon({
                             url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(PIN_SVG_HOVER),
@@ -257,7 +259,7 @@ const RestaurantMap = ({ onClose }) => {
                     });
                     marker.addListener('click', () => {
                         const ratings = r.restaurant_ratings || [];
-                        const fields = ['team_environment','shift_availability','pay','staff_workload_ratio'];
+                        const fields = ['team_environment', 'shift_availability', 'pay', 'staff_workload_ratio'];
                         let avg = null;
                         if (ratings.length > 0) {
                             const total = ratings.reduce((sum, row) => {
@@ -266,13 +268,13 @@ const RestaurantMap = ({ onClose }) => {
                             }, 0);
                             avg = (total / ratings.length).toFixed(1);
                         }
-                    
+
                         const recommendCount = ratings.filter(row => row.would_recommend === true).length;
                         const recommendPct = ratings.length > 0 ? Math.round((recommendCount / ratings.length) * 100) : null;
-                    
+
                         const starsHtml = avg ? (() => {
                             const numAvg = parseFloat(avg);
-                            return [1,2,3,4,5].map(i => {
+                            return [1, 2, 3, 4, 5].map(i => {
                                 const diff = numAvg - (i - 1);
                                 if (diff >= 0.75) {
                                     return `<span style="font-size:16px;color:#ffd700;">★</span>`;
@@ -283,7 +285,7 @@ const RestaurantMap = ({ onClose }) => {
                                 }
                             }).join('');
                         })() : '';
-                    
+
                         const ratingHtml = avg
                             ? `<div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(60,45,20,0.08);">
                                 <div style="display:flex;gap:1px;line-height:1;">${starsHtml}</div>
@@ -291,7 +293,7 @@ const RestaurantMap = ({ onClose }) => {
                                 <span style="font-size:11px;color:#a89d8e;font-family:'DM Sans',sans-serif;font-weight:300;">${ratings.length} review${ratings.length !== 1 ? 's' : ''}</span>
                               </div>`
                             : '';
-                    
+
                         const recommendHtml = recommendPct !== null
                             ? `<div style="display:flex;align-items:center;gap:6px;margin-top:8px;">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2a7a4b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -299,7 +301,7 @@ const RestaurantMap = ({ onClose }) => {
                                 <span style="font-size:12px;font-family:'DM Sans',sans-serif;font-weight:300;color:#7a6e5f;">would recommend</span>
                               </div>`
                             : '';
-                    
+
                         iw.setContent(`
                             <div style="font-family:'DM Sans',sans-serif;width:220px;padding:0;">
                                 <div style="font-size:13px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#2a7a4b;margin-bottom:5px;">${r.name}</div>
@@ -310,22 +312,22 @@ const RestaurantMap = ({ onClose }) => {
                         `);
                         iw.open(map, marker);
                     });
-    
+
                     markersRef.current.push(marker);
                     count++;
                 });
-    
+
                 setPinCount(count);
                 if (!bounds.isEmpty()) map.fitBounds(bounds);
-    
+
             } catch (e) {
                 console.error('Map init error:', e);
                 setStatus('error');
             }
         };
-    
+
         init();
-    
+
         return () => {
             markersRef.current.forEach(m => m.setMap(null));
             markersRef.current = [];
@@ -376,6 +378,7 @@ const RestaurantMap = ({ onClose }) => {
                     background: '#faf8f4',
                     flexShrink: 0,
                 }}>
+                    {/* Left: title + count */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <span style={{
                             fontSize: '11px', fontFamily: "'DM Sans',sans-serif",
@@ -394,20 +397,66 @@ const RestaurantMap = ({ onClose }) => {
                             </span>
                         )}
                     </div>
-                    <button
-                        onClick={onClose}
-                        style={{
-                            background: 'none', border: 'none',
-                            fontSize: '18px', color: '#a89d8e',
-                            cursor: 'pointer', padding: '4px 8px',
-                            lineHeight: 1, transition: 'color 0.2s',
-                            fontFamily: 'sans-serif',
-                        }}
-                        onMouseOver={e => e.target.style.color = '#1e1a14'}
-                        onMouseOut={e => e.target.style.color = '#a89d8e'}
-                    >
-                        ✕
-                    </button>
+
+                    {/* Right: ZIP search + close */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <input
+                            type="text"
+                            placeholder="Search ZIP code"
+                            maxLength={5}
+                            value={zipInput}
+                            onChange={e => setZipInput(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && handleZipSearch()}
+                            style={{
+                                fontFamily: "'DM Sans',sans-serif",
+                                fontSize: '12px',
+                                fontWeight: 300,
+                                color: '#1e1a14',
+                                background: '#f0ece4',
+                                border: '1px solid rgba(60,45,20,0.16)',
+                                borderRadius: '4px',
+                                padding: '7px 12px',
+                                width: '130px',
+                                outline: 'none',
+                                letterSpacing: '0.06em',
+                            }}
+                        />
+                        <button
+                            onClick={handleZipSearch}
+                            style={{
+                                background: '#2a7a4b',
+                                border: 'none',
+                                borderRadius: '4px',
+                                padding: '7px 14px',
+                                fontFamily: "'DM Sans',sans-serif",
+                                fontSize: '12px',
+                                fontWeight: 500,
+                                letterSpacing: '0.1em',
+                                textTransform: 'uppercase',
+                                color: '#fff',
+                                cursor: 'pointer',
+                                transition: 'background 0.2s',
+                            }}
+                            onMouseOver={e => e.currentTarget.style.background = '#3dab68'}
+                            onMouseOut={e => e.currentTarget.style.background = '#2a7a4b'}
+                        >
+                            Go
+                        </button>
+                        <button
+                            onClick={onClose}
+                            style={{
+                                background: 'none', border: 'none',
+                                fontSize: '18px', color: '#a89d8e',
+                                cursor: 'pointer', padding: '4px 8px',
+                                lineHeight: 1, transition: 'color 0.2s',
+                                fontFamily: 'sans-serif',
+                            }}
+                            onMouseOver={e => e.target.style.color = '#1e1a14'}
+                            onMouseOut={e => e.target.style.color = '#a89d8e'}
+                        >
+                            ✕
+                        </button>
+                    </div>
                 </div>
 
                 {/* Map area */}

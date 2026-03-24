@@ -53,7 +53,6 @@ const MissionSection = ({ missionRef, missionVisible, onMapClick }) => {
             <p className={`missionBody ${missionVisible ? 'visible' : ''}`}>
                 Manager Check gives the service industry workers a trusted, anonymous space to share their experiences so the next person can make a more informed choice about their workplace.
             </p>
-            <MapButton onClick={onMapClick} />
         </div>
     );
 };
@@ -315,13 +314,14 @@ const RestaurantLanding = () => {
                     backgroundRepeat: 'no-repeat'
                 }}></div>
                 <div className="mainBackground">
-                    <div className="main">
-                        <div className="left heroFadeUp" style={{ animationDelay: '0.2s' }}>
-                            <img src={logo} alt="ManagerCheck" className='webLogo' />
-                        </div>
-                        <p className="heroTagline heroFadeUp" style={{ animationDelay: '0.5s' }}>
-                            Know who you're working for before you start
-                        </p>
+                <div className="main">
+                <div className="left heroFadeUp" style={{ animationDelay: '0.2s', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <img src={logo} alt="ManagerCheck" className='webLogo' />
+                    <MapButton onClick={() => setShowMap(true)} />
+                </div>
+                    <p className="heroTagline heroFadeUp" style={{ animationDelay: '0.5s' }}>
+                        Know who you're working for before you start
+                    </p>
                         <div className="right heroFadeUp" style={{ animationDelay: '0.75s' }}>
                             {/* ref on .searching so we can measure its position for the portal */}
                             <div className="searching" ref={searchingRef}>
