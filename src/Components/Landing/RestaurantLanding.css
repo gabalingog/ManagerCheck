@@ -19,7 +19,6 @@
      --muted2:       #a89d8e;
    }
    
-   /* ── RESET ─────────────────────────────────────────────── */
    *, *::before, *::after {
      box-sizing: border-box;
      margin: 0;
