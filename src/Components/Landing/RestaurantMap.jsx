@@ -302,14 +302,17 @@ const RestaurantMap = ({ onClose }) => {
                               </div>`
                             : '';
 
-                        iw.setContent(`
-                            <div style="font-family:'DM Sans',sans-serif;width:220px;padding:0;">
-                                <div style="font-size:13px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#2a7a4b;margin-bottom:5px;">${r.name}</div>
-                                <div style="font-size:12px;color:#7a6e5f;line-height:1.6;font-weight:300;word-wrap:break-word;">${r.address}, ${r.city}, ${r.state} ${r.zip_code}</div>
-                                ${ratingHtml}
-                                ${recommendHtml}
-                            </div>
-                        `);
+                            iw.setContent(`
+                                <div style="font-family:'DM Sans',sans-serif;width:220px;padding:0;">
+                                    <div
+                                        onclick="window.location.href='/restaurant/${r.id}'"
+                                        style="font-size:13px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#2a7a4b;margin-bottom:5px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;"
+                                    >${r.name}</div>
+                                    <div style="font-size:12px;color:#7a6e5f;line-height:1.6;font-weight:300;word-wrap:break-word;">${r.address}, ${r.city}, ${r.state} ${r.zip_code}</div>
+                                    ${ratingHtml}
+                                    ${recommendHtml}
+                                </div>
+                            `);
                         iw.open(map, marker);
                     });
 
