@@ -45,14 +45,13 @@
    /* ═══════════════════════════════════════════════════════════
       HERO
       ═══════════════════════════════════════════════════════════ */
-   .bgmain {
-     position: relative;
-     height: 100vh;
-     min-height: 680px;
-     display: flex;
-     align-items: center;
-     /* REMOVED overflow: hidden — it was clipping the search dropdown */
-   }
+      .bgmain {
+        position: relative;
+        height: 100vh;
+        min-height: 680px;
+        display: flex;
+        align-items: center;
+      }
    .bgImage {
      position: absolute;
      inset: 0;
@@ -276,18 +275,16 @@
    
    /* ── SCROLL CUE ────────────────────────────────────────── */
    .heroScroll {
-     position: fixed;
-     bottom: 32px;
-     left: 0;
-     right: 0;
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     gap: 8px;
-     text-align: center;
-     z-index: 1;
-     pointer-events: none;
-   }
+    position: absolute;
+    bottom: 32px;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+  }
    .heroScroll span {
      font-size: 15px;
      letter-spacing: 0.2em;
