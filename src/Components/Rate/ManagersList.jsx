@@ -83,6 +83,11 @@ const ManagersList = () => {
             fairness: avg('fairness').toFixed(1),
             approachability: avg('approachability').toFixed(1),
             organization: avg('organization').toFixed(1),
+            recommendPct: Math.round(
+              (reviews.filter(r =>
+                (r.communication + r.fairness + r.approachability + r.organization) / 4 >= 3.5
+              ).length / reviews.length) * 100
+            ),
           };
         } else {
           ratingsMap[manager.id] = { count: 0, overallRating: 0, communication: 0, fairness: 0, approachability: 0, organization: 0 };
@@ -260,14 +265,29 @@ const ManagersList = () => {
                     const hasReviews = stats && stats.count > 0;
 
                     return (
-                      <div
-                        key={manager.id}
-                        className="managerRow"
-                        onClick={() => handleManagerClick(manager)}
-                      >
+                      <div key={manager.id} className="managerRow">
                         <div className="managerBasicInfo">
                           <h3 className="managerRowName">{manager.name}</h3>
                           <p className="managerRowPosition">{manager.position}</p>
+                          {hasReviews && stats.recommendPct > 50 && (
+                            <div className="managerRecommend recommend-yes">
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                              </svg>
+                              {stats.recommendPct}% Recommended
+                            </div>
+                          )}
+                          <button
+                            className="rateManagerBtn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/rate/${manager.id}/form`, {
+                                state: { managerName: manager.name, returnTo: `/restaurant/${restaurantID}/managers` }
+                              });
+                            }}
+                          >
+                            Rate Manager
+                          </button>
                         </div>
 
                         {hasReviews ? (
@@ -279,18 +299,11 @@ const ManagersList = () => {
                                   {[1, 2, 3, 4, 5].map((star) => {
                                     const filled = star <= Math.floor(parseFloat(stats.overallRating));
                                     const half = !filled && star === Math.ceil(parseFloat(stats.overallRating)) && parseFloat(stats.overallRating) % 1 >= 0.5;
-                                    return (
-                                      <span
-                                        key={star}
-                                        className={`star ${filled ? 'filled' : ''} ${half ? 'half' : ''}`}
-                                      >★</span>
-                                    );
+                                    return <span key={star} className={`star ${filled ? 'filled' : ''} ${half ? 'half' : ''}`}>★</span>;
                                   })}
                                 </div>
                               </div>
-                              <p className="reviewCount">
-                                {stats.count} {stats.count === 1 ? 'review' : 'reviews'}
-                              </p>
+                              <p className="reviewCount">{stats.count} {stats.count === 1 ? 'review' : 'reviews'}</p>
                             </div>
 
                             <div className="managerRatingBreakdown">
@@ -312,7 +325,7 @@ const ManagersList = () => {
                             <p>No reviews yet</p>
                             <button
                               className="beFirstBtn"
-                              onClick={(e) => { e.stopPropagation(); handleManagerClick(manager); }}
+                              onClick={(e) => { e.stopPropagation(); setShowAddManagerForm(true); }}
                             >
                               Be the first to review
                             </button>

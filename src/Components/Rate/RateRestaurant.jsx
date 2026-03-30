@@ -44,16 +44,6 @@ const RateRestaurant = () => {
     fetchRestaurants();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchManagers = async () => {
-  //     const { data, error } = await supabase.from('managers').select('*, restaurants(name)').order('name');
-  //     if (!error) {
-  //       setManagers(data.map(m => ({ ...m, restaurantName: m.restaurants?.name || 'Unknown' })));
-  //     }
-  //   };
-  //   fetchManagers();
-  // }, []);
-
   useEffect(() => {
     const fetchCurrentRestaurant = async () => {
       if (!restaurantID) return;

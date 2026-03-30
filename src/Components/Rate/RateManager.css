@@ -277,3 +277,132 @@ body {
   border-color: rgba(255, 255, 255, 0.6);
   color: #ffffff;
 }
+
+/* ─── UPDATED REVIEW CARD LAYOUT ─── */
+.rateManagerPage .reviewCardInner {
+  display: grid;
+  grid-template-columns: 1.2fr 2.8fr;
+  gap: 28px;
+  align-items: center;
+}
+
+.rateManagerPage .reviewRatingMain {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.rateManagerPage .reviewRatingMain .ratingNumber {
+  font-family: 'DM Serif Display', serif;
+  font-size: 42px;
+  color: var(--green);
+  line-height: 1;
+}
+
+.rateManagerPage .reviewMetaStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.rateManagerPage .reviewMetaStack .reviewPosition {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0.04em;
+}
+
+.rateManagerPage .reviewMetaStack .reviewDuration {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted2);
+}
+
+.rateManagerPage .reviewBreakdown {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.rateManagerPage .reviewBreakdownItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 12px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.rateManagerPage .reviewBreakdownLabel {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.rateManagerPage .reviewBreakdownValue {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 17px;
+  color: var(--green);
+}
+
+.rateManagerPage .reviewCardFooter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 768px) {
+  .rateManagerPage .reviewCardInner {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .rateManagerPage .reviewRatingMain {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 16px;
+    align-items: center;
+  }
+  .rateManagerPage .reviewMetaStack {
+    align-items: flex-start;
+    margin-top: 0;
+  }
+}
+
+/* ─── RECOMMEND BADGE ─── */
+.rateManagerPage .reviewRecommend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 6px;
+  width: 100%;
+}
+
+.rateManagerPage .reviewRecommend.recommend-yes {
+  background: var(--green-pale);
+  border: 1px solid rgba(42, 122, 75, 0.25);
+  color: var(--green);
+}
+
+.rateManagerPage .reviewRecommend.recommend-no {
+  background: #fdf0ee;
+  border: 1px solid rgba(192, 57, 43, 0.2);
+  color: #c0392b;
+}
