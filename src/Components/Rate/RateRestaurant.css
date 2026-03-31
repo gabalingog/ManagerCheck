@@ -239,3 +239,37 @@ body {
   .rateRestaurantPage .reviewCard { padding: 16px; }
   .rateRestaurantPage .reviewText { font-size: 14px; }
 }
+
+.rateRestaurantPage .reviewBreakdownGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.rateRestaurantPage .reviewBreakdownItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 10px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  flex: 1;
+  min-width: 120px;
+  max-width: 180px;
+}
+.rateRestaurantPage .reviewBreakdownLabel {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.rateRestaurantPage .reviewBreakdownValue {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  color: var(--green);
+}

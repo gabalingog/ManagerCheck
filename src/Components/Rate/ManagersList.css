@@ -734,9 +734,8 @@
    }
 
    .managerRecommend {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 5px;
     padding: 6px 12px;
     border-radius: 4px;
@@ -744,7 +743,7 @@
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    width: 100%;
+    white-space: nowrap;
   }
   
   .managerRecommend.recommend-yes {
@@ -760,7 +759,57 @@
   }
 
   .rateManagerBtn {
+    padding: 8px 16px;
+    height: 36px;
+    background: none;
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+  }
+  
+  .rateManagerBtn:hover {
+    border-color: var(--green);
+    color: var(--green);
+  }
+  
+  .managerRecommend {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    height: 36px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  
+  .managerRecommend.recommend-yes {
+    background: var(--green-pale);
+    border: 1px solid rgba(42, 122, 75, 0.25);
+    color: var(--green);
+  }
+
+  .managerBasicActions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-top: 10px;
+    flex-wrap: nowrap;
+  }
+  .rateManagerBtn {
     padding: 8px 16px;
     background: none;
     border: 1px solid var(--border2);
@@ -773,30 +822,16 @@
     color: var(--muted);
     cursor: pointer;
     transition: border-color 0.2s, color 0.2s;
-    align-self: flex-start;
+    white-space: nowrap;
   }
   
   .rateManagerBtn:hover {
     border-color: var(--green);
     color: var(--green);
   }
-  
-  .managerRecommend {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-top: 6px;
-    align-self: flex-start;
-  }
-  
-  .managerRecommend.recommend-yes {
-    background: var(--green-pale);
-    border: 1px solid rgba(42, 122, 75, 0.25);
-    color: var(--green);
+
+  .managerRecommend.recommend-no {
+    background: #fdf0ee;
+    border: 1px solid rgba(192, 57, 43, 0.2);
+    color: #c0392b;
   }

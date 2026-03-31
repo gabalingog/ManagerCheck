@@ -349,26 +349,32 @@ const RateRestaurant = () => {
                           </div>
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                             {isOwner && (
-                              <button className="deleteReviewBtn" onClick={() => handleDeleteReview(rating.id)} disabled={deletingId === rating.id} title="Delete your review">
+                              <button className="deleteReviewBtn" onClick={() => handleDeleteReview(rating.id)} disabled={deletingId === rating.id}>
                                 {deletingId === rating.id ? <span>Deleting...</span> : (<><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Delete</>)}
                               </button>
                             )}
-                            <ReportReview
-                              reviewId={rating.id}
-                              reviewType="restaurant"
-                              contextName={currentRestaurant?.name || restaurantName}
-                              reviewSnippet={rating.comment?.slice(0, 80)}
-                            />
+                            <ReportReview reviewId={rating.id} reviewType="restaurant" contextName={currentRestaurant?.name || restaurantName} reviewSnippet={rating.comment?.slice(0, 80)} />
                           </div>
                         </div>
                       </div>
 
                       <p className="reviewText">{rating.comment}</p>
 
+                      <div className="reviewBreakdownGrid">
+                        {[
+                          ['Team Environment', rating.team_environment],
+                          ['Shift Availability', rating.shift_availability],
+                          ['Pay', rating.pay],
+                          ['Staff / Workload', rating.staff_workload_ratio],
+                        ].map(([label, val]) => (
+                          <div className="reviewBreakdownItem" key={label}>
+                            <span className="reviewBreakdownLabel">{label}</span>
+                            <span className="reviewBreakdownValue">{val}</span>
+                          </div>
+                        ))}
+                      </div>
+
                       <div className="reviewCardFooter">
-                        {rating.tags && rating.tags.length > 0 && (
-                          <div className="reviewTags">{rating.tags.map((tag, i) => <span key={i} className="reviewTag">{tag}</span>)}</div>
-                        )}
                         <div className="reviewVotes">
                           <button className={`voteBtn ${userVotes[rating.id] === 'like' ? 'active' : ''}`} onClick={() => handleVote(rating.id, 'like')}>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
@@ -380,10 +386,7 @@ const RateRestaurant = () => {
                           </button>
                         </div>
                       </div>
-                      <ReviewReplies
-                        reviewId={rating.id}
-                        reviewType="restaurant"   // ← only difference from the manager version
-                      />
+                      <ReviewReplies reviewId={rating.id} reviewType="restaurant" />
                     </article>
                   );
                 })}

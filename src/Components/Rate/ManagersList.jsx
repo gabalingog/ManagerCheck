@@ -269,25 +269,37 @@ const ManagersList = () => {
                         <div className="managerBasicInfo">
                           <h3 className="managerRowName">{manager.name}</h3>
                           <p className="managerRowPosition">{manager.position}</p>
-                          {hasReviews && stats.recommendPct > 50 && (
-                            <div className="managerRecommend recommend-yes">
-                              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
-                              </svg>
-                              {stats.recommendPct}% Recommended
-                            </div>
-                          )}
-                          <button
-                            className="rateManagerBtn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/rate/${manager.id}/form`, {
-                                state: { managerName: manager.name, returnTo: `/restaurant/${restaurantID}/managers` }
-                              });
-                            }}
-                          >
-                            Rate Manager
-                          </button>
+                          <div className="managerBasicActions">
+                            <button
+                              className="rateManagerBtn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/rate/${manager.id}/form`, {
+                                  state: {
+                                    managerName: manager.name,
+                                    returnTo: `/restaurant/${restaurantID}/managers`,
+                                    restaurantName: restaurant?.name
+                                  }
+                                });
+                              }}
+                            >
+                              Rate
+                            </button>
+                            {hasReviews && (
+                              <div className={`managerRecommend ${stats.recommendPct > 50 ? 'recommend-yes' : 'recommend-no'}`}>
+                                {stats.recommendPct > 50 ? (
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                                  </svg>
+                                ) : (
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
+                                  </svg>
+                                )}
+                                {stats.recommendPct}% Recommended
+                              </div>
+                            )}
+                          </div>
                         </div>
 
                         {hasReviews ? (

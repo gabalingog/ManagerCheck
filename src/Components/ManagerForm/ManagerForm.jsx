@@ -22,7 +22,6 @@ const ManagerForm = () => {
   });
 
   const [selectedTags, setSelectedTags] = useState([]);
-  const [comment, setComment] = useState('');
   const [wouldRecommend, setWouldRecommend] = useState(null);
   const [position, setPosition] = useState('');
   const [duration, setDuration] = useState('');
@@ -78,10 +77,6 @@ const ManagerForm = () => {
       alert('Please indicate if you would recommend this manager');
       return;
     }
-    if (!comment.trim()) {
-      alert('Please provide a comment');
-      return;
-    }
     if (!position.trim() || !duration.trim()) {
       alert('Please provide your position and duration');
       return;
@@ -95,7 +90,6 @@ const ManagerForm = () => {
       approachability: ratings.approachability,
       organization: ratings.organization,
       would_recommend: wouldRecommend,
-      comment: comment.trim(),
       date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
       position: position.trim(),
       duration: duration.trim(),
@@ -230,17 +224,6 @@ const ManagerForm = () => {
                   onClick={() => setWouldRecommend(false)}
                 >No</button>
               </div>
-            </div>
-
-            <div className="formSection">
-              <h2>Your Review</h2>
-              <textarea
-                className="commentBox"
-                placeholder="Share your experience working with this manager…"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                rows="6"
-              />
             </div>
 
             <div className="formActions">

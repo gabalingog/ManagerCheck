@@ -39,6 +39,8 @@ const RateManager = () => {
   const [userVotes, setUserVotes] = useState({});
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
+  const returnTo = location.state?.returnTo;
+  const restaurantID = currentManager?.restaurant_id;
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -101,11 +103,8 @@ const RateManager = () => {
 
   const goToRatingForm = () => navigate(`/rate/${managerID}/form`, { state: { managerName } });
   const goToAllManagers = () => {
-    if (currentManager?.restaurant_id) {
-      navigate(`/restaurant/${currentManager.restaurant_id}/managers`, {
-        state: { restaurantName: currentManager.restaurantName }
-      });
-    }
+    const returnPath = location.state?.returnTo || `/restaurant/${currentManager?.restaurant_id}/managers`;
+    navigate(returnPath);
   };
   const goToRestaurant = () => {
     if (currentManager?.restaurant_id) {
@@ -226,7 +225,7 @@ const RateManager = () => {
   const handleSelectManager = (manager) => {
     setManagerSearchInput(''); setFilteredManagers([]); setShowManagerDropdown(false);
     setManagerPlaceholder(managerName || 'Manager Name');
-    navigate(`/rate/${manager.id}`, { state: { managerName: manager.name } });
+    navigate(`/restaurant/${currentManager?.restaurant_id}/managers`);
   };
 
   const existingRatings = allRatings;
