@@ -10,6 +10,7 @@ import RateRestaurant from './Components/Rate/RateRestaurant.jsx';
 import ManagersList from './Components/Rate/ManagersList.jsx';
 import ResetPassword from './Components/Navbar/ResetPassword.jsx';
 import { AuthProvider } from './authContext.js';
+import RestaurantMap from './Components/Landing/RestaurantMap.jsx';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/rate/:managerID/form" element={<ManagerForm />} />
           <Route path="/restaurant/:restaurantID/form" element={<RestaurantForm />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/map" element={<RestaurantMap />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

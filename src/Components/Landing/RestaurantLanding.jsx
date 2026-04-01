@@ -21,7 +21,7 @@ const missionPhrases = [
     { highlight: "support employees'", suffix: "perspectives" },
 ];
 
-const MissionSection = ({ missionRef, missionVisible, onMapClick }) => {
+const MissionSection = ({ missionRef, missionVisible}) => {
     const [index, setIndex] = useState(0);
     const [visible, setVisible] = useState(true);
 
@@ -67,7 +67,6 @@ const RestaurantLanding = () => {
     const searchingRef = useRef(null);
     const [footerForm, setFooterForm] = useState({ name: '', email: '', message: '' });
     const [footerStatus, setFooterStatus] = useState('');
-    const [showMap, setShowMap] = useState(false);
 
     useEffect(() => {
         const fetchRestaurants = async () => {
@@ -317,7 +316,7 @@ const RestaurantLanding = () => {
                 <div className="main">
                 <div className="left heroFadeUp" style={{ animationDelay: '0.2s', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <img src={logo} alt="ManagerCheck" className='webLogo' />
-                    <MapButton onClick={() => setShowMap(true)} />
+                    <MapButton />
                 </div>
                     <p className="heroTagline heroFadeUp" style={{ animationDelay: '0.5s' }}>
                         Know who you're working for before you start
@@ -353,7 +352,6 @@ const RestaurantLanding = () => {
                 <MissionSection 
                     missionRef={missionRef} 
                     missionVisible={missionVisible}
-                    onMapClick={() => setShowMap(true)}
                 />
             </div>
 
@@ -508,7 +506,6 @@ const RestaurantLanding = () => {
                     </div>
                 </>
             )}
-            {showMap && <RestaurantMap onClose={() => setShowMap(false)} />}
         </div>
     );
 };
