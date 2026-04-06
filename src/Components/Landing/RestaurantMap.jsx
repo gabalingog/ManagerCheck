@@ -331,7 +331,6 @@ const RestaurantMap = () => {
 
     return (
         <div className="map-page">
-            {/* Header */}
             <div className="map-header">
                 <div className="map-header-left">
                     <span className="map-header-title">Rated Restaurants Near You</span>
@@ -341,7 +340,6 @@ const RestaurantMap = () => {
                 </div>
 
                 <div className="map-header-right">
-                    {/* Restaurant search */}
                     <div className="map-restaurant-search-wrap">
                         <input
                             type="text"
@@ -370,7 +368,6 @@ const RestaurantMap = () => {
                         )}
                     </div>
 
-                    {/* ZIP search */}
                     <input
                         type="text"
                         placeholder="Search ZIP code"
@@ -385,7 +382,6 @@ const RestaurantMap = () => {
                 </div>
             </div>
 
-            {/* Map + Sidebar */}
             <div className="map-body">
                 <div className="map-area">
                     {(status === 'loading' || status === 'geocoding') && (
@@ -405,7 +401,6 @@ const RestaurantMap = () => {
                     <div ref={mapRef} className="map-canvas" />
                 </div>
 
-                {/* Sidebar */}
                 <div className={`map-sidebar ${selectedRestaurant ? 'open' : ''}`}>
                     {selectedRestaurant && (() => {
                         const { r, avg, recommendPct, reviewCount, ratings } = selectedRestaurant;

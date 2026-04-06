@@ -35,7 +35,6 @@ const ManagerForm = () => {
     "High Workload"
   ];
 
-  // If user is not logged in, show auth modal immediately
   useEffect(() => {
     if (!user) {
       setShowAuthModal(true);
@@ -63,7 +62,6 @@ const ManagerForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Double-check auth at submit time
     if (!user) {
       setShowAuthModal(true);
       return;
@@ -84,7 +82,7 @@ const ManagerForm = () => {
 
     const newRating = {
       manager_id: parseInt(managerID),
-      user_id: user.id,           // ← real Supabase user ID
+      user_id: user.id,
       communication: ratings.communication,
       fairness: ratings.fairness,
       approachability: ratings.approachability,
@@ -132,18 +130,15 @@ const ManagerForm = () => {
   return (
     <div className="managerFormPage">
 
-      {/* Auth gate — shown if not logged in */}
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => {
           setShowAuthModal(false);
-          // If they closed without logging in, send them back
           if (!user) handleCancel();
         }}
         mode="signin"
       />
 
-      {/* Only render the form if logged in */}
       {user && (
         <div className="formContainer">
 

@@ -27,7 +27,6 @@ const Navbar = () => {
 
   const goHome = () => navigate('/');
 
-  // Get initials from email for avatar
   const getInitials = (email) => {
     if (!email) return '?';
     return email.charAt(0).toUpperCase();

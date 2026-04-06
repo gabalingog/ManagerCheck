@@ -1,8 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   MANAGERCHECK — RestaurantForm.css
-   ═══════════════════════════════════════════════════════════ */
-
-   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap');
 
    :root {
      --green:       #2a7a4b;
@@ -32,7 +28,6 @@
      color: var(--text);
    }
    
-   /* ── PAGE ──────────────────────────────────────────────── */
    .restaurantFormPage {
      min-height: 100vh;
      background-color: var(--cream);
@@ -41,14 +36,12 @@
      align-items: center;
    }
    
-   /* ── FORM CONTAINER ────────────────────────────────────── */
    .formContainer {
      max-width: 780px;
      width: 100%;
      padding: 64px 48px 100px;
    }
    
-   /* ── HEADER ────────────────────────────────────────────── */
    .formHeader {
      margin-bottom: 56px;
      padding-bottom: 40px;
@@ -83,7 +76,6 @@
      text-transform: uppercase;
    }
    
-   /* ── FORM SECTION ──────────────────────────────────────── */
    .formSection {
      margin-bottom: 52px;
    }
@@ -97,7 +89,6 @@
      margin-bottom: 28px;
    }
    
-   /* ── INPUTS ────────────────────────────────────────────── */
    .inputRow {
      display: grid;
      grid-template-columns: 1fr 1fr;
@@ -141,7 +132,6 @@
      color: var(--muted2);
    }
    
-   /* ── STAR RATINGS ──────────────────────────────────────── */
    .ratingCategory {
      display: grid;
      grid-template-columns: 220px 1fr auto;
@@ -207,7 +197,6 @@
      text-align: right;
    }
    
-   /* ── TAGS ──────────────────────────────────────────────── */
    .tagsContainer {
      display: flex;
      flex-wrap: wrap;
@@ -241,7 +230,6 @@
      color: #fff;
    }
    
-   /* ── RECOMMEND ─────────────────────────────────────────── */
    .recommendButtons {
      display: grid;
      grid-template-columns: 1fr 1fr;
@@ -276,7 +264,6 @@
      color: #fff;
    }
    
-   /* ── COMMENT BOX ───────────────────────────────────────── */
    .commentBox {
      width: 100%;
      padding: 16px 18px;
@@ -303,7 +290,6 @@
      color: var(--muted2);
    }
    
-   /* ── FORM ACTIONS ──────────────────────────────────────── */
    .formActions {
      display: grid;
      grid-template-columns: 1fr 1fr;
@@ -354,7 +340,6 @@
      color: #c0392b;
    }
    
-   /* ── RESPONSIVE ────────────────────────────────────────── */
    @media (max-width: 768px) {
      .formContainer {
        padding: 40px 24px 80px;
