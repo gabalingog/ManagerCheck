@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap');
 
-/* ── OVERLAY ── */
 .authModalOverlay {
   position: fixed;
   inset: 0;
@@ -10,7 +9,6 @@
   -webkit-backdrop-filter: blur(4px);
 }
 
-/* ── MODAL BOX ── */
 .authModal {
   position: fixed;
   top: 50%;
@@ -26,7 +24,6 @@
   box-shadow: 0 24px 60px rgba(30, 26, 20, 0.2);
 }
 
-/* ── CLOSE BUTTON ── */
 .modalCloseBtn {
   position: absolute;
   top: 18px;
@@ -42,7 +39,6 @@
 }
 .modalCloseBtn:hover { color: #1e1a14; }
 
-/* ── CONTENT ── */
 .modalContent { display: flex; flex-direction: column; gap: 0; }
 
 .modalContent h2 {
@@ -64,7 +60,6 @@
   line-height: 1.2;
 }
 
-/* ── MESSAGES ── */
 .errorMessage {
   font-size: 13px;
   color: #c0392b;
@@ -85,7 +80,6 @@
   margin-bottom: 16px;
 }
 
-/* ── INPUTS ── */
 .modalInputGroup {
   display: flex;
   flex-direction: column;
@@ -118,7 +112,6 @@
 .modalInput:focus { border-bottom-color: #2a7a4b; }
 .modalInput::placeholder { color: #a89d8e; }
 
-/* ── PASSWORD TOGGLE ── */
 .passwordWrapper {
   position: relative;
   display: flex;
@@ -142,7 +135,6 @@
 }
 .passwordToggle:hover { color: #1e1a14; }
 
-/* ── BUTTONS ROW ── */
 .modalButtonsRow {
   display: flex;
   gap: 12px;
@@ -184,9 +176,6 @@
 }
 .modalSecondaryBtn:hover { border-color: #1e1a14; color: #1e1a14; }
 
-/* ── ADD THIS to your existing AuthModal.css ── */
-
-/* Sits under the password field in sign-in mode */
 .forgotPasswordLink {
   background: none;
   border: none;
@@ -261,7 +250,6 @@
 
 .termsLink:hover { opacity: 0.7; }
 
-/* ── TERMS MODAL ── */
 .termsOverlay {
   position: fixed;
   inset: 0;

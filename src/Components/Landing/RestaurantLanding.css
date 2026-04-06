@@ -1,9 +1,5 @@
-/* ═══════════════════════════════════════════════════════════
-   MANAGERCHECK — RestaurantLanding.css
-   ═══════════════════════════════════════════════════════════ */
-   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap');
 
-   /* ── VARIABLES ─────────────────────────────────────────── */
    :root {
      --green:        #2a7a4b;
      --green-light:  #3dab68;
@@ -33,18 +29,12 @@
      color: var(--text);
      overflow-x: hidden;
    }
-   
-   /* ═══════════════════════════════════════════════════════════
-      PAGE WRAPPER
-      ═══════════════════════════════════════════════════════════ */
+
    .restoLanding {
      background-color: var(--cream);
      min-height: 100vh;
    }
-   
-   /* ═══════════════════════════════════════════════════════════
-      HERO
-      ═══════════════════════════════════════════════════════════ */
+
       .bgmain {
         position: relative;
         height: 100vh;
@@ -137,10 +127,9 @@
      margin: 0;
    }
    
-   /* ── SEARCH BAR ────────────────────────────────────────── */
    .searching {
      width: min(560px, 90vw);
-     position: relative;    /* dropdown positions relative to this */
+     position: relative;
      display: flex;
      flex-direction: column;
    }
@@ -153,7 +142,7 @@
      background-color: rgba(255, 255, 255, 0.92);
      border: 1px solid rgba(255, 255, 255, 0.6);
      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
-     overflow: hidden;      /* keeps border-radius clean on the input — safe because dropdown is now a sibling */
+     overflow: hidden;
      transition: box-shadow 0.2s;
    }
    .searchRes:focus-within {
@@ -203,7 +192,6 @@
    }
    .searchSubmitBtn:hover { background: var(--green-light); }
    
-   /* Dropdown — positions relative to .searching, never clipped by .searchRes */
    .searchResult {
      position: absolute;
      top: calc(100% + 4px);
@@ -273,7 +261,6 @@
    }
    .enterName:hover { opacity: 0.7; }
    
-   /* ── SCROLL CUE ────────────────────────────────────────── */
    .heroScroll {
     position: absolute;
     bottom: 32px;
@@ -303,9 +290,6 @@
      50%       { opacity: 1; }
    }
    
-   /* ═══════════════════════════════════════════════════════════
-      MISSION SECTION
-      ═══════════════════════════════════════════════════════════ */
    .mission {
      background-color: var(--cream);
      width: 100%;
@@ -404,9 +388,6 @@
      transform: translateY(10px);
    }
    
-   /* ═══════════════════════════════════════════════════════════
-      BOTTOM FEATURE CARDS
-      ═══════════════════════════════════════════════════════════ */
    .bottom {
      display: grid;
      grid-template-columns: repeat(2, 1fr);
@@ -507,10 +488,7 @@
      padding: 14px 28px 28px 28px;
      font-weight: 300;
    }
-   
-   /* ═══════════════════════════════════════════════════════════
-      MODAL
-      ═══════════════════════════════════════════════════════════ */
+
    .modalOverlay {
      position: fixed;
      inset: 0;
@@ -644,10 +622,7 @@
      border-color: var(--text);
      color: var(--text);
    }
-   
-   /* ═══════════════════════════════════════════════════════════
-      FOOTER
-      ═══════════════════════════════════════════════════════════ */
+
    .footer {
      background: var(--sand);
      border-top: 1px solid var(--border2);
@@ -787,11 +762,6 @@
      height: 32px;
    }
    
-   /* ═══════════════════════════════════════════════════════════
-      RESPONSIVE
-      ═══════════════════════════════════════════════════════════ */
-   
-   /* ── TABLET (≤ 900px) ───────────────────────────────────── */
    @media (max-width: 900px) {
      .bottom {
        grid-template-columns: 1fr;
@@ -810,9 +780,7 @@
      .footerBottom { padding: 20px 32px; }
    }
    
-   /* ── MOBILE (≤ 640px) ───────────────────────────────────── */
    @media (max-width: 640px) {
-     /* HERO */
      .bgmain {
        min-height: 100svh;
        align-items: flex-start;
@@ -834,7 +802,6 @@
        font-size: clamp(13px, 3.8vw, 17px);
        max-width: 300px;
      }
-     /* SEARCH BAR */
      .searching {
        width: min(100%, 90vw);
      }
@@ -862,7 +829,6 @@
        font-size: 12px;
        padding: 11px 16px;
      }
-     /* SCROLL CUE */
      .heroScroll {
        bottom: 20px;
      }
@@ -871,7 +837,6 @@
        letter-spacing: 0.18em;
      }
      .heroScrollLine { height: 60px; }
-     /* MISSION */
      .mission {
        padding: 64px 24px 0;
      }
@@ -883,7 +848,6 @@
        font-size: 15px;
        line-height: 1.8;
      }
-     /* FEATURE CARDS */
      .bottom {
        padding: 48px 20px 64px;
        gap: 12px;
@@ -902,7 +866,6 @@
        font-size: 14px;
        padding: 10px 20px 20px;
      }
-     /* MODAL */
      .addRestaurantModal {
        padding: 36px 24px;
        width: 94%;
@@ -914,7 +877,6 @@
      .modalButtons {
        grid-template-columns: 1fr;
      }
-     /* FOOTER */
      .footerInner {
        padding: 48px 20px 32px;
        gap: 36px;
@@ -932,7 +894,6 @@
      .social2 { width: 26px; height: 26px; }
    }
    
-   /* ── SMALL MOBILE (≤ 390px) ─────────────────────────────── */
    @media (max-width: 390px) {
      .webLogo {
        max-width: 220px;

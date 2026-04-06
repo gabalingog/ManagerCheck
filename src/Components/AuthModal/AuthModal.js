@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../authContext';
-import { supabase } from '../../supabaseClient'; // adjust path if needed
+import { supabase } from '../../supabaseClient';
 import './AuthModal.css';
 
 const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
@@ -36,7 +36,6 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
     setAuthMode(newMode);
   };
 
-  // ── SIGN IN / SIGN UP ────────────────────────────────────
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     clearMessages();
@@ -57,14 +56,12 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
     setLoading(false);
   };
 
-  // ── FORGOT PASSWORD ──────────────────────────────────────
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     clearMessages();
     setLoading(true);
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      // Add this URL to: Supabase Dashboard → Auth → URL Configuration → Redirect URLs
       redirectTo: `${window.location.origin}/reset-password`,
     });
 
@@ -75,7 +72,6 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
 
   if (!isOpen) return null;
 
-  // ── TITLES per mode ──────────────────────────────────────
   const titles = {
     signin: { label: 'Sign In', sub: 'Sign in to rate managers and restaurants' },
     signup: { label: 'Sign Up', sub: 'Create an account to start rating' },
@@ -95,7 +91,6 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
           {error && <div className="errorMessage">{error}</div>}
           {message && <div className="successMessage">{message}</div>}
 
-          {/* ── SIGN IN ── */}
           {authMode === 'signin' && (
             <form onSubmit={handleEmailAuth}>
               <div className="modalInputGroup">
@@ -111,7 +106,6 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
                     className="modalInput passwordInput" placeholder="••••••••" minLength={6} />
                   <PasswordToggle show={showPassword} onToggle={() => setShowPassword(!showPassword)} />
                 </div>
-                {/* Forgot password link sits under the password field */}
                 <button type="button" className="forgotPasswordLink"
                   onClick={() => switchMode('forgot')}>
                   Forgot password?
@@ -128,7 +122,6 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
             </form>
           )}
 
-          {/* ── SIGN UP ── */}
           {authMode === 'signup' && (
             <form onSubmit={handleEmailAuth}>
               <div className="modalInputGroup">
@@ -174,7 +167,6 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
             </form>
           )}
 
-          {/* Terms Modal */}
           {showTerms && (
             <>
               <div className="termsOverlay" onClick={() => setShowTerms(false)}></div>
@@ -206,7 +198,6 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
             </>
           )}
 
-          {/* ── FORGOT PASSWORD ── */}
           {authMode === 'forgot' && (
             <form onSubmit={handleForgotPassword}>
               <div className="modalInputGroup">
@@ -230,7 +221,6 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
   );
 };
 
-// ── Small reusable toggle to avoid duplication ────────────
 const PasswordToggle = ({ show, onToggle }) => (
   <button type="button" className="passwordToggle" onClick={onToggle} tabIndex={-1}>
     {show ? (

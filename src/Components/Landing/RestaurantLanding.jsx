@@ -148,8 +148,6 @@ const RestaurantLanding = () => {
         return () => observer.disconnect();
     }, []);
 
-    // Calculate the real page position of the search bar so the portal dropdown
-    // lines up correctly regardless of any parent stacking context or transform.
     const updateDropdownRect = () => {
         if (searchingRef.current) {
             const rect = searchingRef.current.getBoundingClientRect();
@@ -178,7 +176,7 @@ const RestaurantLanding = () => {
     };
 
     const handleSelectRestaurant = (e, restaurant) => {
-        e.preventDefault(); // prevents blur firing before navigation
+        e.preventDefault();
         setSearchInput('');
         setFilteredRestaurants([]);
         setShowDropdown(false);
@@ -254,8 +252,6 @@ const RestaurantLanding = () => {
         return restaurant.address || '';
     };
 
-    // Rendered via createPortal into document.body so it is never clipped or
-    // blocked by any parent stacking context, overflow, or z-index boundary.
     const PortalDropdown = () => {
         if (!showDropdown || !searchInput || !dropdownRect) return null;
 
@@ -322,7 +318,6 @@ const RestaurantLanding = () => {
                         Know who you're working for before you start
                     </p>
                         <div className="right heroFadeUp" style={{ animationDelay: '0.75s' }}>
-                            {/* ref on .searching so we can measure its position for the portal */}
                             <div className="searching" ref={searchingRef}>
                                 <div className="searchRes">
                                     <img src={search} alt="Search" className='searchLogo'/>
@@ -336,7 +331,6 @@ const RestaurantLanding = () => {
                                         onFocus={handleInputFocus}
                                     />
                                 </div>
-                                {/* Dropdown teleports to document.body via portal */}
                                 <PortalDropdown />
                             </div>
                         </div>

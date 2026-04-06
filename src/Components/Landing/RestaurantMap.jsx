@@ -102,8 +102,6 @@ const RestaurantMap = () => {
     const [pinCount, setPinCount] = useState(0);
     const [zipInput, setZipInput] = useState('');
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
-
-    // Restaurant search state
     const [restaurantSearch, setRestaurantSearch] = useState('');
     const [restaurantResults, setRestaurantResults] = useState([]);
     const [showRestaurantDropdown, setShowRestaurantDropdown] = useState(false);
@@ -141,13 +139,11 @@ const RestaurantMap = () => {
         setRestaurantResults([]);
         setShowRestaurantDropdown(false);
 
-        // Pan map to the pin
         if (mapInstanceRef.current && r.latitude && r.longitude) {
             mapInstanceRef.current.setCenter({ lat: Number(r.latitude), lng: Number(r.longitude) });
             mapInstanceRef.current.setZoom(16);
         }
 
-        // Open sidebar
         const ratings = r.restaurant_ratings || [];
         const fields = ['team_environment', 'shift_availability', 'pay', 'staff_workload_ratio'];
         let avg = null;
@@ -162,7 +158,6 @@ const RestaurantMap = () => {
         const recommendPct = ratings.length > 0 ? Math.round((recommendCount / ratings.length) * 100) : null;
         setSelectedRestaurant({ r, avg, recommendPct, reviewCount: ratings.length, ratings });
 
-        // Open InfoWindow on the matching marker
         const marker = markersRef.current.find(m => m.getTitle() === r.name);
         if (marker && infoWindowRef.current) {
             infoWindowRef.current.open(mapInstanceRef.current, marker);
