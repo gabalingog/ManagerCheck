@@ -52,7 +52,6 @@ const Navbar = () => {
 
         <div className='navRight'>
           {user ? (
-            /* ── LOGGED IN STATE ── */
             <div className="navUserSection">
               <div className="navUserInfo">
                 <span className="navWelcome">Welcome back,</span>
@@ -86,7 +85,6 @@ const Navbar = () => {
               </div>
             </div>
           ) : (
-            /* ── LOGGED OUT STATE ── */
             <>
               <button className='navBtnLogin' onClick={() => handleAuthClick('signin')}>
                 Login
