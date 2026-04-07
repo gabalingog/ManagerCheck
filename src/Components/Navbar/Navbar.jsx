@@ -39,6 +39,7 @@ const Navbar = () => {
         <div className='navLeft'>
           <div className='navLogo' onClick={goHome} style={{ cursor: 'pointer' }}>
             <img src={logo} alt="ManagerCheck" className='webLogoRollUp' />
+            <span className='webName'>RollUp</span>
           </div>
           {!isLandingPage && (
             <button className='navHomeBtn' onClick={goHome}>
