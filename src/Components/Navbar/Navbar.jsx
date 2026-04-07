@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../authContext';
 import AuthModal from '../AuthModal/AuthModal';
 import './Navbar.css';
+import logo from './../Assets/1.png';
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
@@ -37,7 +38,7 @@ const Navbar = () => {
       <nav className='mainNavbar'>
         <div className='navLeft'>
           <div className='navLogo' onClick={goHome} style={{ cursor: 'pointer' }}>
-            Manager<span>Check</span>
+            <img src={logo} alt="ManagerCheck" className='webLogoRollUp' />
           </div>
           {!isLandingPage && (
             <button className='navHomeBtn' onClick={goHome}>

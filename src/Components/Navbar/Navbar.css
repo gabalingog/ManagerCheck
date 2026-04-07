@@ -279,3 +279,9 @@
     display: block;
   }
 }
+
+.webLogoRollUp{
+  margin-top: 5px;
+  width: auto;
+  height: 40px;
+}

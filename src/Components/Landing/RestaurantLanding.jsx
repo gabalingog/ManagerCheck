@@ -5,7 +5,7 @@ import emailjs from '@emailjs/browser';
 import { supabase } from './../../supabaseClient';
 import './RestaurantLanding.css';
 import search from './../Assets/Search.png';
-import logo from './../Assets/pic2-17.png';
+import logo from './../Assets/rolluplogo.png';
 import waitress from './../Assets/waitress.png';
 import pic1 from './../Assets/pic1.png';
 import pic3 from './../Assets/pic2-4.png';
