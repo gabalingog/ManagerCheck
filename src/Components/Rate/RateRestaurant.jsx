@@ -7,8 +7,8 @@ import restaurantBG from './../Assets/pic2-18.png';
 import ReviewReplies from './ReviewReplies';
 import SuggestChanges from './SuggestChanges';
 import ReportReview from './ReportReview';
-import badge from './../Assets/badge.png';
-
+import badgelower from './../Assets/badgelower.png';
+import badgehigher from './../Assets/badgehigher.png';
 
 const RateRestaurant = () => {
   const { restaurantID } = useParams();
@@ -234,8 +234,11 @@ const RateRestaurant = () => {
       <header className="restaurantHeader" style={{ backgroundImage: `url(${restaurantBG})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="headerContent">
         <div className="headerLeft">
-          {parseFloat(overallRating) > 4.3 && existingRatings.length > 0 && (
-            <img src={badge} alt="Top Rated" className="restaurantBadge" />
+          {existingRatings.length > 0 && parseFloat(overallRating) >= 5 && (
+            <img src={badgehigher} alt="Perfect Rating" className="restaurantBadge" />
+          )}
+          {existingRatings.length > 0 && parseFloat(overallRating) >= 4.3 && parseFloat(overallRating) < 5 && (
+            <img src={badgehigher} alt="Top Rated" className="restaurantBadge" />
           )}
           <h1 className="restaurantName">{currentRestaurant?.name || restaurantName}</h1>
           <p className="restaurantLocation">

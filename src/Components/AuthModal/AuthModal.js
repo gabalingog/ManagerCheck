@@ -16,6 +16,11 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
   const [termsScrolled, setTermsScrolled] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
 
+  const [usePhone, setUsePhone] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+
   const handleTermsScroll = (e) => {
     const el = e.target;
     if (el.scrollHeight - el.scrollTop <= el.clientHeight + 10) {
@@ -33,14 +38,25 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
     clearMessages();
     setEmail('');
     setPassword('');
+    setPhone('');
+    setOtp('');
+    setOtpSent(false);
+    setUsePhone(false);
     setAuthMode(newMode);
+  };
+
+  const togglePhoneMode = () => {
+    clearMessages();
+    setOtp('');
+    setOtpSent(false);
+    setPhone('');
+    setUsePhone(!usePhone);
   };
 
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     clearMessages();
     setLoading(true);
-
     if (authMode === 'signin') {
       const { error } = await signIn(email, password);
       if (error) setError(error.message);
@@ -56,15 +72,44 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
     setLoading(false);
   };
 
+  const handleSendOtp = async (e) => {
+    e.preventDefault();
+    clearMessages();
+    setLoading(true);
+  
+    // Normalize to E.164 — strip everything except digits, then prepend +1
+    let normalized = phone.replace(/\D/g, '');
+    if (normalized.length === 10) {
+      normalized = '+1' + normalized;
+    } else if (normalized.length === 11 && normalized.startsWith('1')) {
+      normalized = '+' + normalized;
+    } else if (!normalized.startsWith('+')) {
+      normalized = '+' + normalized;
+    }
+  
+    const { error } = await supabase.auth.signInWithOtp({ phone: normalized });
+    if (error) setError(error.message);
+    else setOtpSent(true);
+    setLoading(false);
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    clearMessages();
+    setLoading(true);
+    const { error } = await supabase.auth.verifyOtp({ phone, token: otp, type: 'sms' });
+    if (error) setError(error.message);
+    else onClose();
+    setLoading(false);
+  };
+
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     clearMessages();
     setLoading(true);
-
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
-
     if (error) setError(error.message);
     else setMessage('Reset link sent! Check your inbox.');
     setLoading(false);
@@ -73,8 +118,8 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
   if (!isOpen) return null;
 
   const titles = {
-    signin: { label: 'Sign In', sub: 'Sign in to rate managers and restaurants' },
-    signup: { label: 'Sign Up', sub: 'Create an account to start rating' },
+    signin: { label: 'Welcome Back', sub: 'Sign in to rate managers and restaurants' },
+    signup: { label: 'Create Account', sub: 'Join to share your workplace experience' },
     forgot: { label: 'Reset Password', sub: "Enter your email and we'll send a reset link" },
   };
   const { label, sub } = titles[authMode];
@@ -92,79 +137,141 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
           {message && <div className="successMessage">{message}</div>}
 
           {authMode === 'signin' && (
-            <form onSubmit={handleEmailAuth}>
-              <div className="modalInputGroup">
-                <label>Email</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                  required className="modalInput" placeholder="your@email.com" />
-              </div>
-              <div className="modalInputGroup">
-                <label>Password</label>
-                <div className="passwordWrapper">
-                  <input type={showPassword ? 'text' : 'password'} value={password}
-                    onChange={(e) => setPassword(e.target.value)} required
-                    className="modalInput passwordInput" placeholder="••••••••" minLength={6} />
-                  <PasswordToggle show={showPassword} onToggle={() => setShowPassword(!showPassword)} />
-                </div>
-                <button type="button" className="forgotPasswordLink"
-                  onClick={() => switchMode('forgot')}>
-                  Forgot password?
-                </button>
-              </div>
-              <div className="modalButtonsRow">
-                <button type="button" className="modalSecondaryBtn" onClick={() => switchMode('signup')}>
-                  Create an Account
-                </button>
-                <button type="submit" className="modalPrimaryBtn" disabled={loading}>
-                  {loading ? 'Loading...' : 'Sign In'}
-                </button>
-              </div>
-            </form>
+            <>
+              {!usePhone ? (
+                <form onSubmit={handleEmailAuth}>
+                  <div className="modalInputGroup">
+                    <label>Email</label>
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                      required className="modalInput" placeholder="your@email.com" />
+                  </div>
+                  <div className="modalInputGroup">
+                    <label>Password</label>
+                    <div className="passwordWrapper">
+                      <input type={showPassword ? 'text' : 'password'} value={password}
+                        onChange={(e) => setPassword(e.target.value)} required
+                        className="modalInput passwordInput" placeholder="••••••••" minLength={6} />
+                      <PasswordToggle show={showPassword} onToggle={() => setShowPassword(!showPassword)} />
+                    </div>
+                    <button type="button" className="forgotPasswordLink" onClick={() => switchMode('forgot')}>
+                      Forgot password?
+                    </button>
+                  </div>
+                  <div className="modalButtonsRow">
+                    <button type="button" className="modalSecondaryBtn" onClick={() => switchMode('signup')}>
+                      Create Account
+                    </button>
+                    <button type="submit" className="modalPrimaryBtn" disabled={loading}>
+                      {loading ? 'Loading...' : 'Sign In'}
+                    </button>
+                  </div>
+                </form>
+              ) : !otpSent ? (
+                <form onSubmit={handleSendOtp}>
+                  <div className="modalInputGroup">
+                    <label>Phone Number</label>
+                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
+                      required className="modalInput" placeholder="(555) 000-0000" />
+                  </div>
+                  <div className="modalButtonsRow">
+                    <button type="submit" className="modalPrimaryBtn" disabled={loading}>
+                      {loading ? 'Sending...' : 'Send Code'}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <form onSubmit={handleVerifyOtp}>
+                  <div className="modalInputGroup">
+                    <label>Enter the 6-digit code sent to {phone}</label>
+                    <input type="text" value={otp} onChange={(e) => setOtp(e.target.value)}
+                      required className="modalInput" placeholder="123456" maxLength={6} />
+                  </div>
+                  <div className="modalButtonsRow">
+                    <button type="button" className="modalSecondaryBtn" onClick={() => setOtpSent(false)}>← Back</button>
+                    <button type="submit" className="modalPrimaryBtn" disabled={loading}>
+                      {loading ? 'Verifying...' : 'Verify'}
+                    </button>
+                  </div>
+                </form>
+              )}
+              <div className="authDivider"><span>or</span></div>
+              <button type="button" className="phoneToggleBtn" onClick={togglePhoneMode}>
+                {usePhone ? 'Use email instead' : 'Continue with phone number'}
+              </button>
+            </>
           )}
 
           {authMode === 'signup' && (
-            <form onSubmit={handleEmailAuth}>
-              <div className="modalInputGroup">
-                <label>Email</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                  required className="modalInput" placeholder="your@email.com" />
-              </div>
-              <div className="modalInputGroup">
-                <label>Password</label>
-                <div className="passwordWrapper">
-                  <input type={showPassword ? 'text' : 'password'} value={password}
-                    onChange={(e) => setPassword(e.target.value)} required
-                    className="modalInput passwordInput" placeholder="••••••••" minLength={6} />
-                  <PasswordToggle show={showPassword} onToggle={() => setShowPassword(!showPassword)} />
-                </div>
-              </div>
-
-              <div className="termsRow">
-                <input
-                  type="checkbox"
-                  id="termsCheck"
-                  checked={termsAccepted}
-                  disabled={!termsScrolled}
-                  onChange={(e) => setTermsAccepted(e.target.checked)}
-                  className="termsCheckbox"
-                />
-                <label htmlFor="termsCheck" className={`termsLabel ${!termsScrolled ? 'termsDisabled' : ''}`}>
-                  I agree to the{' '}
-                  <button type="button" className="termsLink" onClick={() => setShowTerms(true)}>
-                    terms and conditions
-                  </button>
-                </label>
-              </div>
-
-              <div className="modalButtonsRow">
-                <button type="button" className="modalSecondaryBtn" onClick={() => switchMode('signin')}>
-                  Sign In
-                </button>
-                <button type="submit" className="modalPrimaryBtn" disabled={loading || !termsAccepted}>
-                  {loading ? 'Loading...' : 'Create an Account'}
-                </button>
-              </div>
-            </form>
+            <>
+              {!usePhone ? (
+                <form onSubmit={handleEmailAuth}>
+                  <div className="modalInputGroup">
+                    <label>Email</label>
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                      required className="modalInput" placeholder="your@email.com" />
+                  </div>
+                  <div className="modalInputGroup">
+                    <label>Password</label>
+                    <div className="passwordWrapper">
+                      <input type={showPassword ? 'text' : 'password'} value={password}
+                        onChange={(e) => setPassword(e.target.value)} required
+                        className="modalInput passwordInput" placeholder="••••••••" minLength={6} />
+                      <PasswordToggle show={showPassword} onToggle={() => setShowPassword(!showPassword)} />
+                    </div>
+                  </div>
+                  <div className="termsRow">
+                    <input type="checkbox" id="termsCheck" checked={termsAccepted}
+                      disabled={!termsScrolled} onChange={(e) => setTermsAccepted(e.target.checked)}
+                      className="termsCheckbox" />
+                    <label htmlFor="termsCheck" className={`termsLabel ${!termsScrolled ? 'termsDisabled' : ''}`}>
+                      I agree to the{' '}
+                      <button type="button" className="termsLink" onClick={() => setShowTerms(true)}>
+                        terms and conditions
+                      </button>
+                    </label>
+                  </div>
+                  <div className="modalButtonsRow">
+                    <button type="button" className="modalSecondaryBtn" onClick={() => switchMode('signin')}>
+                      Sign In
+                    </button>
+                    <button type="submit" className="modalPrimaryBtn" disabled={loading || !termsAccepted}>
+                      {loading ? 'Loading...' : 'Create Account'}
+                    </button>
+                  </div>
+                </form>
+              ) : !otpSent ? (
+                <form onSubmit={handleSendOtp}>
+                  <div className="modalInputGroup">
+                    <label>Phone Number</label>
+                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
+                      required className="modalInput" placeholder="+1 (555) 000-0000" />
+                  </div>
+                  <div className="modalButtonsRow">
+                    <button type="submit" className="modalPrimaryBtn" disabled={loading}>
+                      {loading ? 'Sending...' : 'Send Code'}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <form onSubmit={handleVerifyOtp}>
+                  <div className="modalInputGroup">
+                    <label>Enter the 6-digit code sent to {phone}</label>
+                    <input type="text" value={otp} onChange={(e) => setOtp(e.target.value)}
+                      required className="modalInput" placeholder="123456" maxLength={6} />
+                  </div>
+                  <div className="modalButtonsRow">
+                    <button type="button" className="modalSecondaryBtn" onClick={() => setOtpSent(false)}>← Back</button>
+                    <button type="submit" className="modalPrimaryBtn" disabled={loading}>
+                      {loading ? 'Verifying...' : 'Verify'}
+                    </button>
+                  </div>
+                </form>
+              )}
+              <div className="authDivider"><span>or</span></div>
+              <button type="button" className="phoneToggleBtn" onClick={togglePhoneMode}>
+                {usePhone ? 'Use email instead' : 'Continue with phone number'}
+              </button>
+            </>
           )}
 
           {showTerms && (
@@ -186,11 +293,8 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
                 </div>
                 <div className="termsModalFooter">
                   {!termsScrolled && <p className="termsScrollHint">Scroll to the bottom to accept</p>}
-                  <button
-                    className="modalPrimaryBtn"
-                    disabled={!termsScrolled}
-                    onClick={() => { setTermsAccepted(true); setShowTerms(false); }}
-                  >
+                  <button className="modalPrimaryBtn" disabled={!termsScrolled}
+                    onClick={() => { setTermsAccepted(true); setShowTerms(false); }}>
                     Accept
                   </button>
                 </div>
@@ -206,9 +310,7 @@ const AuthModal = ({ isOpen, onClose, mode = 'signin' }) => {
                   required className="modalInput" placeholder="your@email.com" />
               </div>
               <div className="modalButtonsRow">
-                <button type="button" className="modalSecondaryBtn" onClick={() => switchMode('signin')}>
-                  ← Back
-                </button>
+                <button type="button" className="modalSecondaryBtn" onClick={() => switchMode('signin')}>← Back</button>
                 <button type="submit" className="modalPrimaryBtn" disabled={loading || !!message}>
                   {loading ? 'Sending...' : 'Send Reset Link'}
                 </button>
