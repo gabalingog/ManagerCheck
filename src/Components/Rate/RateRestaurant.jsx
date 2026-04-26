@@ -7,6 +7,8 @@ import restaurantBG from './../Assets/pic2-18.png';
 import ReviewReplies from './ReviewReplies';
 import SuggestChanges from './SuggestChanges';
 import ReportReview from './ReportReview';
+import badge from './../Assets/badge.png';
+
 
 const RateRestaurant = () => {
   const { restaurantID } = useParams();
@@ -232,6 +234,9 @@ const RateRestaurant = () => {
       <header className="restaurantHeader" style={{ backgroundImage: `url(${restaurantBG})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="headerContent">
         <div className="headerLeft">
+          {parseFloat(overallRating) > 4.3 && existingRatings.length > 0 && (
+            <img src={badge} alt="Top Rated" className="restaurantBadge" />
+          )}
           <h1 className="restaurantName">{currentRestaurant?.name || restaurantName}</h1>
           <p className="restaurantLocation">
             {currentRestaurant ? `${currentRestaurant.address}, ${currentRestaurant.city}, ${currentRestaurant.state} ${currentRestaurant.zip_code}` : 'Boston, MA'}
@@ -241,6 +246,7 @@ const RateRestaurant = () => {
             <button className="btnSecondary" onClick={goToAllManagers}>View Managers</button>
           </div>
         </div>
+        
           <div className="headerRight">
             <div className="headerStats">
               <div className="ratingCard">
